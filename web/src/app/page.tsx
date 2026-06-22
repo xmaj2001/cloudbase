@@ -148,6 +148,7 @@ export default function Catalogue() {
             <Link href="/splash" className="inline-flex h-11 items-center gap-2 rounded-md border border-border px-5 text-sm font-medium hover:bg-accent/10">
               Start from splash
             </Link>
+            
           </div>
         </div>
       </section>
