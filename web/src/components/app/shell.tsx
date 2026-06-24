@@ -6,7 +6,7 @@ import {
   Home, Folder, Share2, Repeat, Settings, Search, Bell, Sparkles, BarChart3,
   MessageCircle, Activity, ChevronLeft,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Logo, LogoMark } from "./brand";
 import { cn } from "@/lib/utils";
 
@@ -123,7 +123,16 @@ export function DashboardShell({
       </header>
 
       <main className="animate-[cb-fade_0.2s_ease-out] px-4 pb-28 pt-4 lg:ml-64 lg:px-8 lg:pb-12 lg:pt-6">
-        {children}
+        <Suspense fallback={<div
+          className="
+    flex items-center justify-center text-sm text-muted-foreground
+    animate-[cb-fade_0.2s_ease-out]
+  "
+        >
+          Carregando…
+        </div>}>
+          {children}
+        </Suspense>
       </main>
 
       {/* Mobile bottom nav */}

@@ -16,7 +16,7 @@ const quickActions = [
 
 export default function DashboardPage() {
   return (
-    <Shell title="Good evening, Dana">
+    <>
       <p className="-mt-2 mb-6 text-sm text-muted-foreground lg:mb-8">
         Your unified drive is healthy. 47 files organized last night.
       </p>
@@ -117,6 +117,6 @@ export default function DashboardPage() {
           </div>
         </Card>
       </div>
-    </Shell>
+    </>
   );
 }
