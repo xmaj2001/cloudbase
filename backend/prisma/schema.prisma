@@ -1,0 +1,232 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════════════════════════════════════════
+// USER
+// ═══════════════════════════════════════════════════
+
+model User {
+  id             String  @id @default(uuid())
+  email          String  @unique
+  name           String
+  avatarUrl      String?
+  passwordHash   String?
+  whatsappNumber String?
+
+  reputationScore     Float @default(0)
+  totalTrades         Int   @default(0)
+  completedTrades     Int   @default(0)
+  tradeCompletionRate Float @default(0)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  drivers StorageDriver[]
+  nodes   Node[]
+
+  @@map("users")
+}
+
+// ═══════════════════════════════════════════════════
+// STORAGE DRIVER
+// ═══════════════════════════════════════════════════
+enum ProviderType {
+  GOOGLE_DRIVE
+  ONEDRIVE
+  TELEGRAM
+  CLOUDINARY
+  MEGA
+  DROPBOX
+  BOX
+  PCLOUD
+  YANDEX
+  VPS
+  LOCAL_MACHINE
+}
+
+model StorageDriver {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type        ProviderType
+  displayName String // "Meu Google Drive pessoal"
+  isActive    Boolean      @default(true)
+  priority    Int          @default(0)
+
+  // credenciais específicas por provider (JSON encriptado)
+  // Google Drive:  { accessToken, refreshToken, expiresAt, accountEmail }
+  // Cloudinary:    { apiKey, apiSecret, cloudName }
+  // Telegram:      { botToken, chatId }
+  // MEGA:          { sessionToken, accountEmail }
+  // VPS:           { agentToken, host, port }
+  credentials Json
+
+  // pasta raiz criada pelo CloudBase neste provider
+  rootFolderId   String? // ID no provider
+  rootFolderPath String? // "CloudBase/"
+
+  // pasta de fragmentos (NÃO eliminar)
+  fragmentFolderId   String? // ID no provider
+  fragmentFolderPath String? // "CloudBase/_fragments/"
+
+  // cache de espaço (evita chamar API a cada request)
+  cachedTotalSpace     BigInt?
+  cachedUsedSpace      BigInt?
+  cachedAvailableSpace BigInt?
+  spaceCachedAt        DateTime?
+  // null = ilimitado (Telegram) ou ainda não consultado
+
+  lastSyncAt DateTime?
+  syncError  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  nodes  Node[]
+  chunks FileChunk[]
+
+  @@unique([userId, type, id])
+  @@map("storage_drivers")
+}
+
+// ═══════════════════════════════════════════════════
+// NODE
+// ═══════════════════════════════════════════════════
+
+enum NodeType {
+  FILE
+  FOLDER
+  GROUP
+}
+
+enum FileStatus {
+  ACTIVE
+  TRASHED
+  DELETED
+  UNREACHABLE
+  CORRUPTED
+  EXPIRED
+  UPLOADING
+  FRAGMENTING
+}
+
+model Node {
+  id     String   @id @default(uuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type   NodeType
+
+  // metadados básicos
+  name      String
+  mimeType  String?
+  extension String?
+  size      BigInt?
+
+  // provider (só FILE e FOLDER)
+  driverId          String?
+  driver            StorageDriver? @relation(fields: [driverId], references: [id])
+  providerFileId    String?
+  providerPath      String?
+  providerCreatedAt DateTime?
+  providerUpdatedAt DateTime?
+
+  // fragmentação
+  isFragmented Boolean     @default(false)
+  totalChunks  Int         @default(1)
+  originalHash String?
+  chunks       FileChunk[]
+
+  // hierarquia
+  parentId String?
+  parent   Node?   @relation("NodeHierarchy", fields: [parentId], references: [id])
+  children Node[]  @relation("NodeHierarchy")
+
+  // status
+  status        FileStatus @default(ACTIVE)
+  errorCount    Int        @default(0)
+  lastErrorAt   DateTime?
+  lastCheckedAt DateTime?
+
+  // lixeira
+  trashedAt         DateTime?
+  permanentDeleteAt DateTime?
+
+  // validade
+  expiresAt        DateTime?
+  expiryNotifiedAt DateTime?
+
+  // tags e busca
+  tags         String[] @default([])
+  searchVector String?
+
+  // thumbnail
+  thumbnailUrl String?
+
+  // AI
+  aiClassified Boolean @default(false)
+  aiCategory   String?
+  aiConfidence Float?
+  aiSummary    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, status])
+  @@index([userId, parentId])
+  @@index([userId, type])
+  @@index([driverId, providerFileId])
+  @@index([userId, trashedAt])
+  @@index([expiresAt])
+  @@map("nodes")
+}
+
+// ═══════════════════════════════════════════════════
+// FILE CHUNK
+// ═══════════════════════════════════════════════════
+
+enum ChunkStatus {
+  PENDING
+  UPLOADED
+  VERIFIED
+  FAILED
+}
+
+model FileChunk {
+  id     String @id @default(uuid())
+  nodeId String
+  node   Node   @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  driverId String
+  driver   StorageDriver @relation(fields: [driverId], references: [id])
+
+  chunkIndex Int
+  size       BigInt
+  byteStart  BigInt
+  byteEnd    BigInt
+  chunkHash  String
+
+  providerFileId String
+  providerPath   String
+
+  status     ChunkStatus @default(PENDING)
+  uploadedAt DateTime?
+  verifiedAt DateTime?
+  errorCount Int         @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([nodeId, chunkIndex])
+  @@index([nodeId])
+  @@index([driverId])
+  @@map("file_chunks")
+}
