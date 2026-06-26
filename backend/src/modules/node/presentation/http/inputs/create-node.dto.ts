@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsNotEmpty,
@@ -6,7 +7,11 @@ import {
   IsArray,
   IsInt,
   Min,
+  IsEnum,
+  ValidateIf,
+  ValidateNested,
 } from 'class-validator';
+import { NodeType } from 'src/modules/node/domain/enums/node-type.enum';
 
 export class CreateNodeLocationDto {
   @ApiProperty({ example: 'a1b2c3d4-...' })
@@ -21,6 +26,8 @@ export class CreateNodeLocationDto {
   @IsString()
   providerPath: string;
 }
+
+
 
 export class CreateNodeDto {
   @ApiProperty({
@@ -38,6 +45,15 @@ export class CreateNodeDto {
   @IsString()
   @IsOptional()
   mimeType?: string;
+
+  @ApiProperty({
+    example: NodeType.FILE,
+    description: `Os tipos de nó suportados são: ${Object.values(NodeType).join(', ')}`,
+    enum: NodeType,
+  })
+  @IsEnum(NodeType)
+  @IsNotEmpty()
+  type: NodeType;
 
   @ApiPropertyOptional({
     example: '.pdf',
@@ -72,16 +88,21 @@ export class CreateNodeDto {
   @IsArray()
   @IsOptional()
   tags?: string[];
+
+  @ApiPropertyOptional({
+    type: CreateNodeLocationDto,
+    description: 'Localização do ficheiro (Apenas para tipo FILE e FOLDER)',
+  })
+  @ValidateIf((o) => o.type === NodeType.FILE || o.type === NodeType.FOLDER)
+  @ValidateNested()
+  @Type(() => CreateNodeLocationDto)
+  @IsOptional()
+  location?: CreateNodeLocationDto;
 }
 
-export class CreateFileNodeDto extends CreateNodeDto {
-  @ApiProperty({ type: CreateNodeLocationDto })
-  location: CreateNodeLocationDto;
-}
 
-export class CreateFolderNodeDto extends CreateNodeDto {
-  @ApiProperty({ type: CreateNodeLocationDto })
-  location: CreateNodeLocationDto;
-}
+export class CreateFileNodeDto extends CreateNodeDto { }
 
-export class CreateGroupNodeDto extends CreateNodeDto {}
+export class CreateFolderNodeDto extends CreateNodeDto { }
+
+export class CreateGroupNodeDto extends CreateNodeDto { }

@@ -1,8 +1,10 @@
-import type { ApiResponseError, ErrorResponse } from "./api.types";
+import type { ApiResponseError, ErrorResponse, Fields } from "./api.types";
+
 
 export class ApiRequestError extends Error {
   private readonly _code: number;
   private readonly _message: string;
+  private readonly _fields: Fields[];
   private readonly _path: string;
   private readonly _ts: string;
 
@@ -11,12 +13,17 @@ export class ApiRequestError extends Error {
     this.name = "ApiRequestError";
     this._code = response.data.code;
     this._message = response.data.message;
+    this._fields = response.data.fields;
     this._path = response.path;
     this._ts = response.ts;
   }
 
   get code(): number {
     return this._code;
+  }
+
+  get fields(): Fields[] {
+    return this._fields;
   }
 
   get message(): string {

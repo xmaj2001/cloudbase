@@ -1,10 +1,11 @@
 import { ApiEnvelope } from "../../api.types";
 import { apiFetch } from "../../apiFetch";
-import { ApiNode } from "../types";
+import { ApiNode, NodeType } from "../types";
 
 interface CreateFileRequest {
     userId: string;
     name: string;
+    type: NodeType;
     mimeType: string;
     extension: string;
     size: string; // Enviado como string para bater com o BigInt
@@ -17,10 +18,11 @@ interface CreateFileRequest {
     tags?: string[];
 }
 
-export const createFileNode = async (data: CreateFileRequest): Promise<ApiEnvelope<ApiNode>> => {
-    return await apiFetch<ApiEnvelope<ApiNode>>('/nodes/file', {
+export const createFileNode = async (data: CreateFileRequest): Promise<ApiNode> => {
+    const { userId, ...bodyData } = data;
+    return await apiFetch<ApiNode>(`/nodes/file?userId=${userId}`, {
         method: 'POST',
-        body: JSON.stringify(data)
+        body: JSON.stringify(bodyData)
     });
 };
 
@@ -28,6 +30,7 @@ export const createFileNode = async (data: CreateFileRequest): Promise<ApiEnvelo
 interface CreateFolderRequest {
     userId: string;
     name: string;
+    type: NodeType;
     location: {
         driverId: string;
         providerFileId: string;
@@ -35,22 +38,25 @@ interface CreateFolderRequest {
     };
     parentId?: string | null;
 }
-export const createFolderNode = async (data: CreateFolderRequest): Promise<ApiEnvelope<ApiNode>> => {
-    return await apiFetch<ApiEnvelope<ApiNode>>('/nodes/folder', {
+export const createFolderNode = async (data: CreateFolderRequest): Promise<ApiNode> => {
+    const { userId, ...bodyData } = data;
+    return await apiFetch<ApiNode>(`/nodes/folder?userId=${userId}`, {
         method: 'POST',
-        body: JSON.stringify(data)
+        body: JSON.stringify(bodyData)
     });
 };
 
 interface CreateGroupRequest {
     userId: string;
     name: string;
+    type: NodeType;
     parentId?: string | null;
 }
 
-export const createGroupNode = async (data: CreateGroupRequest): Promise<ApiEnvelope<ApiNode>> => {
-    return await apiFetch<ApiEnvelope<ApiNode>>('/nodes/group', {
+export const createGroupNode = async (data: CreateGroupRequest): Promise<ApiNode> => {
+    const { userId, ...bodyData } = data;
+    return await apiFetch<ApiNode>(`/nodes/group?userId=${userId}`, {
         method: 'POST',
-        body: JSON.stringify(data)
+        body: JSON.stringify(bodyData)
     });
 };

@@ -8,8 +8,10 @@ import { GetDriversByUserUseCase } from './app/use-cases/get-drivers-by-user.use
 import { GetDriverByIdUseCase } from './app/use-cases/get-driver-by-id.use-case';
 import { UpdateDriverUseCase } from './app/use-cases/update-driver.use-case';
 import { DeleteDriverUseCase } from './app/use-cases/delete-driver.use-case';
+import { UserModule } from '../user/user.module';
 
 @Module({
+  imports: [UserModule],
   controllers: [StorageDriverController],
   providers: [
     StorageDriverClientService,

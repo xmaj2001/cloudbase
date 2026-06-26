@@ -21,7 +21,7 @@ export async function apiFetch<T>(
   //     console.error("Erro ao ler cookies no servidor:", e);
   //   }
   // }
-  const response = await fetch(`${API_URL}${url}`, {
+  const response = await fetch(`${API_URL}/api/${url}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",

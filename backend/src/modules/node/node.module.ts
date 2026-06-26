@@ -10,6 +10,8 @@ import { UpdateNodeUseCase } from './app/use-cases/update-node.use-case';
 import { TrashNodeUseCase } from './app/use-cases/trash-node.use-case';
 import { RestoreNodeUseCase } from './app/use-cases/restore-node.use-case';
 import { DeleteNodeUseCase } from './app/use-cases/delete-node.use-case';
+import { UserModule } from '../user/user.module';
+import { StorageDriverModule } from '../storagedriver/storage-driver.module';
 
 @Module({
   controllers: [NodeController],
@@ -27,6 +29,7 @@ import { DeleteNodeUseCase } from './app/use-cases/delete-node.use-case';
       useClass: PrismaNodeRepository,
     },
   ],
+  imports: [UserModule, StorageDriverModule],
   exports: [NodeClientService],
 })
-export class NodeModule {}
+export class NodeModule { }

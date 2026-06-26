@@ -1,3 +1,4 @@
+import { ApiRequestError } from '@/lib/api/api-request-error';
 import { nodeService } from '@/lib/api/node/node.service';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -50,12 +51,26 @@ export const useNodeMutations = (userId: string, currentParentId: string | null)
     const createFile = useMutation({
         mutationFn: nodeService.createFileNode,
         onSuccess: () => invalidateCurrentList(),
+        onError: (err) => {
+            if (err instanceof ApiRequestError) {
+                console.log(err.message, err.fields)
+            } else {
+                console.error("criar ficheiro.")
+            }
+        }
     });
 
     // Mutação: Criar Pasta
     const createFolder = useMutation({
         mutationFn: nodeService.createFolderNode,
         onSuccess: () => invalidateCurrentList(),
+        onError: (err) => {
+            if (err instanceof ApiRequestError) {
+                console.error(err.message)
+            } else {
+                console.error("Erro desconhecido ao criar pasta.")
+            }
+        }
     });
 
     // Mutação: Renomear Nó
@@ -65,7 +80,7 @@ export const useNodeMutations = (userId: string, currentParentId: string | null)
         onSuccess: (response) => {
             invalidateCurrentList();
             // Atualiza também a cache de detalhes desse nó individual
-            queryClient.setQueryData(NODE_QUERY_KEYS.detail(response.data.id), response);
+            queryClient.setQueryData(NODE_QUERY_KEYS.detail(response.id), response);
         },
     });
 
