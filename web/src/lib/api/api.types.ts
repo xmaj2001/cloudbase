@@ -4,6 +4,11 @@ export interface ApiEnvelope<T> {
   ts: string;
 }
 
+export interface Fields {
+  field: string;
+  messages: string[];
+}
+
 export interface ApiCursorEnvelope<T> {
   items: T[];
   nextCursor: string;
@@ -25,6 +30,7 @@ export interface ApiResponseError<T> {
 export type ErrorResponse = {
   code: number;
   message: string;
+  fields: Fields[];
 };
 
 export class ApiNetworkError extends Error {

@@ -8,7 +8,7 @@ interface GetNodesRequest {
     parentId: string | null;
 }
 
-export const getNodes = async (request: GetNodesRequest): Promise<ApiEnvelope<ApiNode[]>> => {
+export const getNodes = async (request: GetNodesRequest): Promise<ApiNode[]> => {
     // criar as query params de forma dinamica
     const params = new URLSearchParams();
     params.append('userId', request.userId);
@@ -16,14 +16,14 @@ export const getNodes = async (request: GetNodesRequest): Promise<ApiEnvelope<Ap
         params.append('parentId', request.parentId);
     }
     const url = `/nodes?${params.toString()}`;
-    const response = await apiFetch<ApiEnvelope<ApiNode[]>>(url, {
+    const response = await apiFetch<ApiNode[]>(url, {
         method: 'GET'
     });
     return response;
 }
 
-export const getNodeById = async (id: string): Promise<ApiEnvelope<ApiNode>> => {
-    const response = await apiFetch<ApiEnvelope<ApiNode>>(`/nodes/${id}`, {
+export const getNodeById = async (id: string): Promise<ApiNode> => {
+    const response = await apiFetch<ApiNode>(`/nodes/${id}`, {
         method: 'GET'
     });
     return response;

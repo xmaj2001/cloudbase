@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, Logger } from '@nestjs/common';
 import { UserRepository } from '../../domain/repo/user.repository';
 import { UserEntity } from '../../domain/entities/user.entity';
 import * as crypto from 'crypto';
@@ -6,11 +6,16 @@ import { CreateUserDto } from '../../presentation/http/inputs/create-user.dto';
 
 @Injectable()
 export class CreateUserUseCase {
+  private readonly logger = new Logger(CreateUserUseCase.name);
+
   constructor(private readonly userRepository: UserRepository) { }
 
   async execute(dto: CreateUserDto): Promise<UserEntity> {
+    this.logger.log(`A criar utilizador com o email ${dto.email}`);
+
     const existingUser = await this.userRepository.findByEmail(dto.email);
     if (existingUser) {
+      this.logger.warn(`O email ${dto.email} já está em uso`);
       throw new ConflictException('Este email já está em uso.');
     }
 
@@ -28,6 +33,7 @@ export class CreateUserUseCase {
     });
 
     await this.userRepository.save(user);
+    this.logger.log(`Utilizador criado com sucesso (id: ${user.id})`);
     return user;
   }
 
