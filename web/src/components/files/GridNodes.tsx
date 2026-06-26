@@ -4,10 +4,10 @@ import CardItemNode, { CardItemNodeSkeleton } from "./CardItemNode";
 interface GridNodesProps {
     nodes: ApiNode[];
     isLoading: boolean;
-
+    onNodeClick?: (node: ApiNode) => void;
 }
 
-export default function GridNodes({ nodes, isLoading }: GridNodesProps) {
+export default function GridNodes({ nodes, isLoading, onNodeClick }: GridNodesProps) {
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {isLoading ? (
@@ -16,7 +16,7 @@ export default function GridNodes({ nodes, isLoading }: GridNodesProps) {
                 ))
             ) : (
                 nodes.map((node) => {
-                    return <CardItemNode key={node.id} node={node} />
+                    return <CardItemNode key={node.id} node={node} onNodeClick={onNodeClick} />
                 })
             )}
         </div>

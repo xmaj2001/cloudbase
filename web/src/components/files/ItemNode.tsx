@@ -4,7 +4,7 @@ import { CheckCircle2 } from "lucide-react";
 
 interface ItemNodeProps {
     node: ApiNode;
-    onNodeClick?: (node: ApiNode | null) => void;
+    onNodeClick?: (node: ApiNode) => void;
     // toggleSelection: (id: string, e: React.MouseEvent) => void;
 }
 export const ItemNode = ({ node, onNodeClick }: ItemNodeProps) => {

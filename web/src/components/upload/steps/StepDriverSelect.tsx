@@ -14,7 +14,6 @@ import {
 import { cn } from "@/lib/utils";
 import { ApiDriver } from "@/lib/api/drivers/types";
 
-const USER_ID = "a2f54be0-3154-46a6-a629-23388ddbb573"; // TODO: substituir por useUser() quando auth estiver pronto
 interface StepDriverSelectProps {
   drivers: ApiDriver[];
   loading: boolean;
@@ -182,22 +181,6 @@ function AnalysisBanner({
           />
           <span className="text-sm">Sim, fragmentar pelos drivers selecionados</span>
         </label>
-        {forceFragment && plan.length > 0 && (
-          <div className="flex flex-col gap-1.5 pl-7 border-t pt-2 mt-1">
-            <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-1">
-              Plano de fragmentação simulado:
-            </p>
-            {plan.map((chunk) => (
-              <div key={chunk.chunkIndex} className="flex items-center justify-between text-xs text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <span>{PROVIDER_ICONS[chunk.driver.type] ?? "💾"}</span>
-                  <span className="font-medium">{chunk.driver.displayName}</span>
-                </div>
-                <Badge variant="secondary">{formatBytes(chunk.chunkSizeBytes)}</Badge>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     );
   }

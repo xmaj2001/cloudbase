@@ -8,7 +8,7 @@ export const NODE_QUERY_KEYS = {
     lists: () => [...NODE_QUERY_KEYS.all, 'list'] as const,
     list: (userId: string, parentId: string | null) => [...NODE_QUERY_KEYS.lists(), { userId, parentId }] as const,
     details: () => [...NODE_QUERY_KEYS.all, 'detail'] as const,
-    detail: (id: string) => [...NODE_QUERY_KEYS.details(), id] as const,
+    detail: (userId: string, id: string) => [...NODE_QUERY_KEYS.details(), { userId, id }] as const,
 };
 
 /**
@@ -26,11 +26,11 @@ export const useNodes = (userId: string, parentId: string | null) => {
 /**
  * Hook para ver os detalhes de um nó específico
  */
-export const useNodeDetails = (id: string) => {
+export const useNodeDetails = (userId: string, id: string) => {
     return useQuery({
-        queryKey: NODE_QUERY_KEYS.detail(id),
-        queryFn: () => nodeService.getNodeById(id),
-        enabled: !!id,
+        queryKey: NODE_QUERY_KEYS.detail(userId, id),
+        queryFn: () => nodeService.getNodeById({ userId, id }),
+        enabled: !!id && !!userId,
     });
 };
 
@@ -80,7 +80,7 @@ export const useNodeMutations = (userId: string, currentParentId: string | null)
         onSuccess: (response) => {
             invalidateCurrentList();
             // Atualiza também a cache de detalhes desse nó individual
-            queryClient.setQueryData(NODE_QUERY_KEYS.detail(response.id), response);
+            queryClient.setQueryData(NODE_QUERY_KEYS.detail(userId, response.id), response);
         },
     });
 
