@@ -22,8 +22,13 @@ export const getNodes = async (request: GetNodesRequest): Promise<ApiNode[]> => 
     return response;
 }
 
-export const getNodeById = async (id: string): Promise<ApiNode> => {
-    const response = await apiFetch<ApiNode>(`/nodes/${id}`, {
+interface GetNodeByIdRequest {
+    userId: string;
+    id: string;
+}
+
+export const getNodeById = async ({ userId, id }: GetNodeByIdRequest): Promise<ApiNode> => {
+    const response = await apiFetch<ApiNode>(`/nodes/${id}?userId=${userId}`, {
         method: 'GET'
     });
     return response;

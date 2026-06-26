@@ -4,9 +4,10 @@ import { ItemNode } from "./ItemNode";
 interface ListNodesProps {
     nodes: ApiNode[];
     isLoading: boolean;
+    onNodeClick?: (node: ApiNode) => void;
 }
 
-export const ListNodes = ({ nodes, isLoading }: ListNodesProps) => {
+export const ListNodes = ({ nodes, isLoading, onNodeClick }: ListNodesProps) => {
     return (
         <div className="flex flex-col gap-2">
             <div className="grid grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-surface-300 border-b border-surface-100 hidden md:grid">
@@ -21,7 +22,7 @@ export const ListNodes = ({ nodes, isLoading }: ListNodesProps) => {
                 ))
             ) : (
                 nodes.map((node) => {
-                    return <ItemNode key={node.id} node={node} />
+                    return <ItemNode key={node.id} node={node} onNodeClick={onNodeClick} />
                 })
             )}
         </div>

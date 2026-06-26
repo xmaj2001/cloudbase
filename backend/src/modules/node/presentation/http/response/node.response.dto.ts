@@ -7,6 +7,9 @@ class NodeLocationDto {
   @ApiProperty({ example: 'a1b2c3d4-...' })
   driverId: string;
 
+  @ApiProperty({ example: 'local' })
+  providerName?: string;
+
   @ApiProperty({ example: '1A2b3C4d5E6f...' })
   providerFileId: string;
 
@@ -143,6 +146,7 @@ export class NodeResponseDto {
     if (entity.location) {
       dto.location = {
         driverId: entity.location.driverId,
+        providerName: entity.location.providerName,
         providerFileId: entity.location.providerFileId,
         providerPath: entity.location.providerPath,
         providerCreatedAt: entity.location.providerCreatedAt.toISOString(),

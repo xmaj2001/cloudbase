@@ -6,6 +6,7 @@ import NodeToolBar from "./NodeToolBar";
 import GridNodes from "./GridNodes";
 import { ListNodes } from "./ListNodes";
 import { UploadModal } from "@/components/upload/UploadModal";
+import { NodeDetailSheet } from "./NodeDetailSheet";
 import { cn } from "@/lib/utils";
 
 const USER_ID = "a2f54be0-3154-46a6-a629-23388ddbb573"; // TODO: substituir por useUser() quando auth estiver pronto
@@ -57,7 +58,6 @@ export const RecentNodes = () => {
             <div
                 className={cn(
                     "flex-1 flex flex-col p-4 md:p-8 transition-all duration-300 relative",
-                    activeFile ? "md:pr-[320px]" : "",
                     isDragOver && "after:absolute after:inset-0 after:rounded-xl after:border-2 after:border-dashed after:border-primary after:bg-primary/5 after:pointer-events-none after:z-10 after:transition-all"
                 )}
                 onDragOver={handleDragOver}
@@ -84,9 +84,9 @@ export const RecentNodes = () => {
 
                 {
                     viewMode === "grid" ? (
-                        <GridNodes nodes={nodes || []} isLoading={isLoading} />
+                        <GridNodes nodes={nodes || []} isLoading={isLoading} onNodeClick={setActiveFile} />
                     ) : (
-                        <ListNodes nodes={nodes || []} isLoading={isLoading} />
+                        <ListNodes nodes={nodes || []} isLoading={isLoading} onNodeClick={setActiveFile} />
                     )
                 }
             </div>
@@ -98,6 +98,14 @@ export const RecentNodes = () => {
                 userId={USER_ID}
                 parentId={null}
                 initialFiles={droppedFiles}
+            />
+
+            {/* Sheet de detalhes do nó */}
+            <NodeDetailSheet
+                node={activeFile}
+                open={!!activeFile}
+                onOpenChange={(open) => !open && setActiveFile(null)}
+                onTrashed={() => setActiveFile(null)}
             />
         </>
     )

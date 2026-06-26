@@ -12,7 +12,7 @@ import { Node as PrismaNode } from '../../../../generated/prisma/client';
 
 @Injectable()
 export class PrismaNodeRepository implements NodeRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findById(id: string): Promise<NodeEntity | null> {
     const node = await this.prisma.node.findUnique({ where: { id } });
@@ -171,6 +171,7 @@ export class PrismaNodeRepository implements NodeRepository {
     ) {
       location = NodeLocation.create({
         driverId: db.driverId,
+        providerName: db.name,
         providerFileId: db.providerFileId,
         providerPath: db.providerPath,
         providerCreatedAt: db.providerCreatedAt,
@@ -198,10 +199,10 @@ export class PrismaNodeRepository implements NodeRepository {
     // 4. Reconstruir AI Metadata
     const aiMetadata = db.aiClassified
       ? NodeAiMetadata.classified({
-          category: db.aiCategory as string,
-          confidence: db.aiConfidence as number,
-          summary: db.aiSummary as string | undefined,
-        })
+        category: db.aiCategory as string,
+        confidence: db.aiConfidence as number,
+        summary: db.aiSummary as string | undefined,
+      })
       : NodeAiMetadata.pending();
 
     return NodeEntity.reconstitute(

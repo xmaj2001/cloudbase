@@ -3,6 +3,7 @@
 
 export class NodeLocation {
   readonly driverId: string;
+  readonly providerName?: string;
   readonly providerFileId: string;
   readonly providerPath: string;
   readonly providerCreatedAt: Date;
@@ -14,8 +15,10 @@ export class NodeLocation {
     providerPath: string,
     providerCreatedAt: Date,
     providerUpdatedAt: Date,
+    providerName?: string,
   ) {
     this.driverId = driverId;
+    this.providerName = providerName;
     this.providerFileId = providerFileId;
     this.providerPath = providerPath;
     this.providerCreatedAt = providerCreatedAt;
@@ -24,6 +27,7 @@ export class NodeLocation {
 
   static create(data: {
     driverId: string;
+    providerName?: string;
     providerFileId: string;
     providerPath: string;
     providerCreatedAt?: Date;
@@ -35,6 +39,7 @@ export class NodeLocation {
       data.providerPath,
       data.providerCreatedAt ?? new Date(),
       data.providerUpdatedAt ?? new Date(),
+      data.providerName,
     );
   }
 
@@ -46,6 +51,7 @@ export class NodeLocation {
       newPath,
       this.providerCreatedAt,
       new Date(),
+      this.providerName,
     );
   }
 }
