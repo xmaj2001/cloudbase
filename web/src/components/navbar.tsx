@@ -16,7 +16,7 @@ export function NavBar() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-hairline"
+      className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-hairline"
     >
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 group">

@@ -10,17 +10,6 @@ export function Hero() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-200 rounded-full bg-foreground/3 blur-3xl" />
       </div>
       <div className="mx-auto max-w-7xl px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="flex items-center gap-2 mb-8"
-        >
-          <span className="inline-flex items-center gap-2 text-xs mono px-3 py-1.5 rounded-full border border-hairline bg-surface">
-            <span className="size-1.5 rounded-full bg-foreground animate-pulse" />
-            Beta pública · v0.9
-          </span>
-        </motion.div>
 
         <div className="grid lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-7">
@@ -109,7 +98,7 @@ export function Hero() {
               <div className="absolute inset-0 -z-10 rounded-full bg-foreground/5 blur-3xl" />
             </div>
             <div className="mt-6 mono text-[11px] text-muted-foreground text-center">
-              sha256: f1a9··3c7d · integridade ok
+              Meu espaço, unificado. <span className="text-foreground">CloudBase</span>
             </div>
           </motion.div>
         </div>
