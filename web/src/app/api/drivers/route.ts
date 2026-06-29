@@ -29,3 +29,32 @@ export async function GET(req: NextRequest) {
   }
 }
 
+
+// POST /api/drivers?userId=...
+export async function POST(req: NextRequest) {
+  try {
+    const searchParams = req.nextUrl.searchParams;
+    const userId = searchParams.get("userId");
+    const body = await req.json();
+
+    const response = await fetch(`${BACKEND_URL}/storage-drivers?userId=${userId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        { error: errorData?.message || "Erro ao conectar driver no backend" },
+        { status: response.status }
+      );
+    }
+
+    const res = (await response.json()) as ApiEnvelope<ApiDriver>;
+    return NextResponse.json(res.data);
+  } catch (error) {
+    console.error("Erro no BFF POST /api/drivers:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}

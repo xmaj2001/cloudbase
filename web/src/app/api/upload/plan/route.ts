@@ -21,6 +21,8 @@ interface DriverSpace {
  * Obtém os drivers do utilizador a partir do backend real.
  * Converte BigInt-as-string para number.
  */
+// ─── Helpers Atualizados ──────────────────────────────────────────────────────
+
 async function fetchDriverSpaces(
   userId: string,
   filterIds?: string[]
@@ -33,49 +35,31 @@ async function fetchDriverSpaces(
     });
     if (!res.ok) throw new Error(`Backend respondeu com ${res.status}`);
 
-    // O backend devolve { data: [...] } via ApiEnvelope
     const json = await res.json();
     const drivers: any[] = json?.data ?? [];
 
+    // CORREÇÃO: Só aplica o filtro se filterIds existir E tiver elementos selecionados
+    const hasFilter = Array.isArray(filterIds) && filterIds.length > 0;
+
     const result: DriverSpace[] = drivers
-      .filter((d) => (filterIds ? filterIds.includes(d.id) : true))
+      .filter((d) => (hasFilter ? filterIds.includes(d.id) : true))
       .map((d) => ({
         id: d.id,
         displayName: d.displayName,
         type: d.type,
-        // availableSpace vem como BigInt em string
-        availableBytes: d.space?.availableSpace
-          ? Number(d.space.availableSpace)
-          : 0,
+        availableBytes: d.space?.availableSpace ? Number(d.space.availableSpace) : 0,
+        status: d.status,
+        priority: d.priority ?? 0
       }))
-      .filter((d) => d.availableBytes > 0);
+      // Apenas drivers ativos e com espaço
+      .filter((d) => d.status === "ACTIVE" && d.availableBytes > 0);
 
     return result;
-  } catch {
-    // Fallback: dados simulados para desenvolvimento quando o backend não está disponível
-    return [
-      {
-        id: "mock-driver-1",
-        displayName: "Google Drive (Simulado)",
-        type: "GOOGLE_DRIVE",
-        availableBytes: 15 * 1024 * 1024 * 1024, // 15 GB
-      },
-      {
-        id: "mock-driver-2",
-        displayName: "OneDrive (Simulado)",
-        type: "ONEDRIVE",
-        availableBytes: 5 * 1024 * 1024 * 1024, // 5 GB
-      },
-      {
-        id: "mock-driver-3",
-        displayName: "Telegram (Simulado)",
-        type: "TELEGRAM",
-        availableBytes: 10 * 1024 * 1024 * 1024, // 10 GB
-      },
-    ].filter((d) => (filterIds ? filterIds.includes(d.id) : true));
+  } catch (error) {
+    console.error("Erro ao buscar drivers no plano:", error);
+    return [];
   }
 }
-
 /**
  * Algoritmo de distribuição inteligente:
  *
@@ -182,6 +166,140 @@ function computePlan(
   return { plan: filePlans };
 }
 
+
+// function computePlan(
+//   files: { name: string; size: number; extension: string }[],
+//   drivers: DriverSpace[]
+// ): UploadPlanResponse {
+//   const driverPool = drivers.map((d) => ({ ...d }));
+//   const filePlans: FilePlan[] = [];
+
+//   const IMAGES_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif", "svg"];
+//   const FIVE_HUNDRED_MB = 500 * 1024 * 1024;
+
+//   for (const file of files) {
+//     const { name: fileName, size: fileSize, extension } = file;
+//     const extLower = extension.toLowerCase();
+
+//     // 1. Determinar o provider preferencial com base nas tuas regras
+//     let preferredType: string | null = null;
+//     if (IMAGES_EXTENSIONS.includes(extLower)) {
+//       preferredType = "CLOUDINARY";
+//     } else if (fileSize > FIVE_HUNDRED_MB) {
+//       preferredType = "TELEGRAM";
+//     }
+
+//     // 2. Filtrar drivers que têm espaço suficiente para o ficheiro inteiro
+//     let candidates = driverPool.filter((d) => d.availableBytes >= fileSize);
+
+//     let chosenDriver: typeof driverPool[0] | undefined;
+
+//     if (candidates.length > 0) {
+//       // Se houver candidatos e tivermos um tipo preferido, tentamos o preferido primeiro
+//       if (preferredType) {
+//         const preferredCandidates = candidates.filter((d) => d.type === preferredType);
+//         if (preferredCandidates.length > 0) {
+//           candidates = preferredCandidates;
+//         }
+//       }
+
+//       // Aplica regra de desempate: Ordena por espaço disponível (descendente) e prioridade (ascendente)
+//       candidates.sort((a, b) => {
+//         if (b.availableBytes !== a.availableBytes) {
+//           return b.availableBytes - a.availableBytes; // Mais espaço primeiro
+//         }
+//         return a.priority - b.priority; // Prioridade do utilizador (ex: 0 ganha de 1)
+//       });
+
+//       chosenDriver = candidates[0];
+//     }
+
+//     // 3. Se encontrou um driver ideal (Upload Direto sem Fragmentação)
+//     if (chosenDriver) {
+//       const chunk: UploadPlanChunk = {
+//         driverId: chosenDriver.id,
+//         driverName: chosenDriver.displayName,
+//         driverType: chosenDriver.type,
+//         startByte: 0,
+//         endByte: fileSize,
+//         chunkIndex: 0,
+//         chunkSizeBytes: fileSize,
+//         isFragment: false,
+//       };
+
+//       // Abate o espaço no pool para o próximo ficheiro do loop
+//       const poolDriver = driverPool.find((d) => d.id === chosenDriver!.id);
+//       if (poolDriver) poolDriver.availableBytes -= fileSize;
+
+//       filePlans.push({
+//         fileName,
+//         fileSize,
+//         isFragmented: false,
+//         chunks: [chunk],
+//       });
+//       continue;
+//     }
+
+//     // 4. Lógica de Fragmentação (Se não couber inteiro em nenhum)
+//     // Ordena todo o pool dando preferência para o tipo ideal no topo se possível, desempatando por espaço/prioridade
+//     const sortedPool = [...driverPool].sort((a, b) => {
+//       if (preferredType) {
+//         if (a.type === preferredType && b.type !== preferredType) return -1;
+//         if (b.type === preferredType && a.type !== preferredType) return 1;
+//       }
+//       if (b.availableBytes !== a.availableBytes) return b.availableBytes - a.availableBytes;
+//       return a.priority - b.priority;
+//     });
+
+//     const totalAvailable = sortedPool.reduce((sum, d) => sum + d.availableBytes, 0);
+
+//     if (totalAvailable < fileSize) {
+//       return {
+//         plan: [],
+//         error: `Espaço insuficiente para o ficheiro "${fileName}" (${fileSize} bytes necessários, ${totalAvailable} bytes disponíveis no total).`,
+//       };
+//     }
+
+//     const chunks: UploadPlanChunk[] = [];
+//     let cursor = 0;
+//     let chunkIndex = 0;
+
+//     for (const driver of sortedPool) {
+//       if (cursor >= fileSize) break;
+//       if (driver.availableBytes <= 0) continue;
+
+//       const chunkSize = Math.min(driver.availableBytes, fileSize - cursor);
+//       if (chunkSize <= 0) continue;
+
+//       chunks.push({
+//         driverId: driver.id,
+//         driverName: driver.displayName,
+//         driverType: driver.type,
+//         startByte: cursor,
+//         endByte: cursor + chunkSize,
+//         chunkIndex,
+//         chunkSizeBytes: chunkSize,
+//         isFragment: true,
+//       });
+
+//       const poolDriver = driverPool.find((d) => d.id === driver.id);
+//       if (poolDriver) poolDriver.availableBytes -= chunkSize;
+
+//       cursor += chunkSize;
+//       chunkIndex++;
+//     }
+
+//     filePlans.push({
+//       fileName,
+//       fileSize,
+//       isFragmented: true,
+//       chunks,
+//     });
+//   }
+
+//   return { plan: filePlans };
+// }
+
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
@@ -201,6 +319,7 @@ export async function POST(req: NextRequest) {
     const drivers = await fetchDriverSpaces(userId, selectedDriverIds);
 
     if (drivers.length === 0) {
+      console.log("Nenhum driver disponível com espaço livre.", drivers);
       return NextResponse.json(
         { error: "Nenhum driver disponível com espaço livre." },
         { status: 422 }

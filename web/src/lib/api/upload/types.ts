@@ -42,3 +42,13 @@ export interface UploadPlanResponse {
   /** Mensagem de erro se o espaço for insuficiente. */
   error?: string;
 }
+
+
+// Resposta com chaves ou tokens e caminhos para onde fazer o upload direto no provider
+export interface DriverUploadSignature {
+  uploadUrl: string;       // URL direto (Ex: S3 Presigned URL ou endpoint de chunk do Telegram)
+  method: 'POST' | 'PUT';
+  headers?: Record<string, string>;
+  formDataFields?: Record<string, string>; // Usado em uploads via form-data (como Google Drive/Cloudinary)
+  providerFileId: string;
+}

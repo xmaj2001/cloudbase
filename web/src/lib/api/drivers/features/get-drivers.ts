@@ -1,7 +1,7 @@
 import { apiFetch } from "../../apiFetch";
 import { ApiDriver } from "../types";
 
-interface getDriversRequest {
+export interface getDriversRequest {
     userId: string;
 }
 
