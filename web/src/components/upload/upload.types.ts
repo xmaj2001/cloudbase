@@ -8,6 +8,11 @@
 // FICHEIRO — representação de um ficheiro seleccionado pelo utilizador
 // -----------------------------------------------------------------------------
 
+
+export type ProgressState = "WAITING" | "UPLOADING" | "DONE" | "ERROR";
+
+export type UploadStep = "file" | "driver" | "plan" | "progress";
+
 /**
  * Dados de um ficheiro que o frontend envia ao backend para calcular o plano.
  * Usamos `string` para o tamanho porque BigInt não serializa em JSON.

@@ -9,15 +9,19 @@ import { NodeFragmentation } from '../../domain/value-objects/node-fragmentation
 import { NodeAiMetadata } from '../../domain/value-objects/node-ai-metadata.vo';
 import { NodeTrash } from '../../domain/value-objects/node-trash.vo';
 import { Node as PrismaNode } from '../../../../generated/prisma/client';
+import { StorageDriver as PrismaDriver } from '../../../../generated/prisma/client';
 
 @Injectable()
 export class PrismaNodeRepository implements NodeRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: string): Promise<NodeEntity | null> {
-    const node = await this.prisma.node.findUnique({ where: { id } });
+    const node = await this.prisma.node.findUnique({
+      where: { id },
+      include: { driver: true },
+    });
     if (!node) return null;
-    return this.mapToEntity(node);
+    return this.mapToEntity(node, node.driver ?? undefined);
   }
 
   async findByUserId(
@@ -36,8 +40,11 @@ export class PrismaNodeRepository implements NodeRepository {
       }
     }
 
-    const nodes = await this.prisma.node.findMany({ where });
-    return nodes.map((n) => this.mapToEntity(n));
+    const nodes = await this.prisma.node.findMany({
+      where,
+      include: { driver: true },
+    });
+    return nodes.map((n) => this.mapToEntity(n, n.driver ?? undefined));
   }
 
   async findChildren(parentId: string): Promise<NodeEntity[]> {
@@ -50,8 +57,9 @@ export class PrismaNodeRepository implements NodeRepository {
   async findTrashed(userId: string): Promise<NodeEntity[]> {
     const nodes = await this.prisma.node.findMany({
       where: { userId, status: NodeStatus.TRASHED },
+      include: { driver: true },
     });
-    return nodes.map((n) => this.mapToEntity(n));
+    return nodes.map((n) => this.mapToEntity(n, n.driver ?? undefined));
   }
 
   async findExpired(): Promise<NodeEntity[]> {
@@ -61,15 +69,17 @@ export class PrismaNodeRepository implements NodeRepository {
         expiresAt: { lte: now },
         status: { notIn: [NodeStatus.TRASHED, NodeStatus.DELETED] },
       },
+      include: { driver: true },
     });
-    return nodes.map((n) => this.mapToEntity(n));
+    return nodes.map((n) => this.mapToEntity(n, n.driver ?? undefined));
   }
 
   async findCorrupted(userId: string): Promise<NodeEntity[]> {
     const nodes = await this.prisma.node.findMany({
       where: { userId, status: NodeStatus.CORRUPTED },
+      include: { driver: true },
     });
-    return nodes.map((n) => this.mapToEntity(n));
+    return nodes.map((n) => this.mapToEntity(n, n.driver ?? undefined));
   }
 
   async findByProviderFileId(
@@ -78,9 +88,10 @@ export class PrismaNodeRepository implements NodeRepository {
   ): Promise<NodeEntity | null> {
     const node = await this.prisma.node.findFirst({
       where: { driverId, providerFileId },
+      include: { driver: true },
     });
     if (!node) return null;
-    return this.mapToEntity(node);
+    return this.mapToEntity(node, node.driver ?? undefined);
   }
 
   async save(node: NodeEntity): Promise<void> {
@@ -159,7 +170,7 @@ export class PrismaNodeRepository implements NodeRepository {
     };
   }
 
-  private mapToEntity(db: PrismaNode): NodeEntity {
+  private mapToEntity(db: PrismaNode, driver?: PrismaDriver): NodeEntity {
     // 1. Reconstruir Location (só se existir)
     let location: NodeLocation | null = null;
     if (
@@ -171,7 +182,7 @@ export class PrismaNodeRepository implements NodeRepository {
     ) {
       location = NodeLocation.create({
         driverId: db.driverId,
-        providerName: db.name,
+        providerName: driver?.displayName ?? 'unknown',
         providerFileId: db.providerFileId,
         providerPath: db.providerPath,
         providerCreatedAt: db.providerCreatedAt,
@@ -199,10 +210,10 @@ export class PrismaNodeRepository implements NodeRepository {
     // 4. Reconstruir AI Metadata
     const aiMetadata = db.aiClassified
       ? NodeAiMetadata.classified({
-        category: db.aiCategory as string,
-        confidence: db.aiConfidence as number,
-        summary: db.aiSummary as string | undefined,
-      })
+          category: db.aiCategory as string,
+          confidence: db.aiConfidence as number,
+          summary: db.aiSummary as string | undefined,
+        })
       : NodeAiMetadata.pending();
 
     return NodeEntity.reconstitute(
