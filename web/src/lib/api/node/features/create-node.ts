@@ -10,7 +10,7 @@ interface CreateFileRequest {
     extension: string;
     size: string; // Enviado como string para bater com o BigInt
     location: {
-        driverId: string;
+        driverId?: string;
         providerFileId: string;
         providerPath: string;
     };

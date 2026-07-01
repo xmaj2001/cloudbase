@@ -8,7 +8,6 @@ import {
   IsInt,
   Min,
   IsEnum,
-  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { NodeType } from 'src/modules/node/domain/enums/node-type.enum';
@@ -16,7 +15,8 @@ import { NodeType } from 'src/modules/node/domain/enums/node-type.enum';
 export class CreateNodeLocationDto {
   @ApiProperty({ example: 'a1b2c3d4-...' })
   @IsString()
-  driverId: string;
+  @IsOptional()
+  driverId?: string;
 
   @ApiProperty({ example: '1A2b3C4d5E6f...' })
   @IsString()
@@ -26,8 +26,6 @@ export class CreateNodeLocationDto {
   @IsString()
   providerPath: string;
 }
-
-
 
 export class CreateNodeDto {
   @ApiProperty({
@@ -93,16 +91,13 @@ export class CreateNodeDto {
     type: CreateNodeLocationDto,
     description: 'Localização do ficheiro (Apenas para tipo FILE e FOLDER)',
   })
-  @ValidateIf((o) => o.type === NodeType.FILE || o.type === NodeType.FOLDER)
   @ValidateNested()
   @Type(() => CreateNodeLocationDto)
-  @IsOptional()
-  location?: CreateNodeLocationDto;
+  location: CreateNodeLocationDto;
 }
 
+export class CreateFileNodeDto extends CreateNodeDto {}
 
-export class CreateFileNodeDto extends CreateNodeDto { }
+export class CreateFolderNodeDto extends CreateNodeDto {}
 
-export class CreateFolderNodeDto extends CreateNodeDto { }
-
-export class CreateGroupNodeDto extends CreateNodeDto { }
+export class CreateGroupNodeDto extends CreateNodeDto {}

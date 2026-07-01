@@ -1,21 +1,23 @@
-import { DashboardShell as Shell } from "@/components/app/shell";
-import { AppSidebar } from "@/components/app-sidebar";
+"use client";
+import { SidebarStorage } from "@/components/dashboad/Sidebar";
 import { QueryProvider } from "@/components/providers/query-provider";
-import { ThemeProvider } from "@/components/providers/theme-provider";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useState } from "react";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function Layout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const [active, setActive] = useState("all");
+
   return (
-    <ThemeProvider attribute="class">
-      <QueryProvider>
-        <TooltipProvider>
-          <SidebarProvider>
-            <AppSidebar />
-            {children}
-          </SidebarProvider>
-        </TooltipProvider>
-      </QueryProvider>
-    </ThemeProvider>
+    <QueryProvider>
+      <TooltipProvider>
+        <div className="flex bg-background text-foreground min-h-screen">
+          <div className="flex-1 min-w-0">{children}</div>
+        </div>
+      </TooltipProvider>
+    </QueryProvider>
   );
 }

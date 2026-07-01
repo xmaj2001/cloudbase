@@ -13,7 +13,7 @@ import { useNodes } from "@/hooks/use-nodes";
 import { ApiNode } from "@/lib/api/node/types";
 import { UploadModal } from "@/components/upload/UploadModal";
 
-const USER_ID = "6a359f5d-ae83-49dc-917b-62e8929fff87"; // TODO: useUser()
+const USER_ID = "41394207-0974-4ac1-8d6b-75b4147939c6"; // TODO: useUser()
 export default function StoragePage() {
   const { data: nodes, isLoading } = useNodes(USER_ID, null);
   const [selectNode, setSelectNode] = useState<ApiNode | null>(null);

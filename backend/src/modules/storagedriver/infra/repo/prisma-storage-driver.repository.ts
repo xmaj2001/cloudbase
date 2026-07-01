@@ -44,6 +44,44 @@ export class PrismaStorageDriverRepository implements StorageDriverRepository {
     return drivers.map((d) => this.mapToEntity(d));
   }
 
+  async findDriverForSize(
+    userId: string,
+    requiredBytes: bigint,
+  ): Promise<StorageDriverEntity | null> {
+    const drivers = await this.prisma.storageDriver.findMany({
+      where: { userId, isActive: true },
+    });
+    if (!drivers || drivers.length === 0) return null;
+
+    const candidates = drivers.filter((d) => {
+      // unlimited (null) counts as candidate
+      if (d.cachedAvailableSpace === null) return true;
+      try {
+        return BigInt(d.cachedAvailableSpace) >= requiredBytes;
+      } catch {
+        return false;
+      }
+    });
+
+    if (candidates.length === 0) return null;
+
+    // prefer an unlimited driver
+    const unlimited = candidates.find((c) => c.cachedAvailableSpace === null);
+    if (unlimited) return this.mapToEntity(unlimited);
+
+    // pick the driver with the largest available space
+    let best = candidates[0];
+    for (const c of candidates) {
+      if (
+        BigInt(c.cachedAvailableSpace!) > BigInt(best.cachedAvailableSpace!)
+      ) {
+        best = c;
+      }
+    }
+
+    return this.mapToEntity(best);
+  }
+
   async save(driver: StorageDriverEntity): Promise<void> {
     const space = driver.space;
     await this.prisma.storageDriver.upsert({

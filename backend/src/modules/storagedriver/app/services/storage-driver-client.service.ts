@@ -4,6 +4,7 @@ import { GetDriversByUserUseCase } from '../use-cases/get-drivers-by-user.use-ca
 import { GetDriverByIdUseCase } from '../use-cases/get-driver-by-id.use-case';
 import { UpdateDriverUseCase } from '../use-cases/update-driver.use-case';
 import { DeleteDriverUseCase } from '../use-cases/delete-driver.use-case';
+import { FindDriverForSizeUseCase } from '../use-cases/find-driver-for-size.use-case';
 import { ConnectDriverDto } from '../../presentation/http/inputs/connect-driver.dto';
 import { UpdateDriverDto } from '../../presentation/http/inputs/update-driver.dto';
 import { StorageDriverEntity } from '../../domain/entities/storage-driver.entity';
@@ -16,7 +17,8 @@ export class StorageDriverClientService {
     private readonly getDriverByIdUseCase: GetDriverByIdUseCase,
     private readonly updateDriverUseCase: UpdateDriverUseCase,
     private readonly deleteDriverUseCase: DeleteDriverUseCase,
-  ) { }
+    private readonly findDriverForSizeUseCase: FindDriverForSizeUseCase,
+  ) {}
 
   async connectDriver(
     userId: string,
@@ -46,5 +48,9 @@ export class StorageDriverClientService {
 
   async deleteDriver(id: string, userId: string): Promise<void> {
     await this.deleteDriverUseCase.execute(id, userId);
+  }
+
+  async getDriverForSize(userId: string, requiredBytes: bigint) {
+    return this.findDriverForSizeUseCase.execute(userId, requiredBytes);
   }
 }

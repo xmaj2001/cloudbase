@@ -11,4 +11,8 @@ export abstract class StorageDriverRepository {
   abstract findActiveByUserId(userId: string): Promise<StorageDriverEntity[]>;
   abstract save(driver: StorageDriverEntity): Promise<void>;
   abstract delete(id: string): Promise<void>;
+  abstract findDriverForSize(
+    userId: string,
+    requiredBytes: bigint,
+  ): Promise<StorageDriverEntity | null>;
 }

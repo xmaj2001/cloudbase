@@ -18,7 +18,7 @@ export class CreateNodeUseCase {
     private readonly nodeRepository: NodeRepository,
     private readonly userClientService: UserClientService,
     private readonly storageDriverClientService: StorageDriverClientService,
-  ) { }
+  ) {}
 
   // ── Criar Ficheiro ──────────────────────────────────────────────────────────
 
@@ -26,7 +26,9 @@ export class CreateNodeUseCase {
     userId: string,
     dto: CreateFileNodeDto,
   ): Promise<NodeEntity> {
-    this.logger.log(`A criar ficheiro "${dto.name}" para o utilizador ${userId}`);
+    this.logger.log(
+      `A criar ficheiro "${dto.name}" para o utilizador ${userId}`,
+    );
 
     // Verificar se o utilizador existe
     await this.validateUser(userId);
@@ -36,10 +38,33 @@ export class CreateNodeUseCase {
       await this.validateParent(dto.parentId, userId);
     }
 
-    // Verificar se o driver existe e pertence ao utilizador
-    await this.validateDriver(dto.location!.driverId, userId);
+    // Se o driver não for fornecido, escolhe um que tenha espaço suficiente
+    let driverId = '';
+    if (!dto.location.driverId) {
+      const required = BigInt(dto.size ?? 0);
+      const chosen = await this.storageDriverClientService.getDriverForSize(
+        userId,
+        required,
+      );
+      if (!chosen) {
+        this.logger.error(
+          `Nenhum driver com espaço suficiente para ${required} bytes`,
+        );
+        throw new BadRequestException(
+          'Nenhum driver de armazenamento com espaço suficiente.',
+        );
+      }
+      driverId = chosen.id;
+    } else {
+      // Verificar se o driver existe e pertence ao utilizador
+      await this.validateDriver(dto.location.driverId, userId);
+      driverId = dto.location.driverId;
+    }
 
-    const location = NodeLocation.create(dto.location!);
+    const location = NodeLocation.create({
+      ...dto.location,
+      driverId,
+    });
     const node = NodeEntity.createFile({
       userId,
       name: dto.name,
@@ -52,7 +77,9 @@ export class CreateNodeUseCase {
     });
 
     await this.nodeRepository.save(node);
-    this.logger.log(`Ficheiro "${dto.name}" criado com sucesso (id: ${node.id})`);
+    this.logger.log(
+      `Ficheiro "${dto.name}" criado com sucesso (id: ${node.id})`,
+    );
     return node;
   }
 
@@ -72,10 +99,34 @@ export class CreateNodeUseCase {
       await this.validateParent(dto.parentId, userId);
     }
 
-    // Verificar se o driver existe e pertence ao utilizador
-    await this.validateDriver(dto.location!.driverId, userId);
+    // Se o driver não for fornecido, escolhe um que tenha espaço suficiente
+    let driverId = '';
+    if (!dto.location.driverId) {
+      const required = BigInt(dto.size ?? 0);
+      const chosen = await this.storageDriverClientService.getDriverForSize(
+        userId,
+        required,
+      );
+      if (!chosen) {
+        this.logger.error(
+          `Nenhum driver com espaço suficiente para ${required} bytes`,
+        );
+        throw new BadRequestException(
+          'Nenhum driver de armazenamento com espaço suficiente.',
+        );
+      }
+      driverId = chosen.id;
+    } else {
+      // Verificar se o driver existe e pertence ao utilizador
+      await this.validateDriver(dto.location.driverId, userId);
+      driverId = dto.location.driverId;
+    }
 
-    const location = NodeLocation.create(dto.location!);
+    const location = NodeLocation.create({
+      ...dto.location,
+      driverId,
+    });
+
     const node = NodeEntity.createFolder({
       userId,
       name: dto.name,
@@ -126,11 +177,16 @@ export class CreateNodeUseCase {
     }
   }
 
-  private async validateDriver(driverId: string, userId: string): Promise<void> {
+  private async validateDriver(
+    driverId: string,
+    userId: string,
+  ): Promise<void> {
     try {
       await this.storageDriverClientService.getDriverById(driverId, userId);
     } catch {
-      this.logger.error(`Driver ${driverId} não encontrado para o utilizador ${userId}`);
+      this.logger.error(
+        `Driver ${driverId} não encontrado para o utilizador ${userId}`,
+      );
       throw new BadRequestException('Driver de armazenamento não encontrado.');
     }
   }
@@ -141,11 +197,15 @@ export class CreateNodeUseCase {
   ): Promise<void> {
     const parent = await this.nodeRepository.findById(parentId);
     if (!parent || parent.userId !== userId) {
-      this.logger.warn(`Nó pai ${parentId} não encontrado para o utilizador ${userId}`);
+      this.logger.warn(
+        `Nó pai ${parentId} não encontrado para o utilizador ${userId}`,
+      );
       throw new BadRequestException('Pasta/Grupo pai não encontrado.');
     }
     if (parent.isFile) {
-      this.logger.warn(`Tentativa de criar filho dentro de um ficheiro (${parentId})`);
+      this.logger.warn(
+        `Tentativa de criar filho dentro de um ficheiro (${parentId})`,
+      );
       throw new BadRequestException('Ficheiros não podem conter filhos.');
     }
   }
