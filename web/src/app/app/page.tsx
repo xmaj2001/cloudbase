@@ -1,228 +1,140 @@
 "use client";
 import { HeaderStorage } from "@/components/dashboad/header";
-import { LogicalSpaceBanner } from "@/components/dashboad/LogicalSpaceBanner";
 import { StorageBar } from "@/components/dashboad/StorageBar";
-import { motion } from "framer-motion";
+import { ToolbarStorage } from "@/components/dashboad/ToolbarStorage";
+import { TopbarStorage } from "@/components/dashboad/Topbar";
+import { DetailNode } from "@/components/nodes/DetailNode";
+import { GridNodes } from "@/components/nodes/GridNodes";
+import { TableNodes } from "@/components/nodes/TableNodes";
+import { UploadModal } from "@/components/upload/UploadModal";
+import { useNodes } from "@/hooks/use-nodes";
+import { ApiNode } from "@/lib/api/node/types";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  Home,
-  FileText,
   Image as ImageIcon,
-  Film,
-  Music,
-  Archive,
-  Share2,
-  MessageSquare,
-  HardDrive,
   Search,
-  Settings,
-  Bell,
   ArrowUpRight,
-  Cloud,
-  Database,
   Send,
   Upload,
   Info,
+  UploadCloud,
 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { useCallback, useState } from "react";
 
-const nav = [
-  { icon: Home, label: "Overview", active: true },
-  { icon: FileText, label: "Documents" },
-  { icon: ImageIcon, label: "Images" },
-  { icon: Film, label: "Videos" },
-  { icon: Music, label: "Audio" },
-  { icon: Archive, label: "Archives" },
-  { icon: Share2, label: "Shared" },
-  { icon: MessageSquare, label: "Activity" },
-  { icon: HardDrive, label: "Drivers" },
-];
-
-const kpis = [
-  {
-    label: "Armazenamento Total",
-    sub: "(agregado)",
-    value: "2.4 TB",
-    delta: "+18%",
-    icon: Database,
-  },
-  {
-    label: "Ficheiros",
-    value: "8,472",
-    delta: "+2.4%",
-    icon: FileText,
-    deltaNeg: false,
-  },
-  { label: "Fragmentos Activos", value: "1,203", delta: "+35%", icon: Archive },
-  { label: "Uploads Hoje", value: "142", delta: "+12%", icon: Upload },
-];
-
-const insights = [
-  {
-    icon: Cloud,
-    label: "Google Drive",
-    value: "12.4 GB",
-    tone: "a",
-    delta: "+35%",
-    last: "+40%",
-  },
-  {
-    icon: Send,
-    label: "Telegram",
-    value: "48.9 GB",
-    tone: "b",
-    delta: "+22%",
-    last: "+18%",
-  },
-  {
-    icon: Cloud,
-    label: "OneDrive",
-    value: "6.2 GB",
-    tone: "c",
-    delta: "+8%",
-    last: "+12%",
-  },
-  {
-    icon: ImageIcon,
-    label: "Cloudinary",
-    value: "3.1 GB",
-    tone: "d",
-    delta: "+15%",
-    last: "+20%",
-  },
-  {
-    icon: HardDrive,
-    label: "Local Cache",
-    value: "890 MB",
-    tone: "e",
-    delta: "+5%",
-    last: "+7%",
-  },
-];
-
-const files = [
-  {
-    id: "F001",
-    name: "projeto-final.psd",
-    type: "Fragmentado",
-    driver: "GDrive · Telegram",
-    note: "Dividido em 4 fragmentos de 25MB. Reconstituição verificada e íntegra.",
-    status: "Sincronizado",
-    tone: "ok",
-  },
-  {
-    id: "F002",
-    name: "reuniao-Q3.mp4",
-    type: "Directo",
-    driver: "Telegram",
-    note: "Upload directo. Reproduzível em stream via proxy.",
-    status: "Pendente",
-    tone: "warn",
-  },
-  {
-    id: "F003",
-    name: "backup-2026.zip",
-    type: "Fragmentado",
-    driver: "GDrive · OneDrive · Local",
-    note: "Fragmentos ainda não replicados em todos os nós.",
-    status: "Falhou",
-    tone: "err",
-  },
-  {
-    id: "F004",
-    name: "logo-cloudbase.svg",
-    type: "Directo",
-    driver: "Cloudinary",
-    note: "Optimizado e servido via CDN pública.",
-    status: "Aprovado",
-    tone: "good",
-  },
-];
-
-const toneBar: Record<string, string> = {
-  a: "bg-foreground/70",
-  b: "bg-foreground/55",
-  c: "bg-foreground/40",
-  d: "bg-foreground/30",
-  e: "bg-foreground/20",
-};
-
-const statusChip: Record<string, string> = {
-  ok: "border-foreground/30 text-foreground",
-  warn: "border-foreground/20 text-muted-foreground",
-  err: "border-destructive/40 text-destructive",
-  good: "border-foreground/40 text-foreground",
-};
-
+const USER_ID = "2af72357-4f6e-4a8f-8d8d-c75f5ad648c8"; // TODO: useUser()
 export default function StorageNew() {
+  const { data: nodes, isLoading } = useNodes(USER_ID, null);
+  const [selectNode, setSelectNode] = useState<ApiNode | null>(null);
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const [query, setQuery] = useState("");
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.types.includes("Files")) setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node))
+      setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      setDroppedFiles(files);
+      setUploadOpen(true);
+    }
+  }, []);
+
+  const handleUploadClick = () => {
+    setDroppedFiles([]);
+    setUploadOpen(true);
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="h-full"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
     >
       {/* Top bar */}
-      <header className="max-w-350 m-auto flex items-center gap-4 rounded-2xl bg-background px-4 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="h-16 rounded-md grid place-items-center text-background text-[10px] mono">
-            <Image
-              src="/logo.png"
-              alt="CloudBase"
-              width={16}
-              height={16}
-              className="h-7 w-7"
-            />
-          </div>
-          <span className="display text-lg leading-none">CloudBase</span>
-        </Link>
-
-        <nav className="mx-auto flex items-center gap-1 rounded-full border border-hairline bg-surface-2/60 p-1">
-          {nav.map((n) => (
-            <button
-              key={n.label}
-              className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-xs transition-all ${
-                n.active
-                  ? "bg-foreground text-background shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <n.icon className="h-3.5 w-3.5" />
-              {n.active && <span className="mono">{n.label}</span>}
-            </button>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <div className="hidden md:flex items-center gap-2 rounded-full border border-hairline bg-surface-2/60 px-3 py-1.5 text-xs text-muted-foreground w-64">
-            <Search className="h-3.5 w-3.5" />
-            <span>Procurar ficheiros...</span>
-            <span className="ml-auto mono text-[10px] border border-hairline rounded px-1">
-              ⌘K
-            </span>
-          </div>
-          <button className="h-9 w-9 grid place-items-center rounded-full border border-hairline">
-            <Settings className="h-4 w-4" />
-          </button>
-          <button className="h-9 w-9 grid place-items-center rounded-full border border-hairline">
-            <Bell className="h-4 w-4" />
-          </button>
-          <div className="h-9 w-9 rounded-full bg-foreground text-background grid place-items-center mono text-xs">
-            AK
-          </div>
-        </div>
-      </header>
+      <TopbarStorage />
 
       <main className="p-8 space-y-8 max-w-350 m-auto">
         <HeaderStorage />
         <StorageBar />
-        <LogicalSpaceBanner />
+        <div className="space-y-5">
+          <ToolbarStorage
+            view={view}
+            setView={setView}
+            query={query}
+            setQuery={setQuery}
+            onUploadClick={handleUploadClick}
+          />
+          <div className="relative overflow-auto">
+            {isDragOver && (
+              <motion.div
+                initial={{
+                  borderColor: "transparent",
+                  backgroundColor: "transparent",
+                }}
+                key={"na"}
+                animate={{
+                  borderColor: "var(--foreground)",
+                  backgroundColor:
+                    "color-mix(in oklab, var(--foreground) 4%, transparent)",
+                }}
+                className="absolute inset-0 z-20 flex flex-col items-center justify-center min-h-45 h-full border border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors hover:bg-surface-2/50"
+              >
+                <motion.div
+                  animate={{ y: -4 }}
+                  className="inline-flex size-14 rounded-2xl bg-surface-2 items-center justify-center mb-4"
+                >
+                  <UploadCloud className="size-7 stroke-[1.5]" />
+                </motion.div>
+                <div className="text-base font-medium tracking-tight">
+                  Arrasta ficheiros ou clica para escolher
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  Qualquer tipo de ficheiro · Múltiplos suportados
+                </div>
+              </motion.div>
+            )}
+            <AnimatePresence mode="wait">
+              {view === "grid" ? (
+                <GridNodes
+                  nodes={nodes}
+                  isLoading={isLoading}
+                  onSelectNode={setSelectNode}
+                />
+              ) : (
+                <TableNodes
+                  nodes={nodes}
+                  isLoading={isLoading}
+                  onSelectNode={setSelectNode}
+                />
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
       </main>
 
       {/* Ask bar */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-lg px-6">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-lg px-6">
         <div className="mx-auto max-w-lg rounded-full border border-hairline bg-surface shadow-[0_20px_40px_-20px_rgba(0,0,0,0.3)] flex items-center gap-3 px-2 py-2">
-          <div className="h-9 w-9 rounded-full bg-foreground text-background grid place-items-center">
+          <div
+            onClick={handleUploadClick}
+            className="h-9 w-9 rounded-full bg-foreground text-background grid place-items-center"
+          >
             <Upload className="h-4 w-4" />
           </div>
           <input
@@ -237,6 +149,18 @@ export default function StorageNew() {
           </button>
         </div>
       </div>
+
+      {selectNode && (
+        <DetailNode n={selectNode} onClose={() => setSelectNode(null)} />
+      )}
+      {uploadOpen && (
+        <UploadModal
+          userId={USER_ID}
+          open={uploadOpen}
+          onOpenChange={setUploadOpen}
+          initialFiles={droppedFiles}
+        />
+      )}
     </motion.div>
   );
 }

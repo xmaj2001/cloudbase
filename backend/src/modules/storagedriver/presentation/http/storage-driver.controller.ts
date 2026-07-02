@@ -21,14 +21,13 @@ import {
   SuccessArrayResponse,
 } from '../../../../shared/common/envelope.response';
 import { ResponseInterceptor } from '../../../../shared/common/interceptors/response.interceptor';
+import { UserIdQueryDto } from 'src/shared/dtos/query.dto';
 
 @ApiTags('storage-drivers')
 @Controller('storage-drivers')
 @UseInterceptors(ResponseInterceptor)
 export class StorageDriverController {
-  constructor(
-    private readonly storageDriverClientService: StorageDriverClientService,
-  ) { }
+  constructor(private readonly service: StorageDriverClientService) {}
 
   @Post()
   @ApiOperation({ summary: 'Conectar um novo provider de armazenamento' })
@@ -42,19 +41,16 @@ export class StorageDriverController {
     type: SuccessResponse(StorageDriverResponseDto),
     description: 'Driver conectado com sucesso.',
   })
-  async connect(
-    @Query('userId') userId: string,
-    @Body() dto: ConnectDriverDto,
-  ): Promise<StorageDriverResponseDto> {
-    const driver = await this.storageDriverClientService.connectDriver(
-      userId,
-      dto,
-    );
+  async connect(@Query() query: UserIdQueryDto, @Body() dto: ConnectDriverDto) {
+    const driver = await this.service.connectDriver(query.userId, dto);
     return StorageDriverResponseDto.fromEntity(driver);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todos os drivers do utilizador' })
+  @ApiOperation({
+    summary: 'Listar drivers',
+    description: 'Listar todos os drivers do utilizador',
+  })
   @ApiQuery({
     name: 'userId',
     required: true,
@@ -65,12 +61,9 @@ export class StorageDriverController {
     type: SuccessArrayResponse(StorageDriverResponseDto),
     description: 'Lista de drivers retornada com sucesso.',
   })
-  async findAll(
-    @Query('userId') userId: string,
-  ): Promise<StorageDriverResponseDto[]> {
-    const drivers =
-      await this.storageDriverClientService.getDriversByUser(userId);
-    return drivers.map((d) => StorageDriverResponseDto.fromEntity(d));
+  async findAll(@Query() query: UserIdQueryDto) {
+    const drivers = await this.service.getDriversByUser(query.userId);
+    return drivers;
   }
 
   @Get(':id')
@@ -85,14 +78,8 @@ export class StorageDriverController {
     type: SuccessResponse(StorageDriverResponseDto),
     description: 'Driver retornado com sucesso.',
   })
-  async findOne(
-    @Param('id') id: string,
-    @Query('userId') userId: string,
-  ): Promise<StorageDriverResponseDto> {
-    const driver = await this.storageDriverClientService.getDriverById(
-      id,
-      userId,
-    );
+  async findOne(@Param('id') id: string, @Query() query: UserIdQueryDto) {
+    const driver = await this.service.getDriverById(id, query.userId);
     return StorageDriverResponseDto.fromEntity(driver);
   }
 
@@ -110,14 +97,10 @@ export class StorageDriverController {
   })
   async update(
     @Param('id') id: string,
-    @Query('userId') userId: string,
+    @Query() query: UserIdQueryDto,
     @Body() dto: UpdateDriverDto,
-  ): Promise<StorageDriverResponseDto> {
-    const driver = await this.storageDriverClientService.updateDriver(
-      id,
-      userId,
-      dto,
-    );
+  ) {
+    const driver = await this.service.updateDriver(id, query.userId, dto);
     return StorageDriverResponseDto.fromEntity(driver);
   }
 
@@ -135,8 +118,8 @@ export class StorageDriverController {
   })
   async remove(
     @Param('id') id: string,
-    @Query('userId') userId: string,
+    @Query() query: UserIdQueryDto,
   ): Promise<void> {
-    await this.storageDriverClientService.deleteDriver(id, userId);
+    await this.service.deleteDriver(id, query.userId);
   }
 }

@@ -67,6 +67,7 @@ export function useUpload({
       const extension = file.name.includes(".")
         ? (file.name.split(".").pop() ?? "")
         : "";
+      // TODO: Aqui depois temos que verficar se foi selecionado mais de um driver ele deve requesitar um plano de upload.
       const driverId = selectedDrivers.length > 0 ? selectedDrivers[0].id : undefined;
 
       try {

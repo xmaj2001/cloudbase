@@ -83,7 +83,7 @@ export function UploadModal({
 
   const canContinue =
     (step === "file" && files.length > 0) ||
-    (step === "driver" && selectedDrivers.length > 0) ||
+    (step === "driver") ||
     (step === "progress" && isUploadingDone);
 
   const getNextLabel = () => {
@@ -121,6 +121,7 @@ export function UploadModal({
               )}
               {step === "driver" && (
                 <StepDriverSelect
+                  userId={userId}
                   selectedDrivers={selectedDrivers}
                   onSelectionChange={setSelectedDrivers}
                 />

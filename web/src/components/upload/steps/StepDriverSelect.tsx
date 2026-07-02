@@ -28,6 +28,7 @@ function getpct(driver: ApiDriver): number {
 // -----------------------------------------------------------------------------
 
 interface StepDriverSelectProps {
+  userId: string;
   selectedDrivers: ApiDriver[];
   onSelectionChange: (drivers: ApiDriver[]) => void;
 }
@@ -35,12 +36,12 @@ interface StepDriverSelectProps {
 // -----------------------------------------------------------------------------
 // COMPONENTE
 // -----------------------------------------------------------------------------
-const USER_ID = "41394207-0974-4ac1-8d6b-75b4147939c6"; // TODO: useUser()
 export function StepDriverSelect({
   selectedDrivers,
   onSelectionChange,
+  userId
 }: StepDriverSelectProps) {
-  const {isLoading, data} = useDrivers(USER_ID);
+  const {isLoading, data} = useDrivers(userId);
   const toggleDriver = (driver: ApiDriver) => {
     const isSelected = selectedDrivers.some((d) => d.id === driver.id);
     if (isSelected) {

@@ -17,15 +17,15 @@ export function ToolbarStorage({ view, setView, query, setQuery, onUploadClick }
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Pesquisa por nome ou descrição — IA activa"
-          className="w-full pl-10 pr-4 py-2.5 rounded-full bg-surface-2 border border-transparent focus:border-foreground focus:bg-background text-sm outline-none transition-all"
+          className="w-full pl-10 pr-4 py-2.5 text-muted-foreground rounded-full bg-surface-2 border border-transparent focus:border-foreground focus:bg-background text-sm outline-none transition-all"
         />
       </div>
       <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-hairline text-sm hover:bg-surface-2 transition-colors">
         <Filter className="size-3.5" /> Filtros
       </button>
       <div className="flex items-center bg-surface-2 rounded-full p-1">
-        <button onClick={() => setView("grid")} className={`p-2 rounded-full transition-colors ${view === "grid" ? "bg-background shadow-sm" : ""}`}><Grid3x3 className="size-4" /></button>
-        <button onClick={() => setView("list")} className={`p-2 rounded-full transition-colors ${view === "list" ? "bg-background shadow-sm" : ""}`}><List className="size-4" /></button>
+        <button onClick={() => setView("grid")} className={`p-2 rounded-full transition-colors ${view === "grid" ? "bg-background shadow-sm" : "text-muted-foreground"}`}><Grid3x3 className="size-4" /></button>
+        <button onClick={() => setView("list")} className={`p-2 rounded-full transition-colors ${view === "list" ? "bg-background shadow-sm" : "text-muted-foreground"}`}><List className="size-4" /></button>
       </div>
       <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-hairline text-sm hover:bg-surface-2 transition-colors">
         <FolderPlus className="size-4" /> Nova pasta

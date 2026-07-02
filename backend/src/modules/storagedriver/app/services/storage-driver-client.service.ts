@@ -27,8 +27,15 @@ export class StorageDriverClientService {
     return this.connectDriverUseCase.execute(userId, dto);
   }
 
-  async getDriversByUser(userId: string): Promise<StorageDriverEntity[]> {
-    return this.getDriversByUserUseCase.execute(userId);
+  async getDriversByUser(userId: string) {
+    const data = await this.getDriversByUserUseCase.execute(userId);
+    return {
+      drivers: data,
+      total: data.reduce(
+        (acc, driver) => acc + (driver.space.totalSpace ?? BigInt(0)),
+        BigInt(0),
+      ),
+    };
   }
 
   async getDriverById(

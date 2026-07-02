@@ -12,8 +12,9 @@ import { DetailNode } from "@/components/nodes/DetailNode";
 import { useNodes } from "@/hooks/use-nodes";
 import { ApiNode } from "@/lib/api/node/types";
 import { UploadModal } from "@/components/upload/UploadModal";
+import { TopbarStorage } from "@/components/dashboad/Topbar";
 
-const USER_ID = "41394207-0974-4ac1-8d6b-75b4147939c6"; // TODO: useUser()
+const USER_ID = "2af72357-4f6e-4a8f-8d8d-c75f5ad648c8"; // TODO: useUser()
 export default function StoragePage() {
   const { data: nodes, isLoading } = useNodes(USER_ID, null);
   const [selectNode, setSelectNode] = useState<ApiNode | null>(null);
@@ -23,19 +24,6 @@ export default function StoragePage() {
   const [isDragOver, setIsDragOver] = useState(false);
 
   const [query, setQuery] = useState("");
-
-  // const filtered = useMemo(() => {
-  //   let list = nodes.filter(
-  //     (n) => n.status === (active === "trash" ? "TRASHED" : "ACTIVE"),
-  //   );
-  //   if (query)
-  //     list = list.filter(
-  //       (n) =>
-  //         n.name.toLowerCase().includes(query.toLowerCase()) ||
-  //         n.tags.some((t) => t.includes(query.toLowerCase())),
-  //     );
-  //   return list;
-  // }, [active, query]);
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -68,25 +56,11 @@ export default function StoragePage() {
       onDrop={handleDrop}
       className="h-full"
     >
-      <header className="h-16 border-b border-hairline px-8 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur z-20">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">Storage</span>
-          <ChevronRight className="size-3.5 text-muted-foreground" />
-          <span className="font-medium">Todos os ficheiros</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground mono">
-            e7136025··c75c
-          </span>
-          <div className="size-8 rounded-full bg-foreground text-background flex items-center justify-center text-xs font-medium">
-            RP
-          </div>
-        </div>
-      </header>
+      <TopbarStorage variant="brand" />
       <main className="p-8 space-y-8 max-w-350 m-auto">
         <HeaderStorage />
         <StorageBar />
-        <LogicalSpaceBanner />
+      
         <div className="space-y-5">
           <ToolbarStorage
             view={view}
