@@ -100,6 +100,7 @@ export function SidebarStorage({
 }) {
   const items = [
     { id: "all", label: "Todos os ficheiros", icon: Home },
+    { id: "explore", label: "Explorador", icon: Home },
     { id: "recent", label: "Recentes", icon: Clock },
     { id: "shared", label: "Partilhados", icon: Share2 },
     { id: "ai", label: "Sugestões IA", icon: Sparkles },

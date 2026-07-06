@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { OneTapProvider } from "@/components/providers/OneTapProvider";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -41,6 +42,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <OneTapProvider />
           {children}
         </ThemeProvider>
       </body>

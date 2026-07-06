@@ -47,7 +47,7 @@ export function UploadModal({
   const [selectedDrivers, setSelectedDrivers] = useState<ApiDriver[]>([]);
 
   // ── Instanciação do nosso Hook Simples ─────────────────────────────────────
-  const { startUpload, fileProgress, isUploadingDone, resetUploadState } = useUpload({
+  const { startUpload, fileProgress, isUploadingDone } = useUpload({
     userId,
     parentId,
     files,
@@ -62,7 +62,6 @@ export function UploadModal({
       setFiles([]);
       setSelectedDrivers([]);
       setStep("file");
-      resetUploadState();
     }
     onOpenChange(isOpen);
   };

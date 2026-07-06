@@ -13,9 +13,12 @@ import { useNodes } from "@/hooks/use-nodes";
 import { ApiNode } from "@/lib/api/node/types";
 import { UploadModal } from "@/components/upload/UploadModal";
 import { TopbarStorage } from "@/components/dashboad/Topbar";
+import { authClient } from "@/lib/auth/auth-client";
 
-const USER_ID = "2af72357-4f6e-4a8f-8d8d-c75f5ad648c8"; // TODO: useUser()
+const USER_ID = "92509f4b-f6b8-4c34-bdec-717cf1866832"; // TODO: useUser()
 export default function StoragePage() {
+  const { data: session } = authClient.useSession();
+  console.log("Session", session); // Log the userId to verify it's being retrieved correctly
   const { data: nodes, isLoading } = useNodes(USER_ID, null);
   const [selectNode, setSelectNode] = useState<ApiNode | null>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
@@ -60,7 +63,7 @@ export default function StoragePage() {
       <main className="p-8 space-y-8 max-w-350 m-auto">
         <HeaderStorage />
         <StorageBar />
-      
+
         <div className="space-y-5">
           <ToolbarStorage
             view={view}
@@ -119,7 +122,14 @@ export default function StoragePage() {
       {selectNode && (
         <DetailNode n={selectNode} onClose={() => setSelectNode(null)} />
       )}
-      {uploadOpen && <UploadModal userId={USER_ID} open={uploadOpen} onOpenChange={setUploadOpen} initialFiles={droppedFiles} />}
+      {uploadOpen && (
+        <UploadModal
+          userId={USER_ID}
+          open={uploadOpen}
+          onOpenChange={setUploadOpen}
+          initialFiles={droppedFiles}
+        />
+      )}
     </div>
   );
 }

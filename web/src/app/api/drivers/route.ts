@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const userId = searchParams.get("userId");
-    const response = await fetch(`${BACKEND_URL}/storage-drivers?userId=${userId}`, {
+    const response = await fetch(`${BACKEND_URL}/drivers?userId=${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const userId = searchParams.get("userId");
     const body = await req.json();
 
-    const response = await fetch(`${BACKEND_URL}/storage-drivers?userId=${userId}`, {
+    const response = await fetch(`${BACKEND_URL}/drivers?userId=${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)

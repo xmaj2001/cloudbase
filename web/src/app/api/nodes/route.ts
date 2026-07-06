@@ -29,3 +29,34 @@ export async function GET(req: NextRequest, res: NextResponse) {
         return NextResponse.json({ error: 'Failed to fetch nodes' }, { status: 500 });
     }
 }
+
+
+export async function POST(req: NextRequest, res: NextResponse) {
+  try {
+    const body = await req.json();
+    const response = await fetch(`${BACKEND_URL}/nodes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    console.log("Body enviado para o backend:", body);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.data.message, errorData.data.fields);
+      return NextResponse.json(
+        { error: "Erro ao criar file no backend" },
+        { status: response.status },
+      );
+    }
+    const res = (await response.json()) as ApiEnvelope<ApiNode>;
+    return NextResponse.json(res.data);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { error: "Failed to create file" },
+      { status: 500 },
+    );
+  }
+}

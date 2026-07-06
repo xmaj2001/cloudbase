@@ -1,7 +1,6 @@
-import { ApiEnvelope } from "../../api.types";
 import { apiFetch } from "../../apiFetch";
+import { mapBackendNodeToApiNode } from "../node.mapper";
 import { ApiNode } from "../types";
-
 
 interface GetNodesRequest {
     userId: string;
@@ -9,17 +8,24 @@ interface GetNodesRequest {
 }
 
 export const getNodes = async (request: GetNodesRequest): Promise<ApiNode[]> => {
-    // criar as query params de forma dinamica
     const params = new URLSearchParams();
     params.append('userId', request.userId);
     if (request.parentId) {
         params.append('parentId', request.parentId);
     }
+    
     const url = `/nodes?${params.toString()}`;
-    const response = await apiFetch<ApiNode[]>(url, {
+    
+    // Tipamos o fetch temporariamente como 'any' para receber a lista pura do back
+    const response = await apiFetch<any>(url, {
         method: 'GET'
     });
-    return response;
+
+    // Se o teu apiFetch já desembrulha o envelope { success, data } e entrega o array:
+    const rawNodes = Array.isArray(response) ? response : response?.data ?? [];
+
+    // Fazemos a arrumação dos dados aqui usando o Mapper antes de entregar ao componente
+    return rawNodes.map(mapBackendNodeToApiNode);
 }
 
 interface GetNodeByIdRequest {
@@ -28,9 +34,12 @@ interface GetNodeByIdRequest {
 }
 
 export const getNodeById = async ({ userId, id }: GetNodeByIdRequest): Promise<ApiNode> => {
-    const response = await apiFetch<ApiNode>(`/nodes/${id}?userId=${userId}`, {
+    const response = await apiFetch<any>(`/nodes/${id}?userId=${userId}`, {
         method: 'GET'
     });
-    return response;
-};
+    
+    const rawNode = response?.id ? response : response?.data;
 
+    // Retorna o objeto individual perfeitamente arrumado
+    return mapBackendNodeToApiNode(rawNode);
+};

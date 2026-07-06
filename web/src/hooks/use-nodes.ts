@@ -53,8 +53,8 @@ export const useNodeMutations = (
   };
 
   // Mutação: Criar Ficheiro
-  const createFile = useMutation({
-    mutationFn: nodeService.createFileNode,
+  const createNode = useMutation({
+    mutationFn: nodeService.createNode,
     onSuccess: () => invalidateCurrentList(),
     onError: (err) => {
       if (err instanceof ApiRequestError) {
@@ -65,12 +65,7 @@ export const useNodeMutations = (
     },
   });
 
-  // Mutação: Criar Pasta
-  const createFolder = useMutation({
-    mutationFn: nodeService.createFolderNode,
-    onSuccess: () => invalidateCurrentList(),
-    onError: (err) => {},
-  });
+
 
   // Mutação: Renomear Nó
   const rename = useMutation({
@@ -99,8 +94,7 @@ export const useNodeMutations = (
   });
 
   return {
-    createFile,
-    createFolder,
+    createNode,
     rename,
     moveToTrash,
     deletePermanently,

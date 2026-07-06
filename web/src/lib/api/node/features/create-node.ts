@@ -1,62 +1,38 @@
-import { ApiEnvelope } from "../../api.types";
 import { apiFetch } from "../../apiFetch";
+import { mapBackendNodeToApiNode } from "../node.mapper";
 import { ApiNode, NodeType } from "../types";
 
-interface CreateFileRequest {
-    userId: string;
-    name: string;
-    type: NodeType;
-    mimeType: string;
-    extension: string;
-    size: string; // Enviado como string para bater com o BigInt
-    location: {
-        driverId?: string;
-        providerFileId: string;
-        providerPath: string;
-    };
-    parentId?: string | null;
-    tags?: string[];
+// ── INTERFACES PLANAS (IDÊNTICAS AO DTO DO BACKEND) ──────────────────────────
+
+interface CreateNodeRequest {
+  userId: string;
+  type: NodeType;
+  name: string;
+  mimeType?: string;
+  extension?: string;
+  size?: string | number;
+  driverId?: string;
+  parentId?: string | null;
+  tags?: string[];
+  status?: string;
+  providerFileId?: string;
+  providerPath?: string;
 }
 
-export const createFileNode = async (data: CreateFileRequest): Promise<ApiNode> => {
-    const { userId, ...bodyData } = data;
-    return await apiFetch<ApiNode>(`/nodes/file?userId=${userId}`, {
-        method: 'POST',
-        body: JSON.stringify(bodyData)
-    });
+
+
+// ── FUNÇÕES DE CLIENTE ATUALIZADAS ──────────────────────────────────────────
+
+export const createNode = async (
+  data: CreateNodeRequest,
+): Promise<ApiNode> => {
+  // Enviamos o objeto 'data' completo porque ele já é plano e bate 100% com o DTO
+  const response = await apiFetch<any>(`/nodes`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+
+  const rawNode = response?.id ? response : response?.data;
+  return mapBackendNodeToApiNode(rawNode);
 };
 
-
-interface CreateFolderRequest {
-    userId: string;
-    name: string;
-    type: NodeType;
-    location: {
-        driverId: string;
-        providerFileId: string;
-        providerPath: string;
-    };
-    parentId?: string | null;
-}
-export const createFolderNode = async (data: CreateFolderRequest): Promise<ApiNode> => {
-    const { userId, ...bodyData } = data;
-    return await apiFetch<ApiNode>(`/nodes/folder?userId=${userId}`, {
-        method: 'POST',
-        body: JSON.stringify(bodyData)
-    });
-};
-
-interface CreateGroupRequest {
-    userId: string;
-    name: string;
-    type: NodeType;
-    parentId?: string | null;
-}
-
-export const createGroupNode = async (data: CreateGroupRequest): Promise<ApiNode> => {
-    const { userId, ...bodyData } = data;
-    return await apiFetch<ApiNode>(`/nodes/group?userId=${userId}`, {
-        method: 'POST',
-        body: JSON.stringify(bodyData)
-    });
-};

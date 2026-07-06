@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
         const body = await req.json(); // { userId, driverId, fileName, chunkIndex, isFragment }
 
         // Pede ao Backend as chaves temporárias de API do Driver alvo
-        const response = await fetch(`${BACKEND_URL}/storage-drivers/${body.driverId}/sign-upload?userId=${body.userId}`, {
+        const response = await fetch(`${BACKEND_URL}/drivers/${body.driverId}/sign-upload?userId=${body.userId}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
