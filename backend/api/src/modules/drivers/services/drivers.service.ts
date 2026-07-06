@@ -26,15 +26,15 @@ export class DriversService {
     return drivers;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} driver`;
   }
 
-  update(id: number, updateDriverDto: UpdateDriverDto) {
+  update(id: string, updateDriverDto: UpdateDriverDto) {
     return `This action updates a #${id} driver`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} driver`;
   }
 }

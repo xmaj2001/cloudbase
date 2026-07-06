@@ -12,8 +12,8 @@ import { BetterAuthModules } from './shared/auth/betterAuth/betterAuth.module';
 @Module({
   imports: [
     PrismaModule,
-    // AuthModule.forRoot(createBetterAuth()),
-    // BetterAuthModules,
+    AuthModule.forRoot(createBetterAuth()),
+    BetterAuthModules,
     DriversModule,
     NodesModule,
     UsersModule,
