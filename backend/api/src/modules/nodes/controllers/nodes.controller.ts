@@ -12,14 +12,16 @@ import { NodesService } from '../services/nodes.service';
 import { CreateNodeDto } from '../dto/create-node.dto';
 import { UpdateNodeDto } from '../dto/update-node.dto';
 import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { Session } from '@thallesp/nestjs-better-auth';
+import type { UserSession } from '@thallesp/nestjs-better-auth';
 
 @Controller('nodes')
 export class NodesController {
   constructor(private readonly nodesService: NodesService) {}
 
   @Post()
-  create(@Body() createNodeDto: CreateNodeDto) {
-    return this.nodesService.create(createNodeDto);
+  create(@Body() input: CreateNodeDto, @Session() session: UserSession) {
+    return this.nodesService.create(session.user.id, input);
   }
 
   @Get()

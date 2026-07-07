@@ -15,43 +15,39 @@ export class NodesService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createNodeDto: CreateNodeDto) {
-    this.logger.log(
-      `Iniciando criação de um nó para o utilizador: ${createNodeDto.userId}`,
-    );
+  async create(userId: string, input: CreateNodeDto) {
+    this.logger.log(`Iniciando criação de um nó para o utilizador: ${userId}`);
 
     // 1. Verificar se o utilizador existe
     const userExists = await this.prisma.user.findUnique({
-      where: { id: createNodeDto.userId },
+      where: { id: userId },
     });
     if (!userExists) {
       throw new NotFoundException(
-        `Utilizador com ID ${createNodeDto.userId} não encontrado.`,
+        `Utilizador com ID ${userId} não encontrado.`,
       );
     }
 
     // 2. Verificar se a pasta pai existe (se fornecida)
-    if (createNodeDto.parentId) {
+    if (input.parentId) {
       const parentExists = await this.prisma.node.findUnique({
-        where: { id: createNodeDto.parentId },
+        where: { id: input.parentId },
       });
       if (!parentExists) {
         this.logger.warn(
-          `Pasta pai com ID ${createNodeDto.parentId} não encontrada para o utilizador ${createNodeDto.userId}.`,
+          `Pasta pai com ID ${input.parentId} não encontrada para o utilizador ${userId}.`,
         );
         throw new NotFoundException(
-          `Pasta pai com ID ${createNodeDto.parentId} não encontrada.`,
+          `Pasta pai com ID ${input.parentId} não encontrada.`,
         );
       }
     }
 
-    let finalDriverId = createNodeDto.driverId;
-    const fileSize = createNodeDto.size
-      ? BigInt(createNodeDto.size)
-      : BigInt(0);
+    let finalDriverId = input.driverId;
+    const fileSize = input.size ? BigInt(input.size) : BigInt(0);
 
     // 3. Regra de Negócio para Ficheiros: Seleção de Driver e Validação de Espaço
-    if (createNodeDto.type === NodeType.FILE) {
+    if (input.type === NodeType.FILE) {
       if (finalDriverId) {
         // Validar o driver explicitamente enviado
         const driver = await this.prisma.driver.findUnique({
@@ -60,7 +56,7 @@ export class NodesService {
 
         if (!driver || !driver.isActive) {
           this.logger.warn(
-            `Driver com ID ${finalDriverId} não encontrado ou inativo para o utilizador ${createNodeDto.userId}.`,
+            `Driver com ID ${finalDriverId} não encontrado ou inativo para o utilizador ${userId}.`,
           );
           throw new BadRequestException(
             'O driver de armazenamento selecionado não existe ou está inativo.',
@@ -83,12 +79,12 @@ export class NodesService {
         );
 
         const activeDrivers = await this.prisma.driver.findMany({
-          where: { userId: createNodeDto.userId, isActive: true },
+          where: { userId: userId, isActive: true },
         });
 
         if (activeDrivers.length === 0) {
           this.logger.warn(
-            `Nenhum driver ativo encontrado para o utilizador ${createNodeDto.userId}.`,
+            `Nenhum driver ativo encontrado para o utilizador ${userId}.`,
           );
           throw new BadRequestException(
             'O utilizador não possui nenhum driver de armazenamento ativo configurado.',
@@ -125,22 +121,22 @@ export class NodesService {
 
     // 4. Mapear e persistir o nó na Base de Dados
     const nodeData: Prisma.NodeCreateInput = {
-      name: createNodeDto.name,
-      type: createNodeDto.type,
-      mimeType: createNodeDto.mimeType || null,
-      extension: createNodeDto.extension || null,
-      size: createNodeDto.type === NodeType.FILE ? fileSize : null,
-      status: createNodeDto.status || 'ACTIVE',
-      tags: createNodeDto.tags || [],
-      providerFileId: createNodeDto.providerFileId || null,
-      providerPath: createNodeDto.providerPath || null,
-      user: { connect: { id: createNodeDto.userId } },
+      name: input.name,
+      type: input.type,
+      mimeType: input.mimeType || null,
+      extension: input.extension || null,
+      size: input.type === NodeType.FILE ? fileSize : null,
+      status: input.status || 'ACTIVE',
+      tags: input.tags || [],
+      providerFileId: input.providerFileId || null,
+      providerPath: input.providerPath || null,
+      user: { connect: { id: userId } },
       ...(finalDriverId &&
-        createNodeDto.type === NodeType.FILE && {
+        input.type === NodeType.FILE && {
           driver: { connect: { id: finalDriverId } },
         }),
-      ...(createNodeDto.parentId && {
-        parent: { connect: { id: createNodeDto.parentId } },
+      ...(input.parentId && {
+        parent: { connect: { id: input.parentId } },
       }),
     };
 

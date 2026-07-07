@@ -2,7 +2,6 @@ import { ApiEnvelope } from "@/lib/api/api.types";
 import { ApiDriver } from "@/lib/api/drivers/types";
 import { NextRequest, NextResponse } from "next/server";
 
-
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Ajusta para a tua API real
 
 export async function GET(req: NextRequest) {
@@ -13,41 +12,48 @@ export async function GET(req: NextRequest) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-      }
+        Cookie: req.headers.get("Cookie") || "",
+      },
     });
 
     if (!response.ok) {
-      return NextResponse.json({ error: "Erro ao carregar drivers do backend" }, { status: response.status });
+      return NextResponse.json(
+        { error: "Erro ao carregar drivers do backend" },
+        { status: response.status },
+      );
     }
 
     const res = (await response.json()) as ApiEnvelope<ApiDriver[]>;
     return NextResponse.json(res.data);
-
   } catch (error) {
     console.error("Erro no BFF /api/drivers:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
-
 
 // POST /api/drivers?userId=...
 export async function POST(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const userId = searchParams.get("userId");
     const body = await req.json();
 
-    const response = await fetch(`${BACKEND_URL}/drivers?userId=${userId}`, {
+    const response = await fetch(`${BACKEND_URL}/drivers`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: req.headers.get("Cookie") || "",
+      },
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error("Erro ao conectar driver no backend:", errorData.data);
       return NextResponse.json(
-        { error: errorData?.message || "Erro ao conectar driver no backend" },
-        { status: response.status }
+        { error: errorData?.data.message || "Erro ao conectar driver no backend" },
+        { status: response.status },
       );
     }
 
@@ -55,6 +61,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(res.data);
   } catch (error) {
     console.error("Erro no BFF POST /api/drivers:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

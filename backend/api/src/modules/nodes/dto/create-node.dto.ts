@@ -11,14 +11,6 @@ import { NodeType, FileStatus } from 'src/generated/prisma/client';
 
 export class CreateNodeDto {
   @ApiProperty({
-    example: '7a5e1b0d-1b75-4654-8353-3617ca5e7aea',
-    description: 'ID do utilizador dono do nó',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  userId: string;
-
-  @ApiProperty({
     example: NodeType.FILE,
     description: `Os tipos de nó suportados são: ${Object.values(NodeType).join(', ')}`,
     enum: NodeType,

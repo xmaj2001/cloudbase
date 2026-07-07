@@ -31,19 +31,28 @@ export const useDriverMutations = (userId: string) => {
     // Ligar/conectar um novo driver
     const connect = useMutation({
         mutationFn: (data: ConnectDriverRequest) =>
-            driverService.connectDriver(userId, data),
+            driverService.connectDriver(data),
         onSuccess: () => invalidateList(),
     });
 
     // Atualizar metadados de um driver existente (Nome ou prioridade)
     const update = useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateDriverRequest }) =>
-            driverService.updateDriver(id, userId, data),
+            driverService.updateDriver(id, data),
         onSuccess: (updatedDriver) => {
             invalidateList();
             queryClient.setQueryData(DRIVER_QUERY_KEYS.detail(updatedDriver.id), updatedDriver);
         },
     });
 
-    return { connect, update };
+    const sync = useMutation({
+        mutationFn: (id: string) => driverService.syncDriver(id),
+        onSuccess: (updatedDriver) => {
+            invalidateList();
+            // Atualiza também o cache de detalhes do driver específico com os novos tamanhos/metadados obtidos
+            queryClient.setQueryData(DRIVER_QUERY_KEYS.detail(updatedDriver.id), updatedDriver);
+        },
+    });
+
+    return { connect, update, sync};
 };

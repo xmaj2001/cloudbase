@@ -15,7 +15,7 @@ import {
   ValidateNested,
   IsDateString,
 } from 'class-validator';
-import { ProviderType } from '../domain/value-objects/driver-credentials';
+import { ProviderType } from '../helper/driver-credentials';
 
 /**
  * Credenciais do Google Drive

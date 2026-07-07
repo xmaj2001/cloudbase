@@ -5,7 +5,6 @@ import { ApiNode, NodeType } from "../types";
 // ── INTERFACES PLANAS (IDÊNTICAS AO DTO DO BACKEND) ──────────────────────────
 
 interface CreateNodeRequest {
-  userId: string;
   type: NodeType;
   name: string;
   mimeType?: string;

@@ -83,7 +83,6 @@ export function useUpload({
         updateFileStatus(file.name, "REGISTERING", 100);
 
         await createNode.mutateAsync({
-          userId,
           type: NodeType.FILE,
           name: file.name,
           mimeType: file.type || "application/octet-stream",

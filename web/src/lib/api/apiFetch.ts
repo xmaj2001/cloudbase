@@ -9,18 +9,18 @@ export async function apiFetch<T>(
 ): Promise<T> {
   let serverHeaders = {};
 
-  // if (typeof window === "undefined") {
-  //   try {
-  //     const { cookies } = await import("next/headers");
-  //     const cookieStore = await cookies();
+  if (typeof window === "undefined") {
+    try {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
 
-  //     serverHeaders = {
-  //       Cookie: cookieStore.toString(),
-  //     };
-  //   } catch (e) {
-  //     console.error("Erro ao ler cookies no servidor:", e);
-  //   }
-  // }
+      serverHeaders = {
+        Cookie: cookieStore.toString(),
+      };
+    } catch (e) {
+      console.error("Erro ao ler cookies no servidor:", e);
+    }
+  }
   const response = await fetch(`${API_URL}/api/${url}`, {
     ...options,
     headers: {

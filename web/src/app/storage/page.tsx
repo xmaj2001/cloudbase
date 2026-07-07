@@ -68,7 +68,6 @@ export default function StoragePage() {
 
   return (
     <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} className="h-full">
-      <TopbarStorage variant="brand" />
       <main className="p-8 space-y-8 max-w-350 m-auto">
         <HeaderStorage />
         <StorageBar />

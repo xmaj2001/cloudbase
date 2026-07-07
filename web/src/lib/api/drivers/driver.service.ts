@@ -1,9 +1,10 @@
 import { connectDriver } from "./features/connect-driver";
 import { getDrivers } from "./features/get-drivers";
-import { updateDriver } from "./features/mutations";
+import { syncDriver, updateDriver } from "./features/mutations";
 
 export const driverService = {
     connectDriver,
     getDrivers,
     updateDriver,
+    syncDriver
 }

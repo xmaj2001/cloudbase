@@ -6,12 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
 import { CreateDriverDto } from '../dto/create-driver.dto';
 import { UpdateDriverDto } from '../dto/update-driver.dto';
 import { DriversService } from '../services/drivers.service';
+import { Session } from '@thallesp/nestjs-better-auth';
+import type { UserSession } from '@thallesp/nestjs-better-auth';
 
 @Controller('drivers')
 export class DriversController {
@@ -19,40 +20,46 @@ export class DriversController {
 
   @Post()
   @ApiOperation({
-    summary: 'Criar novo Storage Driver',
+    summary: 'Criar novo Driver',
     description:
       'Cria um novo storage driver com validação de credenciais específicas do provedor.',
   })
-  create(@Body() createDriverDto: CreateDriverDto) {
-    return this.driversService.create(createDriverDto);
+  create(@Body() input: CreateDriverDto, @Session() session: UserSession) {
+    return this.driversService.create(session.user.id, input);
   }
 
   @Get()
   @ApiOperation({
-    summary: 'Listar Storage Drivers',
-    description: 'Lista todos os storage drivers, opcionalmente filtrados por usuário.',
+    summary: 'Listar Drivers',
+    description:
+      'Lista todos os storage drivers, opcionalmente filtrados por usuário.',
   })
-  @ApiQuery({
-    name: 'userId',
-    required: false,
-    description: 'ID do usuário para filtrar os drivers',
-  })
-  findAll(@Query('userId') userId?: string) {
-    return this.driversService.findAll(userId);
+  findAll(@Session() session: UserSession) {
+    return this.driversService.findAll(session.user.id);
   }
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Buscar Storage Driver por ID',
+    summary: 'Buscar Driver',
     description: 'Retorna um storage driver específico pelo seu ID.',
   })
   findOne(@Param('id') id: string) {
-    return this.driversService.findOne(id);
+    return this.driversService.findById(id);
+  }
+
+  @Get('credentials/:id')
+  @ApiOperation({
+    summary: 'Buscar Credenciais',
+    description:
+      'Retorna as credenciais de um storage driver específico pelo seu ID.',
+  })
+  findCredentials(@Param('id') id: string, @Session() session: UserSession) {
+    return this.driversService.findCredentialsById(session.user.id, id);
   }
 
   @Patch(':id')
   @ApiOperation({
-    summary: 'Atualizar Storage Driver',
+    summary: 'Atualizar Driver',
     description: 'Atualiza as informações de um storage driver existente.',
   })
   update(@Param('id') id: string, @Body() updateDriverDto: UpdateDriverDto) {
@@ -61,7 +68,7 @@ export class DriversController {
 
   @Delete(':id')
   @ApiOperation({
-    summary: 'Remover Storage Driver',
+    summary: 'Remover Driver',
     description: 'Deleta um storage driver pelo seu ID.',
   })
   remove(@Param('id') id: string) {
