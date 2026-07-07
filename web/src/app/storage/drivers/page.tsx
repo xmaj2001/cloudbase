@@ -8,7 +8,6 @@ import { driverIcon } from "@/lib/utils/driver";
 import { DriversKpis } from "./_components/drivers-kpis";
 import { DriverCard } from "./_components/driver-card";
 import { ConnectDriverFab } from "./_components/connect-driver-fab";
-import { TopbarStorage } from "@/components/dashboad/Topbar";
 import { useRouter } from "next/navigation";
 
 function bytesToGb(bytes: string | number | bigint | null | undefined): number {
