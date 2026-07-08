@@ -32,12 +32,26 @@ export class DriversController {
   @ApiOperation({
     summary: 'Listar Drivers',
     description:
-      'Lista todos os storage drivers, opcionalmente filtrados por usuário.',
+      'Lista todos os storage drivers do utilizador, com espaço já convertido para GB (totalGb é null quando o provedor não tem limite fixo, ex: Telegram).',
   })
   findAll(@Session() session: UserSession) {
-    return this.driversService.findAll(session.user.id);
+    return this.driversService.list(session.user.id);
   }
 
+  @Get('summary')
+  @ApiOperation({
+    summary: 'Resumo dos Drivers',
+    description:
+      'Retorna espaço total, espaço usado e contagens de drivers do utilizador autenticado, agregados diretamente na base de dados (sem bater nos provedores externos).',
+  })
+  getSummary(@Session() session: UserSession) {
+    return this.driversService.getSummary(session.user.id);
+  }
+
+  // ⚠️ Rotas estáticas (como 'summary' acima) precisam vir ANTES de
+  // rotas dinâmicas como ':id'. Se ':id' fosse declarado primeiro,
+  // uma request pra GET /drivers/summary seria capturada por
+  // findOne() com id="summary" — nunca chegaria aqui.
   @Get(':id')
   @ApiOperation({
     summary: 'Buscar Driver',
@@ -47,7 +61,7 @@ export class DriversController {
     return this.driversService.findById(id);
   }
 
-  @Get('credentials/:id')
+  @Get(':id/credentials')
   @ApiOperation({
     summary: 'Buscar Credenciais',
     description:
@@ -55,6 +69,16 @@ export class DriversController {
   })
   findCredentials(@Param('id') id: string, @Session() session: UserSession) {
     return this.driversService.findCredentialsById(session.user.id, id);
+  }
+
+  @Patch(':id/sync')
+  @ApiOperation({
+    summary: 'Sincronizar Driver',
+    description:
+      'Consulta o provedor externo em tempo real e atualiza o cache de espaço (total, usado e disponível) do driver.',
+  })
+  sync(@Param('id') id: string, @Session() session: UserSession) {
+    return this.driversService.sync(session.user.id, id);
   }
 
   @Patch(':id')

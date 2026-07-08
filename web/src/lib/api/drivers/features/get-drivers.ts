@@ -27,3 +27,10 @@ export const getDriverById = async (id: string): Promise<ApiDriver> => {
     // Retorna o driver individual perfeitamente estruturado
     return mapBackendDriverToApiDriver(rawDriver);
 };
+
+export const getDriverCredentials = async (id: string): Promise<any> => {
+    const response = await apiFetch<any>(`/drivers/${id}/credentials`);
+    
+    const rawCredentials = response;
+    return rawCredentials;
+}

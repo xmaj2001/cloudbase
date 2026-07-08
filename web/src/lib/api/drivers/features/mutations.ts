@@ -16,6 +16,6 @@ export async function updateDriver(id: string, data: UpdateDriverRequest): Promi
 
 export async function syncDriver(id: string): Promise<ApiDriver> {
   return await apiFetch<ApiDriver>(`/drivers/${id}/sync`, {
-    method: "POST" // Normalmente ações de sincronização usam POST
+    method: "PATCH"
   });
 }

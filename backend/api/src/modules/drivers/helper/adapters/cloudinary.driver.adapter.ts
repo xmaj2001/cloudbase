@@ -1,6 +1,38 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { v2 as cloudinary } from 'cloudinary';
 import { IStorageAdapter, StorageSpaceInfo } from '../adapter.interface';
 import { CloudinaryCredentialsDto } from '../../dto/create-driver.dto';
+
+/**
+ * 1 credit da Cloudinary ≈ 1 GiB (1024^3 bytes), seja em storage,
+ * bandwidth ou transformações. Referência oficial:
+ * https://cloudinary.com/documentation/developer_onboarding_faq_credits
+ */
+const BYTES_PER_GIB = 1024 ** 3;
+
+/**
+ * Tipagem mínima da resposta do endpoint GET /usage.
+ * A Cloudinary pode adicionar campos novos no futuro (é o aviso deles
+ * próprios na doc), por isso mantemos isto como "o que usamos", não
+ * "o schema completo".
+ */
+interface CloudinaryUsageResponse {
+  plan: string;
+  last_updated: string;
+  storage: {
+    usage: number; // bytes, valor CUMULATIVO atual (não é "do dia")
+    credits_usage?: number;
+  };
+  bandwidth: {
+    usage: number;
+    credits_usage?: number;
+  };
+  credits: {
+    usage: number;
+    limit: number; // total de credits do plano (ex: 25 no Free)
+    used_percent: number;
+  };
+}
 
 @Injectable()
 export class CloudinaryDriverAdapter implements IStorageAdapter {
@@ -9,56 +41,84 @@ export class CloudinaryDriverAdapter implements IStorageAdapter {
   ): Promise<StorageSpaceInfo> {
     const { apiKey, apiSecret, cloudName } = credentials;
 
-    // Basic Auth obrigatória para a API Admin/Usage
-    const authHeader = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
-    const url = `https://api.cloudinary.com/v1_1/${cloudName}/usage`;
-
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Authorization: `Basic ${authHeader}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      // ⚠️ Propositalmente NÃO usamos cloudinary.config() aqui.
+      //
+      // cloudinary.config() escreve num singleton do módulo (state
+      // global do processo Node). Num backend que atende vários
+      // utilizadores, cada um com a sua própria conta Cloudinary,
+      // duas chamadas concorrentes a fetchSpaceInfo() podem
+      // sobrescrever a config uma da outra ANTES do request sair —
+      // e acabas a consultar a conta errada. É um bug de
+      // concorrência, silencioso, que só aparece sob carga real.
+      //
+      // Passar as credenciais dentro das próprias options da chamada
+      // é suportado nativamente pelo SDK e evita esse state
+      // partilhado por completo.
+      const usage = (await cloudinary.api.usage({
+        cloud_name: cloudName,
+        api_key: apiKey,
+        api_secret: apiSecret,
+      })) as unknown as CloudinaryUsageResponse;
 
-      if (!response.ok) {
-        // Tenta extrair a mensagem de erro nativa da Cloudinary se existir
-        const errorData = await response.json().catch(() => ({}));
-        const errorMsg =
-          errorData.error?.message || `Status ${response.status}`;
-        throw new Error(errorMsg);
-      }
+      const { storage, credits } = usage;
 
-      const data = await response.json();
-
-      // ── MAPEAMENTO SEGURO CONFORME A API ──────────────────────────────
-      // A Cloudinary retorna o nó "storage" diretamente na raiz do objeto
-      const storageMetrics = data.storage;
-
-      if (!storageMetrics) {
+      if (!storage || !credits) {
         throw new Error(
-          'Métricas de armazenamento ("storage") ausentes no retorno da Cloudinary.',
+          'Resposta da Cloudinary não trouxe os campos "storage" ou "credits".',
         );
       }
 
-      // Captura os bytes numéricos de uso e limite
-      const usedSpace = BigInt(storageMetrics.usage || 0);
-      const totalSpace = BigInt(storageMetrics.limit || 0);
+      // Storage usado é o valor real reportado em bytes — sem
+      // aproximações, é direto da API.
+      const usedSpace = BigInt(Math.round(storage.usage));
 
-      // Se for uma conta antiga ou plano de créditos dinâmicos onde o limit vem zerado,
-      // assume 0n (ou lidas mais tarde como ilimitado/flexível se preferires)
-      const availableSpace =
-        totalSpace > usedSpace ? totalSpace - usedSpace : 0n;
+      // Disponível = credits que ainda não foram gastos em NENHUMA
+      // categoria (storage, bandwidth, transformações), convertido
+      // pra bytes. Representa o headroom REAL que sobra pro
+      // storage crescer, já descontando o que bandwidth e
+      // transformações consumiram do mesmo pool partilhado.
+      const remainingCredits = Math.max(credits.limit - credits.usage, 0);
+      const availableSpace = BigInt(
+        Math.round(remainingCredits * BYTES_PER_GIB),
+      );
+
+      // totalSpace é DERIVADO, não é o limite nominal do plano.
+      //
+      // Por quê: a Cloudinary não reserva um teto fixo de storage —
+      // o "espaço total" que resta pra storage depende de quanto
+      // bandwidth/transformações já comeram do pool de credits.
+      // Se usássemos credits.limit * BYTES_PER_GIB como totalSpace,
+      // quebraríamos a invariante totalSpace = usedSpace +
+      // availableSpace que o resto do sistema (e qualquer
+      // frontend fazendo totalSpace - usedSpace) assume como
+      // verdade. Ex: plano Free (25 credits), 2GB em storage,
+      // 10 credits já queimados em bandwidth:
+      //   - usedSpace = 2 GiB
+      //   - availableSpace = (25 - 12) = 13 GiB
+      //   - totalSpace nominal (25GiB) - usedSpace (2GiB) = 23GiB
+      //     de "livre" ❌ — mentira, só sobram 13GiB de fato.
+      //   - totalSpace derivado = 2 + 13 = 15 GiB ✅ — bate com a
+      //     realidade do pool partilhado.
+      //
+      // Efeito colateral aceite: totalSpace passa a ser dinâmico,
+      // encolhe conforme bandwidth/transformações consomem credits
+      // ao longo do mês. Isso é correto — reflete o comportamento
+      // real da conta, não é bug.
+      const totalSpace = usedSpace + availableSpace;
 
       return {
-        totalSpace: totalSpace > 0n ? totalSpace : null, // null se não houver limite estático definido
+        totalSpace,
         usedSpace,
         availableSpace,
       };
     } catch (error) {
+      // Evita duplo-wrap se já for uma exceção do Nest
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new BadRequestException(
-        `Falha ao validar credenciais ou obter espaço da Cloudinary: ${error.message}`,
+        `Falha ao validar credenciais ou obter espaço da Cloudinary: ${error}`,
       );
     }
   }

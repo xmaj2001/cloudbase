@@ -28,12 +28,19 @@ export function useUpload({
   const { createNode } = useNodeMutations(userId, parentId);
 
   const updateFileStatus = useCallback(
-    (fileName: string, status: UploadFileStatus, progress: number, error?: string) => {
+    (
+      fileName: string,
+      status: UploadFileStatus,
+      progress: number,
+      error?: string,
+    ) => {
       setFileProgress((prev) =>
-        prev.map((f) => (f.fileName === fileName ? { ...f, status, progress, error } : f))
+        prev.map((f) =>
+          f.fileName === fileName ? { ...f, status, progress, error } : f,
+        ),
       );
     },
-    []
+    [],
   );
 
   const startUpload = useCallback(async () => {
@@ -41,17 +48,22 @@ export function useUpload({
     setIsUploadingDone(false);
 
     // Inicializa a UI
-    setFileProgress(files.map(f => ({
-      fileName: f.name,
-      status: "WAITING",
-      progress: 0,
-      chunksDone: 1,
-      chunksTotal: 1,
-    })));
+    setFileProgress(
+      files.map((f) => ({
+        fileName: f.name,
+        status: "WAITING",
+        progress: 0,
+        chunksDone: 1,
+        chunksTotal: 1,
+      })),
+    );
 
     const uploadPromises = files.map(async (file, idx) => {
-      const extension = file.name.includes(".") ? `.${file.name.split(".").pop()}` : "";
-      const activeDriverInfo = selectedDrivers.length > 0 ? selectedDrivers[0] : null;
+      const extension = file.name.includes(".")
+        ? `.${file.name.split(".").pop()}`
+        : "";
+      const activeDriverInfo =
+        selectedDrivers.length > 0 ? selectedDrivers[0] : null;
 
       try {
         // Valores de contingência/mock caso nenhum driver seja compatível
@@ -61,21 +73,24 @@ export function useUpload({
         updateFileStatus(file.name, "UPLOADING", 0);
 
         // ── ENCONTRAR O DRIVER MODULAR DINAMICAMENTE ──────────────────────
-        const driver = activeDriverInfo ? getStorageDriver(activeDriverInfo.type) : null;
+        const driver = activeDriverInfo
+          ? getStorageDriver(activeDriverInfo.type)
+          : null;
 
-        if (driver) {
+        if (driver && activeDriverInfo) {
           // Executa o upload real independente de qual driver seja (Polimorfismo)
           const result = await driver.upload({
             file,
+            driverId: activeDriverInfo.id,
             onProgress: (percentage) => {
               updateFileStatus(file.name, "UPLOADING", percentage);
-            }
+            },
           });
           providerFileId = result.providerFileId;
           providerPath = result.providerPath;
         } else {
           // Caso não haja driver mapeado (Simulação padrão local)
-          await new Promise(res => setTimeout(res, 500));
+          await new Promise((res) => setTimeout(res, 500));
           updateFileStatus(file.name, "UPLOADING", 100);
         }
 
@@ -97,14 +112,27 @@ export function useUpload({
         updateFileStatus(file.name, "DONE", 100);
       } catch (error: any) {
         console.error(`Erro no ficheiro "${file.name}":`, error);
-        updateFileStatus(file.name, "ERROR", 100, error?.message || "Falha ao processar");
+        updateFileStatus(
+          file.name,
+          "ERROR",
+          100,
+          error?.message || "Falha ao processar",
+        );
       }
     });
 
     await Promise.all(uploadPromises);
     setIsUploadingDone(true);
     onComplete?.();
-  }, [files, selectedDrivers, userId, parentId, createNode, updateFileStatus, onComplete]);
+  }, [
+    files,
+    selectedDrivers,
+    userId,
+    parentId,
+    createNode,
+    updateFileStatus,
+    onComplete,
+  ]);
 
   return { startUpload, fileProgress, isUploadingDone };
 }

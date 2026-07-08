@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, RefreshCw, Pause, Loader2 } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
-import { useDrivers } from "@/hooks/use-drivers";
+import { useDriverMutations, useDrivers } from "@/hooks/use-drivers";
 import { driverIcon } from "@/lib/utils/driver";
 
 import { DriverHeroCard } from "../_components/driver-hero-card";
 import { DriverMetrics } from "../_components/driver-metrics";
 import { DriverActivity } from "../_components/driver-activity";
 import { DriverSidebarDetails } from "../_components/driver-sidebar-details";
+import { useState } from "react";
 
 function bytesToGb(bytes: string | number | bigint | null | undefined): number {
   if (!bytes) return 0;
@@ -22,10 +23,27 @@ export default function DriverDetailPage() {
   const driverId = params.id as string;
 
   const { userId, isLoading: isUserLoading } = useUser();
+  const { sync } = useDriverMutations(userId ?? "");
+  const [isLoadingSync, setIsLoadingSync] = useState(false);
   const { data: drivers = [], isLoading: isDriversLoading } = useDrivers(
     userId ?? "",
   );
 
+  const handleSyncDriver = async () => {
+    if (!driverId) return;
+    setIsLoadingSync(true);
+    await sync.mutateAsync(driverId, {
+      onSuccess: (updatedDriver) => {
+        setIsLoadingSync(false);
+        console.log("Driver sincronizado com sucesso:", updatedDriver);
+      },
+      onError: (error) => {
+        setIsLoadingSync(false);
+        console.error("Erro ao sincronizar o driver:", error);
+      },
+    });
+    setIsLoadingSync(false);
+  };
   const driver = drivers.find((d) => d.id === driverId);
 
   if (isUserLoading || isDriversLoading) {
@@ -72,8 +90,15 @@ export default function DriverDetailPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="inline-flex items-center gap-2 h-9 px-3 rounded-full border border-hairline text-[12px] hover:border-foreground transition font-medium bg-background">
-            <RefreshCw className="size-3.5" /> Sincronizar
+          <button
+            onClick={handleSyncDriver}
+            disabled={isLoadingSync}
+            className={`inline-flex items-center gap-2 h-9 px-3 rounded-full border border-hairline text-[12px] hover:border-foreground transition font-medium bg-background ${isLoadingSync ? "invert" : ""}`}
+          >
+            <RefreshCw
+              className={`size-3.5 ${isLoadingSync ? "animate-spin" : ""}`}
+            />{" "}
+            Sincronizar
           </button>
           <button className="inline-flex items-center gap-2 h-9 px-3 rounded-full border border-hairline text-[12px] hover:border-foreground transition font-medium bg-background">
             <Pause className="size-3.5" /> Pausar

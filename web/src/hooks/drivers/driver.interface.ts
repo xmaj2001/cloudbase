@@ -1,5 +1,6 @@
 export interface DriverUploadParams {
   file: File;
+  driverId: string;
   folder?: string;
   onProgress: (percentage: number) => void;
 }

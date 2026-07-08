@@ -1,31 +1,48 @@
 import CryptoJS from "crypto-js";
 import { DriverUploadParams, DriverUploadResult, IStorageDriver } from "../driver.interface";
+import { driverService } from "@/lib/api/drivers/driver.service";
+
+// Tipagem local correspondente à resposta do teu endpoint de credenciais
+interface CloudinaryCreds {
+  apiKey: string;
+  apiSecret: string;
+  cloudName: string;
+}
 
 export class CloudinaryDriver implements IStorageDriver {
-  async upload({ file, folder = "cloudbase_teste", onProgress }: DriverUploadParams): Promise<DriverUploadResult> {
+  async upload({ file, driverId, folder = "cloudbase_teste", onProgress }: DriverUploadParams): Promise<DriverUploadResult> {
+    
+    // 1. Vai buscar as credenciais de forma segura através do BFF em Runtime
+    const credentials: CloudinaryCreds = await driverService.getDriverCredentials(driverId);
+    
+    if (!credentials.apiKey || !credentials.apiSecret || !credentials.cloudName) {
+      throw new Error("Credenciais do Cloudinary inválidas ou incompletas.");
+    }
+
     return new Promise((resolve, reject) => {
       const timestamp = Math.round(Date.now() / 1000);
-      const secret = "AhDY5p_fIyv8LGsO5JT7d6P9chQ"; // O teu segredo dinâmico ou estático
       
-      const stringToSign = `folder=${folder}&timestamp=${timestamp}${secret}`;
+      // 2. Assina o upload usando as credenciais dinâmicas e frescas recebidas
+      const stringToSign = `folder=${folder}&timestamp=${timestamp}${credentials.apiSecret}`;
       const signature = CryptoJS.SHA1(stringToSign).toString();
 
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("api_key", "498163631413899");
+      formData.append("api_key", credentials.apiKey); // 👈 Dinâmico
       formData.append("timestamp", timestamp.toString());
       formData.append("folder", folder);
       formData.append("signature", signature);
 
-      const cloudinaryUrl = `https://api.cloudinary.com/v1_1/rrfs6rwb/auto/upload`;
-      const xhr = new XMLHttpRequest();
+      // 3. Aponta dinamicamente para o bucket correto usando o cloudName retornado
+      const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${credentials.cloudName}/auto/upload`;
       
+      const xhr = new XMLHttpRequest();
       xhr.open("POST", cloudinaryUrl, true);
 
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
           const percentage = Math.round((event.loaded / event.total) * 100);
-          onProgress(percentage); // Dispara o callback real para a UI
+          onProgress(percentage);
         }
       };
 
