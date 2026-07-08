@@ -1,6 +1,6 @@
 "use client";
 
-import { getStorageDriver } from "@/hooks/drivers/driver.registry";
+import { getStorageDriver } from "@/lib/drivers/driver.registry";
 import { useState } from "react";
 
 // Lista de drivers suportados pelo sistema para poderes alternar no teste

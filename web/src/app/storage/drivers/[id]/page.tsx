@@ -3,31 +3,21 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, RefreshCw, Pause, Loader2 } from "lucide-react";
-import { useUser } from "@/hooks/use-user";
-import { useDriverMutations, useDrivers } from "@/hooks/use-drivers";
-import { driverIcon } from "@/lib/utils/driver";
 
 import { DriverHeroCard } from "../_components/driver-hero-card";
 import { DriverMetrics } from "../_components/driver-metrics";
 import { DriverActivity } from "../_components/driver-activity";
 import { DriverSidebarDetails } from "../_components/driver-sidebar-details";
 import { useState } from "react";
-
-function bytesToGb(bytes: string | number | bigint | null | undefined): number {
-  if (!bytes) return 0;
-  return Number(bytes) / 1024 / 1024 / 1024;
-}
+import { useDriverMutations, useDrivers } from "@/api/drivers";
 
 export default function DriverDetailPage() {
   const params = useParams();
   const driverId = params.id as string;
 
-  const { userId, isLoading: isUserLoading } = useUser();
-  const { sync } = useDriverMutations(userId ?? "");
+  const { sync } = useDriverMutations();
   const [isLoadingSync, setIsLoadingSync] = useState(false);
-  const { data: drivers = [], isLoading: isDriversLoading } = useDrivers(
-    userId ?? "",
-  );
+  const { data: drivers = [], isLoading: isDriversLoading } = useDrivers();
 
   const handleSyncDriver = async () => {
     if (!driverId) return;
@@ -46,7 +36,7 @@ export default function DriverDetailPage() {
   };
   const driver = drivers.find((d) => d.id === driverId);
 
-  if (isUserLoading || isDriversLoading) {
+  if (isDriversLoading) {
     return (
       <div className="h-[60vh] w-full flex flex-col items-center justify-center gap-2">
         <Loader2 className="size-6 animate-spin text-muted-foreground" />
@@ -110,9 +100,8 @@ export default function DriverDetailPage() {
         <div className="space-y-6">
           <DriverHeroCard
             driver={driver}
-            icon={driverIcon(driver)}
-            driverUsed={bytesToGb(driver.space?.usedSpace)}
-            driverTotal={bytesToGb(driver.space?.totalSpace)}
+            driverUsed={driver.space?.usedSpace ?? 0}
+            driverTotal={driver.space?.totalSpace ?? 0}
           />
           <DriverMetrics />
           <DriverActivity />
