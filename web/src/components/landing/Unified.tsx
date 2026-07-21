@@ -2,9 +2,13 @@ import { driveStack, providers } from "@/lib/utils";
 import { Reveal } from "../reveal";
 import { SectionHeader } from "./SectionHeader";
 import { motion } from "framer-motion";
+import { Globe } from "lucide-react";
 
 
 export function Unified() {
+  const total = driveStack.reduce((a, d) => a + (d.label ? 0 : d.val), 0);
+  const hasUnlimited = driveStack.some((d) => d.label);
+
   return (
     <section id="unificado" className="py-32 border-t border-hairline">
       <div className="mx-auto max-w-7xl px-6">
@@ -12,7 +16,7 @@ export function Unified() {
           index="01"
           kicker="Armazenamento Unificado"
           title="Quanto mais contas adicionas, maior o teu espaço."
-          sub="Cada plataforma contribui com o seu espaço para o teu total. Sem custo adicional, sem limites artificiais."
+          sub="Cada plataforma contribui com o seu espaço para o teu total. Múltiplas contas por provider, sem custo adicional, sem limites artificiais."
         />
 
         <div className="mt-16 grid lg:grid-cols-5 gap-8">
@@ -36,7 +40,7 @@ export function Unified() {
               ))}
               <div className="mt-4 pt-4 border-t border-foreground/20 flex items-center justify-between">
                 <span className="font-semibold">Total unificado</span>
-                <span className="font-semibold">244.6 GB + ilimitado</span>
+                <span className="font-semibold">{total.toFixed(1)} GB{hasUnlimited ? " + ilimitado" : ""}</span>
               </div>
             </div>
           </Reveal>
@@ -53,7 +57,12 @@ export function Unified() {
                     className="flex items-start justify-between gap-4 py-2 border-b border-hairline/60 last:border-0"
                   >
                     <div>
-                      <div className="font-medium">{p.name}</div>
+                      <div className="font-medium flex items-center gap-2">
+                        {p.name}
+                        {p.publicUrl && (
+                          <Globe className="size-3 text-muted-foreground" />
+                        )}
+                      </div>
                       <div className="text-xs text-muted-foreground mt-0.5">
                         {p.best}
                       </div>
@@ -64,6 +73,10 @@ export function Unified() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-4 pt-3 border-t border-hairline text-xs text-muted-foreground flex items-center gap-1.5">
+                <Globe className="size-3" />
+                URL pública directa disponível
+              </div>
             </div>
           </Reveal>
         </div>

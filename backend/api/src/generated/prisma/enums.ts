@@ -28,8 +28,7 @@ export type ProviderType = (typeof ProviderType)[keyof typeof ProviderType]
 
 export const NodeType = {
   FILE: 'FILE',
-  FOLDER: 'FOLDER',
-  GROUP: 'GROUP'
+  FOLDER: 'FOLDER'
 } as const
 
 export type NodeType = (typeof NodeType)[keyof typeof NodeType]

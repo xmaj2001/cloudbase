@@ -3,12 +3,12 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowUpRight, Activity } from "lucide-react";
-import { LucideIcon } from "lucide-react";
+import { DriverIcon } from "@/components/drivers/driver-icon";
+import { fmtBytes } from "@/lib/utils";
 
 interface DriverCardProps {
   driver: any;
   index: number;
-  icon: React.ComponentType;
   driverTotal: number;
   driverUsed: number;
 }
@@ -27,7 +27,7 @@ const statusLabel: Record<string, string> = {
   ERROR: "Erro",
 };
 
-export function DriverCard({ driver, index, icon: Icon, driverTotal, driverUsed }: DriverCardProps) {
+export function DriverCard({ driver, index, driverTotal, driverUsed }: DriverCardProps) {
   const pct = driverTotal > 0 ? Math.min(100, (driverUsed / driverTotal) * 100) : 0;
   const currentStatus = driver.status || (driver.status ? "ACTIVE" : "PAUSED");
 
@@ -44,13 +44,13 @@ export function DriverCard({ driver, index, icon: Icon, driverTotal, driverUsed 
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-surface-2 flex items-center justify-center shrink-0">
-              <Icon className="size-5 stroke-[1.5]" />
+              <DriverIcon type={driver.type} />
             </div>
             <div className="min-w-0">
               <div className="text-[14px] font-medium leading-tight truncate">
                 {driver.displayName}
               </div>
-              <div className="text-[12px] text-muted-foreground mt-0.5 truncate uppercase tracking-wider text-[10px] font-mono">
+              <div className="text-[12px] text-muted-foreground mt-0.5 truncate uppercase tracking-wider font-mono">
                 {driver.type}
               </div>
             </div>
@@ -71,8 +71,8 @@ export function DriverCard({ driver, index, icon: Icon, driverTotal, driverUsed 
 
         <div className="mt-4">
           <div className="flex justify-between text-[11px] mono text-muted-foreground mb-1.5">
-            <span>{driverUsed.toFixed(2)} GB</span>
-            <span>{driverTotal > 0 ? `${driverTotal.toFixed(0)} GB` : "∞"}</span>
+            <span>{fmtBytes(driverUsed)}</span>
+            <span>{driverTotal > 0 ? `${fmtBytes(driverTotal)}` : "0"}</span>
           </div>
           <div className="h-1.5 rounded-full bg-surface-2 overflow-hidden">
             <motion.div

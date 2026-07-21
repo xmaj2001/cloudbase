@@ -1,11 +1,11 @@
 "use client";
 
+import { DriverIcon } from "@/components/drivers/driver-icon";
+import { fmtBytes } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { LucideIcon } from "lucide-react";
 
 interface DriverHeroCardProps {
   driver: any;
-  icon: LucideIcon;
   driverUsed: number;
   driverTotal: number;
 }
@@ -24,9 +24,15 @@ const statusLabel: Record<string, string> = {
   ERROR: "Erro",
 };
 
-export function DriverHeroCard({ driver, icon: Icon, driverUsed, driverTotal }: DriverHeroCardProps) {
-  const pct = driverTotal > 0 ? Math.min(100, (driverUsed / driverTotal) * 100) : 0;
-  const currentStatus = driver.status || (driver.isActive ? "ACTIVE" : "PAUSED");
+export function DriverHeroCard({
+  driver,
+  driverUsed,
+  driverTotal,
+}: DriverHeroCardProps) {
+  const pct =
+    driverTotal > 0 ? Math.min(100, (driverUsed / driverTotal) * 100) : 0;
+  const currentStatus =
+    driver.status || (driver.isActive ? "ACTIVE" : "PAUSED");
 
   return (
     <motion.div
@@ -38,7 +44,10 @@ export function DriverHeroCard({ driver, icon: Icon, driverUsed, driverTotal }: 
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="h-14 w-14 rounded-2xl bg-surface-2 flex items-center justify-center shrink-0">
-            <Icon className="size-7 stroke-[1.5]" />
+            <DriverIcon
+              type={driver.type}
+              className="h-6 w-6 text-muted-foreground"
+            />
           </div>
           <div className="min-w-0">
             <h1 className="text-2xl font-medium tracking-tight truncate">
@@ -49,15 +58,21 @@ export function DriverHeroCard({ driver, icon: Icon, driverUsed, driverTotal }: 
             </div>
           </div>
         </div>
-        <span className={`mono text-[11px] px-2.5 py-0.5 font-medium uppercase tracking-wider rounded-full ${statusStyles[currentStatus] || "bg-surface-2"}`}>
+        <span
+          className={`mono text-[11px] px-2.5 py-0.5 font-medium uppercase tracking-wider rounded-full ${statusStyles[currentStatus] || "bg-surface-2"}`}
+        >
           {statusLabel[currentStatus] || "Ativo"}
         </span>
       </div>
 
       <div className="mt-8">
         <div className="flex justify-between text-[12px] mono text-muted-foreground mb-2">
-          <span>{driverUsed.toFixed(2)} GB usados</span>
-          <span>{driverTotal > 0 ? `${driverTotal.toFixed(0)} GB total` : "Ilimitado (∞)"}</span>
+          <span>{fmtBytes(driverUsed)}</span>
+          <span>
+            {driverTotal > 0
+              ? `${fmtBytes(driverTotal)} total`
+              : "Ilimitado (∞)"}
+          </span>
         </div>
         <div className="h-2 rounded-full bg-surface-2 overflow-hidden">
           <motion.div

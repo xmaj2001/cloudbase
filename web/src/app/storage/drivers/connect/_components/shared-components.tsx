@@ -2,13 +2,14 @@
 
 import React from "react";
 import { ArrowRight, LucideIcon } from "lucide-react";
-import { ProviderSpec } from "@/lib/api/drivers/driver-providor";
+import { ProviderSpec } from "@/components/drivers/driver-providor";
+import { DriverIcon } from "@/components/drivers/driver-icon";
 
 export function ProviderHeader({ p }: { p: ProviderSpec }) {
   return (
     <div className="bg-background border border-hairline rounded-2xl p-5 flex items-center gap-4">
       <div className="h-12 w-12 rounded-xl bg-surface-2 grid place-items-center">
-        <p.icon className="size-6" />
+        <DriverIcon type={p.type} className="size-6" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-[15px] font-medium">{p.name}</div>

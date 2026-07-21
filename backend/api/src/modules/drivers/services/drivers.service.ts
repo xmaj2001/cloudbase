@@ -87,9 +87,9 @@ export class DriversService {
    * "Distribuição" do StorageBar — os dois só precisam de uma
    * slice/filter em cima disto, sem lógica de negócio adicional.
    */
-  async list(userId: string): Promise<DriverListItemDto[]> {
+  async list(userId: string) {
     const drivers = await this.findAll(userId);
-    return drivers.map((d) => this.toListItemDto(d));
+    return drivers;
   }
 
   private toListItemDto(driver: Driver): DriverListItemDto {

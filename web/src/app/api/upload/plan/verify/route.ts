@@ -1,4 +1,4 @@
-import { FilePlanSuccess } from "@/components/upload/upload.types";
+import { FilePlanSuccess } from "@/lib/upload/upload.types";
 import { NextRequest, NextResponse } from "next/server";
 
 

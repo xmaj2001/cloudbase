@@ -1,69 +1,50 @@
-import { ApiEnvelope } from "@/lib/api/api.types";
-import { ApiDriver } from "@/lib/api/drivers/types";
 import { NextRequest, NextResponse } from "next/server";
+import { backendFetch } from "@/api/core/backend-fetch";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Ajusta para a tua API real
-
+// GET /api/drivers -> Lista os drivers do utilizador logado
 export async function GET(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const userId = searchParams.get("userId");
-    const response = await fetch(`${BACKEND_URL}/drivers?userId=${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: req.headers.get("Cookie") || "",
-      },
-    });
+    // Nota: Como o NestJS já extrai o usuário através da Session/Cookie que enviamos,
+    // não precisas mais de passar o ?userId= na URL do fetch interno. O Nest resolve na Session!
+    const response = await backendFetch(req, "drivers");
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: "Erro ao carregar drivers do backend" },
-        { status: response.status },
+        { error: "Erro ao carregar drivers do ecossistema NestJS" },
+        { status: response.status }
       );
     }
 
-    const res = (await response.json()) as ApiEnvelope<ApiDriver[]>;
-    return NextResponse.json(res.data);
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Erro no BFF /api/drivers:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    console.error("[BFF GET /drivers] Erro catastrófico:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-// POST /api/drivers?userId=...
+// POST /api/drivers -> Cria/Conecta um novo driver
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
-    const response = await fetch(`${BACKEND_URL}/drivers`, {
+    
+    const response = await backendFetch(req, "drivers", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: req.headers.get("Cookie") || "",
-      },
       body: JSON.stringify(body),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error("Erro ao conectar driver no backend:", errorData.data);
       return NextResponse.json(
-        { error: errorData?.data.message || "Erro ao conectar driver no backend" },
-        { status: response.status },
+        { error: errorData?.message || "Erro ao conectar driver no backend remoto" },
+        { status: response.status }
       );
     }
 
-    const res = (await response.json()) as ApiEnvelope<ApiDriver>;
-    return NextResponse.json(res.data);
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Erro no BFF POST /api/drivers:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    console.error("[BFF POST /drivers] Erro catastrófico:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

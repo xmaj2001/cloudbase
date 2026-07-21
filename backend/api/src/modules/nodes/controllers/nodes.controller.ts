@@ -6,12 +6,11 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
 } from '@nestjs/common';
 import { NodesService } from '../services/nodes.service';
 import { CreateNodeDto } from '../dto/create-node.dto';
 import { UpdateNodeDto } from '../dto/update-node.dto';
-import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiParam } from '@nestjs/swagger';
 import { Session } from '@thallesp/nestjs-better-auth';
 import type { UserSession } from '@thallesp/nestjs-better-auth';
 
@@ -29,13 +28,8 @@ export class NodesController {
     summary: 'Listar todos',
     description: 'Retorna todos os nós, ou filtra por userId se fornecido',
   })
-  @ApiQuery({
-    name: 'userId',
-    required: false,
-    description: 'ID do usuário para filtrar os nós',
-  })
-  findAll(@Query('userId') userId?: string) {
-    return this.nodesService.findAll(userId);
+  findAll(@Session() session: UserSession) {
+    return this.nodesService.findAll(session.user.id);
   }
 
   @Get(':id')

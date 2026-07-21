@@ -3,15 +3,15 @@ import { SectionHeader } from "./SectionHeader";
 
 export function Roadmap() {
   const items = [
-    { q: "Agora · Q2 2026", t: "Beta pública", items: ["Armazenamento unificado", "Fragmentação inteligente", "Partilha protegida", "Bot WhatsApp"] },
-    { q: "Próximo · Q3 2026", t: "Inteligência ampliada", items: ["IA de classificação avançada", "Resumos de PDF na interface", "Detecção semântica de duplicados"] },
-    { q: "Depois · Q4 2026", t: "Rede expandida", items: ["Agent multiplataforma estável", "Espaços partilhados (logical spaces)", "Troca de ficheiros com reputação pública"] },
-    { q: "2027", t: "Ecossistema", items: ["API pública", "Integrações Zapier / n8n", "Plano empresarial opt-in"] },
+    { q: "Agora · Q2 2026", t: "Beta pública", items: ["Armazenamento unificado", "Fragmentação inteligente", "Partilha protegida", "Bot WhatsApp", "SDK & API REST"] },
+    { q: "Próximo · Q3 2026", t: "Inteligência ampliada", items: ["IA de classificação avançada", "Resumos de PDF na interface", "Detecção semântica de duplicados", "HLS Streaming"] },
+    { q: "Depois · Q4 2026", t: "Rede expandida", items: ["Agent multiplataforma", "Space Pools avançados", "Troca com reputação", "WiFi & Bluetooth local"] },
+    { q: "2027", t: "Ecossistema", items: ["Marketplace de espaço", "CloudBase Identity", "CloudBase Mobile (iOS/Android)", "IA de conteúdo (OCR, transcrição)"] },
   ];
   return (
     <section id="roadmap" className="py-32 border-t border-hairline">
       <div className="mx-auto max-w-7xl px-6">
-        <SectionHeader index="14" kicker="Roadmap" title="Onde vamos a seguir." />
+        <SectionHeader index="17" kicker="Roadmap" title="Onde vamos a seguir." />
         <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {items.map((it, i) => (
             <Reveal key={it.q} delay={i * 0.08}>

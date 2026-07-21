@@ -6,7 +6,7 @@ import { TopbarStorage } from "@/components/dashboad/Topbar";
 import { DetailNode } from "@/components/nodes/DetailNode";
 import { GridNodes } from "@/components/nodes/GridNodes";
 import { TableNodes } from "@/components/nodes/TableNodes";
-import { UploadModal } from "@/components/upload/UploadModal";
+import { UploadModal } from "@/lib/upload/UploadModal";
 import { useNodes } from "@/hooks/use-nodes";
 import { ApiNode } from "@/lib/api/node/types";
 import { AnimatePresence, motion } from "framer-motion";

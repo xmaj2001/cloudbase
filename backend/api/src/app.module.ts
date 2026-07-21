@@ -8,12 +8,14 @@ import { PrismaModule } from './shared/prisma/prisma.module';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { createBetterAuth } from './shared/auth/betterAuth/betterAuth';
 import { BetterAuthModules } from './shared/auth/betterAuth/betterAuth.module';
+import { FragmentationModule } from './modules/fragmentation/fragmentation.module';
 
 @Module({
   imports: [
     PrismaModule,
     AuthModule.forRoot(createBetterAuth()),
     BetterAuthModules,
+    FragmentationModule,
     DriversModule,
     NodesModule,
     UsersModule,

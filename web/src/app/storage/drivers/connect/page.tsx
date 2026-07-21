@@ -13,9 +13,8 @@ import { StepCredentials } from "./_components/step-credentials";
 import {
   providers,
   type ProviderSpec,
-} from "@/lib/api/drivers/driver-providor";
-import { useDriverMutations } from "@/hooks/use-drivers";
-import { useUser } from "@/hooks/use-user";
+} from "@/components/drivers/driver-providor";
+import { useDriverMutations } from "@/api/drivers";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -28,7 +27,6 @@ const stepLabels: Record<Step, string> = {
 
 export default function ConnectDriverPage() {
   const router = useRouter();
-  const { userId, isLoading: isUserLoading } = useUser();
   const [step, setStep] = useState<Step>(1);
   const [selected, setSelected] = useState<ProviderSpec | null>(null);
   const [query, setQuery] = useState("");
@@ -63,7 +61,7 @@ export default function ConnectDriverPage() {
       (f) => !f.required || (creds[f.name] ?? "").trim().length > 0,
     );
 
-  const { connect } = useDriverMutations(userId ?? "");
+  const { connect } = useDriverMutations();
 
   const handleSubmit = async () => {
     if (!selected || !canSubmit) return;
@@ -111,7 +109,7 @@ export default function ConnectDriverPage() {
             <li key={n} className="flex items-center gap-2">
               <button
                 onClick={() => (complete || n === 1) && setStep(n)}
-                disabled={(!complete && !active && n !== 1) ? true : false}
+                disabled={!complete && !active && n !== 1 ? true : false}
                 className={`flex items-center gap-2 h-8 px-3 rounded-full text-[11px] mono transition ${
                   active
                     ? "bg-foreground text-background"

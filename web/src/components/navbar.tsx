@@ -6,8 +6,9 @@ const links = [
   { href: "#unificado", label: "Armazenamento" },
   { href: "#fragmentacao", label: "Fragmentação" },
   { href: "#automacao", label: "Automação" },
-  { href: "#comparativo", label: "Comparativo" },
-  { href: "#roadmap", label: "Roadmap" },
+  { href: "#planos", label: "Planos" },
+  { href: "/docs", label: "Docs" },
+  { href: "/docs/developers", label: "Developers" },
 ];
 
 export function NavBar() {
@@ -30,15 +31,29 @@ export function NavBar() {
           </span>
         </Link>
         <nav className="hidden md:flex items-center gap-8">
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {l.label}
-            </a>
-          ))}
+          {links.map((l) => {
+            const isInternal = l.href.startsWith("/");
+            if (isInternal) {
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {l.label}
+                </Link>
+              );
+            }
+            return (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {l.label}
+              </a>
+            );
+          })}
         </nav>
         <div className="flex items-center gap-2">
           <ModeToggle />

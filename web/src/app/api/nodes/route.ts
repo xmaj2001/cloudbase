@@ -1,70 +1,59 @@
-import { ApiEnvelope } from "@/lib/api/api.types";
-import { ApiNode } from "@/lib/api/node/types";
 import { NextRequest, NextResponse } from "next/server";
+import { backendFetch } from "@/api/core/backend-fetch";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000"; // Ajusta para a tua API real
-
-export async function GET(req: NextRequest, res: NextResponse) {
+// GET /api/nodes -> Lista nós da raiz ou de uma pasta específica
+export async function GET(req: NextRequest) {
   try {
-    const userId = req.nextUrl.searchParams.get("userId");
-    const parentId = req.nextUrl.searchParams.get("parentid");
-    if (!userId) {
-      return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 },
-      );
-    }
-    const response = await fetch(`${BACKEND_URL}/nodes?userId=${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: req.headers.get("Cookie") || "",
-      },
-    });
+    const searchParams = req.nextUrl.searchParams;
+    const parentId = searchParams.get("parentId");
+
+    const endpoint = parentId ? `nodes?parentId=${parentId}` : "nodes";
+    const response = await backendFetch(req, endpoint);
+
     if (!response.ok) {
       return NextResponse.json(
-        { error: "Erro ao carregar nodes do backend" },
+        { error: "Erro ao carregar ficheiros e pastas do servidor NestJS" },
         { status: response.status },
       );
     }
 
-    const res = (await response.json()) as ApiEnvelope<ApiNode[]>;
-    return NextResponse.json(res.data);
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
-    console.log(error);
+    console.error("[BFF GET /nodes] Erro catastrófico:", error);
     return NextResponse.json(
-      { error: "Failed to fetch nodes" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
 }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const response = await fetch(`${BACKEND_URL}/nodes`, {
+    const body = await req.json(); // Payload validado pelo CreateNodeRequest no client
+
+    const response = await backendFetch(req, "nodes", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: req.headers.get("Cookie") || "",
-      },
       body: JSON.stringify(body),
     });
-    console.log("Body enviado para o backend:", body);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      console.log(errorData.data.message, errorData.data.fields);
+      const errorData = await response.json().catch(() => ({}));
       return NextResponse.json(
-        { error: "Erro ao criar file no backend" },
+        {
+          error:
+            errorData?.message || "Erro ao registar o nó no ecossistema NestJS",
+        },
         { status: response.status },
       );
     }
-    const res = (await response.json()) as ApiEnvelope<ApiNode>;
-    return NextResponse.json(res.data);
+
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
-    console.log(error);
+    console.error("[BFF POST /nodes] Erro ao criar nó:", error);
     return NextResponse.json(
-      { error: "Failed to create file" },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

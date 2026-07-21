@@ -2,13 +2,12 @@
 
 import { Loader2 } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
-import { useDrivers } from "@/hooks/use-drivers";
-import { driverIcon } from "@/lib/utils/driver";
 
 import { DriversKpis } from "./_components/drivers-kpis";
 import { DriverCard } from "./_components/driver-card";
 import { ConnectDriverFab } from "./_components/connect-driver-fab";
 import { useRouter } from "next/navigation";
+import { useDrivers, useDriversSummary } from "@/api/drivers";
 
 function bytesToGb(bytes: string | number | bigint | null | undefined): number {
   if (!bytes) return 0;
@@ -16,12 +15,11 @@ function bytesToGb(bytes: string | number | bigint | null | undefined): number {
 }
 
 export default function DriversPage() {
-  const { userId, isLoading: isUserLoading } = useUser();
-  const { data: drivers = [], isLoading: isDriversLoading } = useDrivers(
-    userId ?? "",
-  );
+  const { data: drivers = [], isLoading: isDriversLoading } = useDrivers();
+  const { data: driversSummary, isLoading: isDriversSummaryLoading } =
+    useDriversSummary();
   const router = useRouter();
-  if (isUserLoading || isDriversLoading) {
+  if (isDriversLoading || isDriversSummaryLoading) {
     return (
       <div className="h-[60vh] w-full flex flex-col items-center justify-center gap-2">
         <Loader2 className="size-6 animate-spin text-muted-foreground" />
@@ -31,33 +29,19 @@ export default function DriversPage() {
       </div>
     );
   }
-  // 
   const handleConnectDriver = () => {
     router.push("/storage/drivers/connect");
-  }
-
-  // Cálculos consolidados para os KPIs
-  const totalGb = drivers
-    .map((d) => bytesToGb(d.space.totalSpace))
-    .reduce((a, b) => a + b, 0);
-  const usedGb = drivers
-    .map((d) => bytesToGb(d.space.usedSpace))
-    .reduce((a, b) => a + b, 0);
-  const activeCount = drivers.filter(
-    (d) => d.status === "ACTIVE" || d.status === "SYNCING",
-  ).length;
+  };
 
   return (
     <main className="p-8 space-y-8 max-w-350 m-auto">
-      {/* 📊 KPIs Modulares */}
       <DriversKpis
-        totalGb={totalGb}
-        usedGb={usedGb}
-        driversCount={drivers.length}
-        activeCount={activeCount}
+        totalGb={bytesToGb(driversSummary?.totalGb)}
+        usedGb={bytesToGb(driversSummary?.usedGb)}
+        driversCount={driversSummary?.driversCount || 0}
+        activeCount={driversSummary?.activeCount || 0}
       />
 
-      {/* 🗂️ Renderização da Grid de Drivers */}
       {drivers.length === 0 ? (
         <div className="border border-dashed border-hairline rounded-2xl p-12 text-center flex flex-col items-center justify-center">
           <div className="text-sm font-medium">
@@ -74,9 +58,8 @@ export default function DriversPage() {
               key={d.id}
               driver={d}
               index={i}
-              icon={driverIcon(d)}
-              driverTotal={bytesToGb(d.space.totalSpace)}
-              driverUsed={bytesToGb(d.space.usedSpace)}
+              driverTotal={d.space.totalSpace ?? 0}
+              driverUsed={d.space.usedSpace ?? 0}
             />
           ))}
         </div>
