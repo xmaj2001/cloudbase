@@ -28,6 +28,7 @@ export type AggregateDriver = {
 
 export type DriverAvgAggregateOutputType = {
   priority: number | null
+  maxFileSizeOverride: number | null
   cachedTotalSpace: number | null
   cachedUsedSpace: number | null
   cachedAvailableSpace: number | null
@@ -35,6 +36,7 @@ export type DriverAvgAggregateOutputType = {
 
 export type DriverSumAggregateOutputType = {
   priority: number | null
+  maxFileSizeOverride: bigint | null
   cachedTotalSpace: bigint | null
   cachedUsedSpace: bigint | null
   cachedAvailableSpace: bigint | null
@@ -51,6 +53,7 @@ export type DriverMinAggregateOutputType = {
   rootFolderPath: string | null
   fragmentFolderId: string | null
   fragmentFolderPath: string | null
+  maxFileSizeOverride: bigint | null
   cachedTotalSpace: bigint | null
   cachedUsedSpace: bigint | null
   cachedAvailableSpace: bigint | null
@@ -72,6 +75,7 @@ export type DriverMaxAggregateOutputType = {
   rootFolderPath: string | null
   fragmentFolderId: string | null
   fragmentFolderPath: string | null
+  maxFileSizeOverride: bigint | null
   cachedTotalSpace: bigint | null
   cachedUsedSpace: bigint | null
   cachedAvailableSpace: bigint | null
@@ -94,6 +98,7 @@ export type DriverCountAggregateOutputType = {
   rootFolderPath: number
   fragmentFolderId: number
   fragmentFolderPath: number
+  maxFileSizeOverride: number
   cachedTotalSpace: number
   cachedUsedSpace: number
   cachedAvailableSpace: number
@@ -108,6 +113,7 @@ export type DriverCountAggregateOutputType = {
 
 export type DriverAvgAggregateInputType = {
   priority?: true
+  maxFileSizeOverride?: true
   cachedTotalSpace?: true
   cachedUsedSpace?: true
   cachedAvailableSpace?: true
@@ -115,6 +121,7 @@ export type DriverAvgAggregateInputType = {
 
 export type DriverSumAggregateInputType = {
   priority?: true
+  maxFileSizeOverride?: true
   cachedTotalSpace?: true
   cachedUsedSpace?: true
   cachedAvailableSpace?: true
@@ -131,6 +138,7 @@ export type DriverMinAggregateInputType = {
   rootFolderPath?: true
   fragmentFolderId?: true
   fragmentFolderPath?: true
+  maxFileSizeOverride?: true
   cachedTotalSpace?: true
   cachedUsedSpace?: true
   cachedAvailableSpace?: true
@@ -152,6 +160,7 @@ export type DriverMaxAggregateInputType = {
   rootFolderPath?: true
   fragmentFolderId?: true
   fragmentFolderPath?: true
+  maxFileSizeOverride?: true
   cachedTotalSpace?: true
   cachedUsedSpace?: true
   cachedAvailableSpace?: true
@@ -174,6 +183,7 @@ export type DriverCountAggregateInputType = {
   rootFolderPath?: true
   fragmentFolderId?: true
   fragmentFolderPath?: true
+  maxFileSizeOverride?: true
   cachedTotalSpace?: true
   cachedUsedSpace?: true
   cachedAvailableSpace?: true
@@ -283,6 +293,7 @@ export type DriverGroupByOutputType = {
   rootFolderPath: string | null
   fragmentFolderId: string | null
   fragmentFolderPath: string | null
+  maxFileSizeOverride: bigint | null
   cachedTotalSpace: bigint | null
   cachedUsedSpace: bigint | null
   cachedAvailableSpace: bigint | null
@@ -328,6 +339,7 @@ export type DriverWhereInput = {
   rootFolderPath?: Prisma.StringNullableFilter<"Driver"> | string | null
   fragmentFolderId?: Prisma.StringNullableFilter<"Driver"> | string | null
   fragmentFolderPath?: Prisma.StringNullableFilter<"Driver"> | string | null
+  maxFileSizeOverride?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedTotalSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedUsedSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedAvailableSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
@@ -353,6 +365,7 @@ export type DriverOrderByWithRelationInput = {
   rootFolderPath?: Prisma.SortOrderInput | Prisma.SortOrder
   fragmentFolderId?: Prisma.SortOrderInput | Prisma.SortOrder
   fragmentFolderPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxFileSizeOverride?: Prisma.SortOrderInput | Prisma.SortOrder
   cachedTotalSpace?: Prisma.SortOrderInput | Prisma.SortOrder
   cachedUsedSpace?: Prisma.SortOrderInput | Prisma.SortOrder
   cachedAvailableSpace?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -382,6 +395,7 @@ export type DriverWhereUniqueInput = Prisma.AtLeast<{
   rootFolderPath?: Prisma.StringNullableFilter<"Driver"> | string | null
   fragmentFolderId?: Prisma.StringNullableFilter<"Driver"> | string | null
   fragmentFolderPath?: Prisma.StringNullableFilter<"Driver"> | string | null
+  maxFileSizeOverride?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedTotalSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedUsedSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedAvailableSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
@@ -407,6 +421,7 @@ export type DriverOrderByWithAggregationInput = {
   rootFolderPath?: Prisma.SortOrderInput | Prisma.SortOrder
   fragmentFolderId?: Prisma.SortOrderInput | Prisma.SortOrder
   fragmentFolderPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxFileSizeOverride?: Prisma.SortOrderInput | Prisma.SortOrder
   cachedTotalSpace?: Prisma.SortOrderInput | Prisma.SortOrder
   cachedUsedSpace?: Prisma.SortOrderInput | Prisma.SortOrder
   cachedAvailableSpace?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -437,6 +452,7 @@ export type DriverScalarWhereWithAggregatesInput = {
   rootFolderPath?: Prisma.StringNullableWithAggregatesFilter<"Driver"> | string | null
   fragmentFolderId?: Prisma.StringNullableWithAggregatesFilter<"Driver"> | string | null
   fragmentFolderPath?: Prisma.StringNullableWithAggregatesFilter<"Driver"> | string | null
+  maxFileSizeOverride?: Prisma.BigIntNullableWithAggregatesFilter<"Driver"> | bigint | number | null
   cachedTotalSpace?: Prisma.BigIntNullableWithAggregatesFilter<"Driver"> | bigint | number | null
   cachedUsedSpace?: Prisma.BigIntNullableWithAggregatesFilter<"Driver"> | bigint | number | null
   cachedAvailableSpace?: Prisma.BigIntNullableWithAggregatesFilter<"Driver"> | bigint | number | null
@@ -458,6 +474,7 @@ export type DriverCreateInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -483,6 +500,7 @@ export type DriverUncheckedCreateInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -506,6 +524,7 @@ export type DriverUpdateInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -531,6 +550,7 @@ export type DriverUncheckedUpdateInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -555,6 +575,7 @@ export type DriverCreateManyInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -576,6 +597,7 @@ export type DriverUpdateManyMutationInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -598,6 +620,7 @@ export type DriverUncheckedUpdateManyInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -636,6 +659,7 @@ export type DriverCountOrderByAggregateInput = {
   rootFolderPath?: Prisma.SortOrder
   fragmentFolderId?: Prisma.SortOrder
   fragmentFolderPath?: Prisma.SortOrder
+  maxFileSizeOverride?: Prisma.SortOrder
   cachedTotalSpace?: Prisma.SortOrder
   cachedUsedSpace?: Prisma.SortOrder
   cachedAvailableSpace?: Prisma.SortOrder
@@ -648,6 +672,7 @@ export type DriverCountOrderByAggregateInput = {
 
 export type DriverAvgOrderByAggregateInput = {
   priority?: Prisma.SortOrder
+  maxFileSizeOverride?: Prisma.SortOrder
   cachedTotalSpace?: Prisma.SortOrder
   cachedUsedSpace?: Prisma.SortOrder
   cachedAvailableSpace?: Prisma.SortOrder
@@ -664,6 +689,7 @@ export type DriverMaxOrderByAggregateInput = {
   rootFolderPath?: Prisma.SortOrder
   fragmentFolderId?: Prisma.SortOrder
   fragmentFolderPath?: Prisma.SortOrder
+  maxFileSizeOverride?: Prisma.SortOrder
   cachedTotalSpace?: Prisma.SortOrder
   cachedUsedSpace?: Prisma.SortOrder
   cachedAvailableSpace?: Prisma.SortOrder
@@ -685,6 +711,7 @@ export type DriverMinOrderByAggregateInput = {
   rootFolderPath?: Prisma.SortOrder
   fragmentFolderId?: Prisma.SortOrder
   fragmentFolderPath?: Prisma.SortOrder
+  maxFileSizeOverride?: Prisma.SortOrder
   cachedTotalSpace?: Prisma.SortOrder
   cachedUsedSpace?: Prisma.SortOrder
   cachedAvailableSpace?: Prisma.SortOrder
@@ -697,6 +724,7 @@ export type DriverMinOrderByAggregateInput = {
 
 export type DriverSumOrderByAggregateInput = {
   priority?: Prisma.SortOrder
+  maxFileSizeOverride?: Prisma.SortOrder
   cachedTotalSpace?: Prisma.SortOrder
   cachedUsedSpace?: Prisma.SortOrder
   cachedAvailableSpace?: Prisma.SortOrder
@@ -815,6 +843,7 @@ export type DriverCreateWithoutUserInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -838,6 +867,7 @@ export type DriverUncheckedCreateWithoutUserInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -891,6 +921,7 @@ export type DriverScalarWhereInput = {
   rootFolderPath?: Prisma.StringNullableFilter<"Driver"> | string | null
   fragmentFolderId?: Prisma.StringNullableFilter<"Driver"> | string | null
   fragmentFolderPath?: Prisma.StringNullableFilter<"Driver"> | string | null
+  maxFileSizeOverride?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedTotalSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedUsedSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
   cachedAvailableSpace?: Prisma.BigIntNullableFilter<"Driver"> | bigint | number | null
@@ -912,6 +943,7 @@ export type DriverCreateWithoutNodesInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -936,6 +968,7 @@ export type DriverUncheckedCreateWithoutNodesInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -974,6 +1007,7 @@ export type DriverUpdateWithoutNodesInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -998,6 +1032,7 @@ export type DriverUncheckedUpdateWithoutNodesInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1020,6 +1055,7 @@ export type DriverCreateWithoutChunksInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -1044,6 +1080,7 @@ export type DriverUncheckedCreateWithoutChunksInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -1082,6 +1119,7 @@ export type DriverUpdateWithoutChunksInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1106,6 +1144,7 @@ export type DriverUncheckedUpdateWithoutChunksInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1128,6 +1167,7 @@ export type DriverCreateManyUserInput = {
   rootFolderPath?: string | null
   fragmentFolderId?: string | null
   fragmentFolderPath?: string | null
+  maxFileSizeOverride?: bigint | number | null
   cachedTotalSpace?: bigint | number | null
   cachedUsedSpace?: bigint | number | null
   cachedAvailableSpace?: bigint | number | null
@@ -1149,6 +1189,7 @@ export type DriverUpdateWithoutUserInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1172,6 +1213,7 @@ export type DriverUncheckedUpdateWithoutUserInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1195,6 +1237,7 @@ export type DriverUncheckedUpdateManyWithoutUserInput = {
   rootFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fragmentFolderPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxFileSizeOverride?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedTotalSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedUsedSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   cachedAvailableSpace?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1257,6 +1300,7 @@ export type DriverSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   rootFolderPath?: boolean
   fragmentFolderId?: boolean
   fragmentFolderPath?: boolean
+  maxFileSizeOverride?: boolean
   cachedTotalSpace?: boolean
   cachedUsedSpace?: boolean
   cachedAvailableSpace?: boolean
@@ -1283,6 +1327,7 @@ export type DriverSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   rootFolderPath?: boolean
   fragmentFolderId?: boolean
   fragmentFolderPath?: boolean
+  maxFileSizeOverride?: boolean
   cachedTotalSpace?: boolean
   cachedUsedSpace?: boolean
   cachedAvailableSpace?: boolean
@@ -1306,6 +1351,7 @@ export type DriverSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   rootFolderPath?: boolean
   fragmentFolderId?: boolean
   fragmentFolderPath?: boolean
+  maxFileSizeOverride?: boolean
   cachedTotalSpace?: boolean
   cachedUsedSpace?: boolean
   cachedAvailableSpace?: boolean
@@ -1329,6 +1375,7 @@ export type DriverSelectScalar = {
   rootFolderPath?: boolean
   fragmentFolderId?: boolean
   fragmentFolderPath?: boolean
+  maxFileSizeOverride?: boolean
   cachedTotalSpace?: boolean
   cachedUsedSpace?: boolean
   cachedAvailableSpace?: boolean
@@ -1339,7 +1386,7 @@ export type DriverSelectScalar = {
   updatedAt?: boolean
 }
 
-export type DriverOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "displayName" | "isActive" | "priority" | "credentials" | "rootFolderId" | "rootFolderPath" | "fragmentFolderId" | "fragmentFolderPath" | "cachedTotalSpace" | "cachedUsedSpace" | "cachedAvailableSpace" | "spaceCachedAt" | "lastSyncAt" | "syncError" | "createdAt" | "updatedAt", ExtArgs["result"]["driver"]>
+export type DriverOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "displayName" | "isActive" | "priority" | "credentials" | "rootFolderId" | "rootFolderPath" | "fragmentFolderId" | "fragmentFolderPath" | "maxFileSizeOverride" | "cachedTotalSpace" | "cachedUsedSpace" | "cachedAvailableSpace" | "spaceCachedAt" | "lastSyncAt" | "syncError" | "createdAt" | "updatedAt", ExtArgs["result"]["driver"]>
 export type DriverInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   nodes?: boolean | Prisma.Driver$nodesArgs<ExtArgs>
@@ -1372,6 +1419,7 @@ export type $DriverPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     rootFolderPath: string | null
     fragmentFolderId: string | null
     fragmentFolderPath: string | null
+    maxFileSizeOverride: bigint | null
     cachedTotalSpace: bigint | null
     cachedUsedSpace: bigint | null
     cachedAvailableSpace: bigint | null
@@ -1817,6 +1865,7 @@ export interface DriverFieldRefs {
   readonly rootFolderPath: Prisma.FieldRef<"Driver", 'String'>
   readonly fragmentFolderId: Prisma.FieldRef<"Driver", 'String'>
   readonly fragmentFolderPath: Prisma.FieldRef<"Driver", 'String'>
+  readonly maxFileSizeOverride: Prisma.FieldRef<"Driver", 'BigInt'>
   readonly cachedTotalSpace: Prisma.FieldRef<"Driver", 'BigInt'>
   readonly cachedUsedSpace: Prisma.FieldRef<"Driver", 'BigInt'>
   readonly cachedAvailableSpace: Prisma.FieldRef<"Driver", 'BigInt'>

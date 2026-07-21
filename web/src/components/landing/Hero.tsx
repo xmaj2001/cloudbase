@@ -1,6 +1,6 @@
 import { providers } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Code2 } from "lucide-react";
 import Link from "next/link";
 
 export function Hero() {
@@ -13,6 +13,15 @@ export function Hero() {
 
         <div className="grid lg:grid-cols-12 gap-12 items-start">
           <div className="lg:col-span-7">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-hairline bg-surface-2/50 text-xs text-muted-foreground mb-6"
+            >
+              <span className="size-1.5 rounded-full bg-success animate-pulse" />
+              Beta pública disponível — SDK + API REST
+            </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -29,10 +38,10 @@ export function Hero() {
               transition={{ duration: 0.9, delay: 0.15 }}
               className="mt-8 max-w-xl text-lg text-muted-foreground leading-relaxed"
             >
-              O CloudBase não te vende espaço. Conecta o espaço que já é teu —
-              Google Drive, Telegram, OneDrive — numa única interface que pensa,
-              organiza, e transfere com segurança.{" "}
-              <span className="text-foreground">Custo mensal: zero.</span>
+              Centenas de gigabytes distribuídos por Google Drive, Telegram, OneDrive,
+              MEGA, Cloudinary, Supabase, Firebase — geridos por um único sistema inteligente.
+              Acessível de qualquer dispositivo, controlável pelo WhatsApp, com SDK completo.{" "}
+              <span className="text-foreground">Custo para começar: zero.</span>
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -47,9 +56,16 @@ export function Hero() {
                 Abrir dashboard
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
+              <Link
+                href="/docs/developers"
+                className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-hairline text-sm hover:bg-surface-2 transition-colors"
+              >
+                <Code2 className="size-4" />
+                Documentação SDK
+              </Link>
               <a
                 href="#unificado"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-hairline text-sm hover:bg-surface-2 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Ver como funciona
               </a>
@@ -61,8 +77,8 @@ export function Hero() {
               className="mt-12 grid grid-cols-3 max-w-md gap-6"
             >
               {[
-                { v: "100+", l: "GB grátis" },
-                { v: "10+", l: "providers" },
+                { v: "200+", l: "GB grátis" },
+                { v: "15+", l: "providers" },
                 { v: "$0", l: "custo mensal" },
               ].map((s) => (
                 <div key={s.l}>

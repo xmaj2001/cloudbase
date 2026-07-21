@@ -174,32 +174,24 @@ model Driver {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   type        ProviderType
-  displayName String // "Meu Google Drive pessoal"
+  displayName String
   isActive    Boolean      @default(true)
   priority    Int          @default(0)
 
-  // credenciais específicas por provider (JSON encriptado)
-  // Google Drive:  { accessToken, refreshToken, expiresAt, accountEmail }
-  // Cloudinary:    { apiKey, apiSecret, cloudName }
-  // Telegram:      { botToken, chatId }
-  // MEGA:          { sessionToken, accountEmail }
-  // VPS:           { agentToken, host, port }
   credentials Json
 
-  // pasta raiz criada pelo CloudBase neste provider
-  rootFolderId   String? // ID no provider
-  rootFolderPath String? // "CloudBase/"
+  rootFolderId   String?
+  rootFolderPath String?
 
-  // pasta de fragmentos (NÃO eliminar)
-  fragmentFolderId   String? // ID no provider
+  fragmentFolderId   String? // pasta "_fragments" no driver
   fragmentFolderPath String? // "CloudBase/_fragments/"
 
-  // cache de espaço (evita chamar API a cada request)
+  maxFileSizeOverride BigInt? // opcional, teto próprio do user (ex: VPS)
+
   cachedTotalSpace     BigInt?
   cachedUsedSpace      BigInt?
   cachedAvailableSpace BigInt?
   spaceCachedAt        DateTime?
-  // null = ilimitado (Telegram) ou ainda não consultado
 
   lastSyncAt DateTime?
   syncError  String?
@@ -221,7 +213,6 @@ model Driver {
 enum NodeType {
   FILE
   FOLDER
-  GROUP
 }
 
 enum FileStatus {
@@ -241,13 +232,11 @@ model Node {
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   type   NodeType
 
-  // metadados básicos
   name      String
   mimeType  String?
   extension String?
   size      BigInt?
 
-  // provider (só FILE e FOLDER)
   driverId          String?
   driver            Driver?   @relation(fields: [driverId], references: [id])
   providerFileId    String?
@@ -255,39 +244,29 @@ model Node {
   providerCreatedAt DateTime?
   providerUpdatedAt DateTime?
 
-  // fragmentação
   isFragmented Boolean     @default(false)
   totalChunks  Int         @default(1)
   originalHash String?
   chunks       FileChunk[]
 
-  // hierarquia
   parentId String?
   parent   Node?   @relation("NodeHierarchy", fields: [parentId], references: [id])
   children Node[]  @relation("NodeHierarchy")
 
-  // status
   status        FileStatus @default(ACTIVE)
   errorCount    Int        @default(0)
   lastErrorAt   DateTime?
   lastCheckedAt DateTime?
 
-  // lixeira
   trashedAt         DateTime?
   permanentDeleteAt DateTime?
+  expiresAt         DateTime?
+  expiryNotifiedAt  DateTime?
 
-  // validade
-  expiresAt        DateTime?
-  expiryNotifiedAt DateTime?
-
-  // tags e busca
   tags         String[] @default([])
   searchVector String?
-
-  // thumbnail
   thumbnailUrl String?
 
-  // AI
   aiClassified Boolean @default(false)
   aiCategory   String?
   aiConfidence Float?
@@ -331,7 +310,11 @@ model FileChunk {
   chunkHash  String
 
   providerFileId String
-  providerPath   String
+  providerPath   String // "CloudBase/_fragments/{nodeId}/chunk-{index}"
+
+  encryptionAlgo   String?
+  encryptionIv     String?
+  encryptionKeyRef String?
 
   status     ChunkStatus @default(PENDING)
   uploadedAt DateTime?

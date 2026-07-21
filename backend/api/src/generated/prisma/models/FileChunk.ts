@@ -53,6 +53,9 @@ export type FileChunkMinAggregateOutputType = {
   chunkHash: string | null
   providerFileId: string | null
   providerPath: string | null
+  encryptionAlgo: string | null
+  encryptionIv: string | null
+  encryptionKeyRef: string | null
   status: $Enums.ChunkStatus | null
   uploadedAt: Date | null
   verifiedAt: Date | null
@@ -72,6 +75,9 @@ export type FileChunkMaxAggregateOutputType = {
   chunkHash: string | null
   providerFileId: string | null
   providerPath: string | null
+  encryptionAlgo: string | null
+  encryptionIv: string | null
+  encryptionKeyRef: string | null
   status: $Enums.ChunkStatus | null
   uploadedAt: Date | null
   verifiedAt: Date | null
@@ -91,6 +97,9 @@ export type FileChunkCountAggregateOutputType = {
   chunkHash: number
   providerFileId: number
   providerPath: number
+  encryptionAlgo: number
+  encryptionIv: number
+  encryptionKeyRef: number
   status: number
   uploadedAt: number
   verifiedAt: number
@@ -128,6 +137,9 @@ export type FileChunkMinAggregateInputType = {
   chunkHash?: true
   providerFileId?: true
   providerPath?: true
+  encryptionAlgo?: true
+  encryptionIv?: true
+  encryptionKeyRef?: true
   status?: true
   uploadedAt?: true
   verifiedAt?: true
@@ -147,6 +159,9 @@ export type FileChunkMaxAggregateInputType = {
   chunkHash?: true
   providerFileId?: true
   providerPath?: true
+  encryptionAlgo?: true
+  encryptionIv?: true
+  encryptionKeyRef?: true
   status?: true
   uploadedAt?: true
   verifiedAt?: true
@@ -166,6 +181,9 @@ export type FileChunkCountAggregateInputType = {
   chunkHash?: true
   providerFileId?: true
   providerPath?: true
+  encryptionAlgo?: true
+  encryptionIv?: true
+  encryptionKeyRef?: true
   status?: true
   uploadedAt?: true
   verifiedAt?: true
@@ -272,6 +290,9 @@ export type FileChunkGroupByOutputType = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo: string | null
+  encryptionIv: string | null
+  encryptionKeyRef: string | null
   status: $Enums.ChunkStatus
   uploadedAt: Date | null
   verifiedAt: Date | null
@@ -314,6 +335,9 @@ export type FileChunkWhereInput = {
   chunkHash?: Prisma.StringFilter<"FileChunk"> | string
   providerFileId?: Prisma.StringFilter<"FileChunk"> | string
   providerPath?: Prisma.StringFilter<"FileChunk"> | string
+  encryptionAlgo?: Prisma.StringNullableFilter<"FileChunk"> | string | null
+  encryptionIv?: Prisma.StringNullableFilter<"FileChunk"> | string | null
+  encryptionKeyRef?: Prisma.StringNullableFilter<"FileChunk"> | string | null
   status?: Prisma.EnumChunkStatusFilter<"FileChunk"> | $Enums.ChunkStatus
   uploadedAt?: Prisma.DateTimeNullableFilter<"FileChunk"> | Date | string | null
   verifiedAt?: Prisma.DateTimeNullableFilter<"FileChunk"> | Date | string | null
@@ -335,6 +359,9 @@ export type FileChunkOrderByWithRelationInput = {
   chunkHash?: Prisma.SortOrder
   providerFileId?: Prisma.SortOrder
   providerPath?: Prisma.SortOrder
+  encryptionAlgo?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionIv?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionKeyRef?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -360,6 +387,9 @@ export type FileChunkWhereUniqueInput = Prisma.AtLeast<{
   chunkHash?: Prisma.StringFilter<"FileChunk"> | string
   providerFileId?: Prisma.StringFilter<"FileChunk"> | string
   providerPath?: Prisma.StringFilter<"FileChunk"> | string
+  encryptionAlgo?: Prisma.StringNullableFilter<"FileChunk"> | string | null
+  encryptionIv?: Prisma.StringNullableFilter<"FileChunk"> | string | null
+  encryptionKeyRef?: Prisma.StringNullableFilter<"FileChunk"> | string | null
   status?: Prisma.EnumChunkStatusFilter<"FileChunk"> | $Enums.ChunkStatus
   uploadedAt?: Prisma.DateTimeNullableFilter<"FileChunk"> | Date | string | null
   verifiedAt?: Prisma.DateTimeNullableFilter<"FileChunk"> | Date | string | null
@@ -381,6 +411,9 @@ export type FileChunkOrderByWithAggregationInput = {
   chunkHash?: Prisma.SortOrder
   providerFileId?: Prisma.SortOrder
   providerPath?: Prisma.SortOrder
+  encryptionAlgo?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionIv?: Prisma.SortOrderInput | Prisma.SortOrder
+  encryptionKeyRef?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -408,6 +441,9 @@ export type FileChunkScalarWhereWithAggregatesInput = {
   chunkHash?: Prisma.StringWithAggregatesFilter<"FileChunk"> | string
   providerFileId?: Prisma.StringWithAggregatesFilter<"FileChunk"> | string
   providerPath?: Prisma.StringWithAggregatesFilter<"FileChunk"> | string
+  encryptionAlgo?: Prisma.StringNullableWithAggregatesFilter<"FileChunk"> | string | null
+  encryptionIv?: Prisma.StringNullableWithAggregatesFilter<"FileChunk"> | string | null
+  encryptionKeyRef?: Prisma.StringNullableWithAggregatesFilter<"FileChunk"> | string | null
   status?: Prisma.EnumChunkStatusWithAggregatesFilter<"FileChunk"> | $Enums.ChunkStatus
   uploadedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FileChunk"> | Date | string | null
   verifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FileChunk"> | Date | string | null
@@ -425,6 +461,9 @@ export type FileChunkCreateInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -446,6 +485,9 @@ export type FileChunkUncheckedCreateInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -463,6 +505,9 @@ export type FileChunkUpdateInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -484,6 +529,9 @@ export type FileChunkUncheckedUpdateInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -503,6 +551,9 @@ export type FileChunkCreateManyInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -520,6 +571,9 @@ export type FileChunkUpdateManyMutationInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -539,6 +593,9 @@ export type FileChunkUncheckedUpdateManyInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -573,6 +630,9 @@ export type FileChunkCountOrderByAggregateInput = {
   chunkHash?: Prisma.SortOrder
   providerFileId?: Prisma.SortOrder
   providerPath?: Prisma.SortOrder
+  encryptionAlgo?: Prisma.SortOrder
+  encryptionIv?: Prisma.SortOrder
+  encryptionKeyRef?: Prisma.SortOrder
   status?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
@@ -600,6 +660,9 @@ export type FileChunkMaxOrderByAggregateInput = {
   chunkHash?: Prisma.SortOrder
   providerFileId?: Prisma.SortOrder
   providerPath?: Prisma.SortOrder
+  encryptionAlgo?: Prisma.SortOrder
+  encryptionIv?: Prisma.SortOrder
+  encryptionKeyRef?: Prisma.SortOrder
   status?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
@@ -619,6 +682,9 @@ export type FileChunkMinOrderByAggregateInput = {
   chunkHash?: Prisma.SortOrder
   providerFileId?: Prisma.SortOrder
   providerPath?: Prisma.SortOrder
+  encryptionAlgo?: Prisma.SortOrder
+  encryptionIv?: Prisma.SortOrder
+  encryptionKeyRef?: Prisma.SortOrder
   status?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
@@ -740,6 +806,9 @@ export type FileChunkCreateWithoutDriverInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -759,6 +828,9 @@ export type FileChunkUncheckedCreateWithoutDriverInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -807,6 +879,9 @@ export type FileChunkScalarWhereInput = {
   chunkHash?: Prisma.StringFilter<"FileChunk"> | string
   providerFileId?: Prisma.StringFilter<"FileChunk"> | string
   providerPath?: Prisma.StringFilter<"FileChunk"> | string
+  encryptionAlgo?: Prisma.StringNullableFilter<"FileChunk"> | string | null
+  encryptionIv?: Prisma.StringNullableFilter<"FileChunk"> | string | null
+  encryptionKeyRef?: Prisma.StringNullableFilter<"FileChunk"> | string | null
   status?: Prisma.EnumChunkStatusFilter<"FileChunk"> | $Enums.ChunkStatus
   uploadedAt?: Prisma.DateTimeNullableFilter<"FileChunk"> | Date | string | null
   verifiedAt?: Prisma.DateTimeNullableFilter<"FileChunk"> | Date | string | null
@@ -824,6 +899,9 @@ export type FileChunkCreateWithoutNodeInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -843,6 +921,9 @@ export type FileChunkUncheckedCreateWithoutNodeInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -887,6 +968,9 @@ export type FileChunkCreateManyDriverInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -904,6 +988,9 @@ export type FileChunkUpdateWithoutDriverInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -923,6 +1010,9 @@ export type FileChunkUncheckedUpdateWithoutDriverInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -941,6 +1031,9 @@ export type FileChunkUncheckedUpdateManyWithoutDriverInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -959,6 +1052,9 @@ export type FileChunkCreateManyNodeInput = {
   chunkHash: string
   providerFileId: string
   providerPath: string
+  encryptionAlgo?: string | null
+  encryptionIv?: string | null
+  encryptionKeyRef?: string | null
   status?: $Enums.ChunkStatus
   uploadedAt?: Date | string | null
   verifiedAt?: Date | string | null
@@ -976,6 +1072,9 @@ export type FileChunkUpdateWithoutNodeInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -995,6 +1094,9 @@ export type FileChunkUncheckedUpdateWithoutNodeInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1013,6 +1115,9 @@ export type FileChunkUncheckedUpdateManyWithoutNodeInput = {
   chunkHash?: Prisma.StringFieldUpdateOperationsInput | string
   providerFileId?: Prisma.StringFieldUpdateOperationsInput | string
   providerPath?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptionAlgo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionIv?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  encryptionKeyRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumChunkStatusFieldUpdateOperationsInput | $Enums.ChunkStatus
   uploadedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1034,6 +1139,9 @@ export type FileChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   chunkHash?: boolean
   providerFileId?: boolean
   providerPath?: boolean
+  encryptionAlgo?: boolean
+  encryptionIv?: boolean
+  encryptionKeyRef?: boolean
   status?: boolean
   uploadedAt?: boolean
   verifiedAt?: boolean
@@ -1055,6 +1163,9 @@ export type FileChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   chunkHash?: boolean
   providerFileId?: boolean
   providerPath?: boolean
+  encryptionAlgo?: boolean
+  encryptionIv?: boolean
+  encryptionKeyRef?: boolean
   status?: boolean
   uploadedAt?: boolean
   verifiedAt?: boolean
@@ -1076,6 +1187,9 @@ export type FileChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   chunkHash?: boolean
   providerFileId?: boolean
   providerPath?: boolean
+  encryptionAlgo?: boolean
+  encryptionIv?: boolean
+  encryptionKeyRef?: boolean
   status?: boolean
   uploadedAt?: boolean
   verifiedAt?: boolean
@@ -1097,6 +1211,9 @@ export type FileChunkSelectScalar = {
   chunkHash?: boolean
   providerFileId?: boolean
   providerPath?: boolean
+  encryptionAlgo?: boolean
+  encryptionIv?: boolean
+  encryptionKeyRef?: boolean
   status?: boolean
   uploadedAt?: boolean
   verifiedAt?: boolean
@@ -1105,7 +1222,7 @@ export type FileChunkSelectScalar = {
   updatedAt?: boolean
 }
 
-export type FileChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nodeId" | "driverId" | "chunkIndex" | "size" | "byteStart" | "byteEnd" | "chunkHash" | "providerFileId" | "providerPath" | "status" | "uploadedAt" | "verifiedAt" | "errorCount" | "createdAt" | "updatedAt", ExtArgs["result"]["fileChunk"]>
+export type FileChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nodeId" | "driverId" | "chunkIndex" | "size" | "byteStart" | "byteEnd" | "chunkHash" | "providerFileId" | "providerPath" | "encryptionAlgo" | "encryptionIv" | "encryptionKeyRef" | "status" | "uploadedAt" | "verifiedAt" | "errorCount" | "createdAt" | "updatedAt", ExtArgs["result"]["fileChunk"]>
 export type FileChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   node?: boolean | Prisma.NodeDefaultArgs<ExtArgs>
   driver?: boolean | Prisma.DriverDefaultArgs<ExtArgs>
@@ -1136,6 +1253,9 @@ export type $FileChunkPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     chunkHash: string
     providerFileId: string
     providerPath: string
+    encryptionAlgo: string | null
+    encryptionIv: string | null
+    encryptionKeyRef: string | null
     status: $Enums.ChunkStatus
     uploadedAt: Date | null
     verifiedAt: Date | null
@@ -1577,6 +1697,9 @@ export interface FileChunkFieldRefs {
   readonly chunkHash: Prisma.FieldRef<"FileChunk", 'String'>
   readonly providerFileId: Prisma.FieldRef<"FileChunk", 'String'>
   readonly providerPath: Prisma.FieldRef<"FileChunk", 'String'>
+  readonly encryptionAlgo: Prisma.FieldRef<"FileChunk", 'String'>
+  readonly encryptionIv: Prisma.FieldRef<"FileChunk", 'String'>
+  readonly encryptionKeyRef: Prisma.FieldRef<"FileChunk", 'String'>
   readonly status: Prisma.FieldRef<"FileChunk", 'ChunkStatus'>
   readonly uploadedAt: Prisma.FieldRef<"FileChunk", 'DateTime'>
   readonly verifiedAt: Prisma.FieldRef<"FileChunk", 'DateTime'>

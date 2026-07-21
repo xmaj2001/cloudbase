@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -13,16 +14,43 @@ export function Footer() {
           </p>
         </div>
         {[
-          { title: "Produto", items: ["Armazenamento", "Fragmentação", "Automação", "IA"] },
-          { title: "Plataforma", items: ["WhatsApp Bot", "Agent", "API", "VPS"] },
-          { title: "Empresa", items: ["Roadmap", "Blog", "Comunidade", "Contacto"] },
+          {
+            title: "Produto",
+            items: [
+              { label: "Armazenamento", href: "/#unificado" },
+              { label: "Fragmentação", href: "/#fragmentacao" },
+              { label: "Automação", href: "/#automacao" },
+              { label: "Planos", href: "/#planos" },
+              { label: "IA", href: "/docs#inteligencia-artificial" },
+            ],
+          },
+          {
+            title: "Plataforma",
+            items: [
+              { label: "WhatsApp Bot", href: "/docs#whatsapp" },
+              { label: "CloudBase Agent", href: "/docs#rede-dispositivos" },
+              { label: "SDK & API", href: "/docs/developers" },
+              { label: "Documentação", href: "/docs" },
+            ],
+          },
+          {
+            title: "Empresa",
+            items: [
+              { label: "Roadmap", href: "/#roadmap" },
+              { label: "Blog", href: "#" },
+              { label: "Comunidade", href: "#" },
+              { label: "Contacto", href: "#" },
+            ],
+          },
         ].map((col) => (
           <div key={col.title}>
             <h4 className="text-xs uppercase tracking-widest text-muted-foreground mb-4">{col.title}</h4>
             <ul className="space-y-2.5">
-              {col.items.map((i) => (
-                <li key={i}>
-                  <a href="#" className="text-sm hover:underline underline-offset-4">{i}</a>
+              {col.items.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="text-sm hover:underline underline-offset-4">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
