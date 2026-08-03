@@ -14,9 +14,9 @@ import { Scheduled } from "@/components/landing/Scheduled";
 import { ShareSystem } from "@/components/landing/ShareSystem";
 import { Unified } from "@/components/landing/Unified";
 import { Whatsapp } from "@/components/landing/Whatsapp";
-import { NavBar } from "@/components/navbar";
+import { Navbar, NavBar } from "@/components/navbar";
 import { motion } from "framer-motion";
-import {  ArrowLeft, Mail, Bell } from "lucide-react";
+import { ArrowLeft, Mail, Bell } from "lucide-react";
 import Link from "next/link";
 
 // export default function PageIndex() {
@@ -46,7 +46,7 @@ import Link from "next/link";
 export default function PageIndex() {
   return (
     <main className="relative min-h-screen w-full overflow-hidden bg-background text-foreground">
-      {/* ambient glows */}
+      <Navbar />
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-foreground/[0.03] blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-foreground/[0.02] blur-3xl" />
@@ -58,8 +58,11 @@ export default function PageIndex() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Link href="/" className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors">
-            <img src={'/logo.png'} alt="CloudBase" className="h-5 w-5" />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <img src={"/logo.png"} alt="CloudBase" className="h-5 w-5" />
             <span>CloudBase</span>
           </Link>
         </motion.div>
@@ -71,7 +74,7 @@ export default function PageIndex() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         >
           <motion.img
-            src={'/logo.png'}
+            src={"/logo.png"}
             alt="CloudBase"
             className="h-full w-full object-contain"
             animate={{ y: [0, -14, 0], rotate: [-2, 2, -2] }}
@@ -108,7 +111,8 @@ export default function PageIndex() {
           className="mt-6 max-w-lg text-lg text-muted-foreground leading-relaxed"
         >
           A plataforma CloudBase está quase pronta. Em breve poderás agregar,
-          fragmentar e gerir o teu armazenamento num só sítio — sem custos mensais.
+          fragmentar e gerir o teu armazenamento num só sítio — sem custos
+          mensais.
         </motion.p>
 
         <NotifyForm />
