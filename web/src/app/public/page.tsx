@@ -4,7 +4,6 @@ import {
   Search, Upload, Send, Music, Film, Image as ImageIcon, AppWindow,
   BookOpen, Archive, Gamepad2, LayoutGrid, Download, Heart, Clock,
 } from "lucide-react";
-import logo from "@/assets/logo.png";
 import Link from "next/link";
 import { ModeToggle } from "@/components/mode-toggle";
 import { PUBLIC_FILES, PUBLIC_FILTERS, PublicKind } from "@/lib/public-files";

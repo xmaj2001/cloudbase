@@ -14,15 +14,12 @@ import { Scheduled } from "@/components/landing/Scheduled";
 import { ShareSystem } from "@/components/landing/ShareSystem";
 import { Unified } from "@/components/landing/Unified";
 import { Whatsapp } from "@/components/landing/Whatsapp";
-import { NavBar } from "@/components/navbar";
-import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Bell } from "lucide-react";
-import Link from "next/link";
+import { Navbar } from "@/components/navbar";
 
 export default function PageIndex() {
   return (
     <div className="bg-background text-foreground">
-      <NavBar />
+      <Navbar />
       <main>
         <Hero />
         <Unified />
