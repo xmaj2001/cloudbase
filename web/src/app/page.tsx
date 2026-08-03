@@ -8,6 +8,9 @@ import Link from "next/link";
 export default function PageIndex() {
   return (
     <main className="relative min-h-screen w-full overflow-hidden bg-background text-foreground">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:36px_36px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-tr from-neutral-800/20 via-neutral-500/10 to-transparent blur-3xl pointer-events-none rounded-full" />
+
       <Navbar />
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-foreground/[0.03] blur-3xl" />
@@ -51,7 +54,7 @@ export default function PageIndex() {
           transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="mt-10"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-1.5 text-xs mono">
+          <span className="inline-flex items-center gap-2 rounded-full text-muted-foreground border border-hairline bg-surface px-3 py-1.5 text-xs mono">
             <span className="size-1.5 rounded-full bg-foreground animate-pulse" />
             Lançamento iminente
           </span>
