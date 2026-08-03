@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
-import { ApiEnvelope } from "../api/api.types";
 import { ApiUserSession } from "./user";
+import { ApiEnvelope } from "@/api/core/api.types";
 
 export async function getServerSession() {
   const res = await fetch(`${process.env.API_URL}/auth/me`, {
