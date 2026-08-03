@@ -1,47 +1,9 @@
 "use client";
 
-import { Footer } from "@/components/footer";
-import { Automation } from "@/components/landing/Automation";
-import { Comparison } from "@/components/landing/Comparison";
-import { CTA } from "@/components/landing/CTA";
-import { DevPreview } from "@/components/landing/DevPreview";
-import { FeatureGrid } from "@/components/landing/FeatureGrid";
-import { Fragmentation } from "@/components/landing/Fragmentation";
-import { Hero } from "@/components/landing/Hero";
-import { Pricing } from "@/components/landing/Pricing";
-import { Roadmap } from "@/components/landing/Roadmap";
-import { Scheduled } from "@/components/landing/Scheduled";
-import { ShareSystem } from "@/components/landing/ShareSystem";
-import { Unified } from "@/components/landing/Unified";
-import { Whatsapp } from "@/components/landing/Whatsapp";
-import { Navbar, NavBar } from "@/components/navbar";
+import { Navbar } from "@/components/navbar";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Bell } from "lucide-react";
+import { Mail, Bell } from "lucide-react";
 import Link from "next/link";
-
-// export default function PageIndex() {
-//   return (
-//     <div className="bg-background text-foreground">
-//       <NavBar />
-//       <main>
-//         <Hero />
-//         <Unified />
-//         <Fragmentation />
-//         <Automation />
-//         <ShareSystem />
-//         <Scheduled />
-//         <FeatureGrid />
-//         <Whatsapp />
-//         <DevPreview />
-//         <Pricing />
-//         <Comparison />
-//         <Roadmap />
-//         <CTA />
-//       </main>
-//       <Footer />
-//     </div>
-//   );
-// }
 
 export default function PageIndex() {
   return (
@@ -142,30 +104,32 @@ function NotifyForm() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-10 w-full max-w-md"
+      className="mt-10 w-full max-w-md px-2 sm:px-0"
       onSubmit={(e) => e.preventDefault()}
     >
-      <div className="flex items-center gap-2 rounded-full border border-hairline bg-surface p-1.5 pl-4 focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/10 transition-all">
-        <Mail className="size-4 text-muted-foreground shrink-0" />
-        <label htmlFor="notify-email" className="sr-only">
-          Endereço de email
-        </label>
-        <input
-          id="notify-email"
-          type="email"
-          placeholder="O teu email para ser notificado"
-          className="flex-1 bg-transparent px-2 py-2 text-sm outline-none placeholder:text-muted-foreground"
-          required
-        />
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 rounded-2xl sm:rounded-full border border-hairline bg-surface p-1.5 focus-within:border-foreground/30 focus-within:ring-1 focus-within:ring-foreground/10 transition-all">
+        <div className="flex items-center gap-2 flex-1 pl-3 pr-2 py-1">
+          <Mail className="size-4 text-muted-foreground shrink-0" />
+          <label htmlFor="notify-email" className="sr-only">
+            Endereço de email
+          </label>
+          <input
+            id="notify-email"
+            type="email"
+            placeholder="O teu email para ser notificado"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            required
+          />
+        </div>
         <button
           type="submit"
-          className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90 transition-opacity"
+          className="inline-flex items-center justify-center gap-2 rounded-xl sm:rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90 transition-opacity shrink-0"
         >
           <Bell className="size-4" />
           Notificar-me
         </button>
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">
+      <p className="mt-3 text-xs text-muted-foreground text-center">
         Sem spam. Apenas uma notificação no dia do lançamento.
       </p>
     </motion.form>
