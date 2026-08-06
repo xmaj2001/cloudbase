@@ -80,7 +80,7 @@ export default function ConnectDriverPage() {
     connect.mutate(payload, {
       onSuccess: () => {
         setDone(true);
-        setTimeout(() => router.push("/storage/drivers"), 1000);
+        // setTimeout(() => router.push("/system/drivers"), 1000);
       },
       onError: (error) => {
         console.error("Erro ao conectar:", error);
@@ -92,7 +92,7 @@ export default function ConnectDriverPage() {
     <>
       <div className="mb-6">
         <Link
-          href="/storage/drivers"
+          href="/system/drivers"
           className="inline-flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition"
         >
           <ArrowLeft className="size-3.5" /> Todos os drivers
@@ -111,10 +111,10 @@ export default function ConnectDriverPage() {
                 onClick={() => (complete || n === 1) && setStep(n)}
                 disabled={!complete && !active && n !== 1 ? true : false}
                 className={`flex items-center gap-2 h-8 px-3 rounded-full text-[11px] mono transition ${active
-                    ? "bg-foreground text-background"
-                    : complete
-                      ? "bg-surface-2 text-foreground hover:bg-surface-2/70"
-                      : "bg-transparent text-muted-foreground border border-hairline"
+                  ? "bg-foreground text-background"
+                  : complete
+                    ? "bg-surface-2 text-foreground hover:bg-surface-2/70"
+                    : "bg-transparent text-muted-foreground border border-hairline"
                   }`}
               >
                 <span className="tabular-nums">0{n}</span>

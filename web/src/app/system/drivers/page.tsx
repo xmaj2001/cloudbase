@@ -8,6 +8,9 @@ import { DriverCard } from "./_components/driver-card";
 import { ConnectDriverFab } from "./_components/connect-driver-fab";
 import { useRouter } from "next/navigation";
 import { useDrivers, useDriversSummary } from "@/api/drivers";
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 
 function bytesToGb(bytes: string | number | bigint | null | undefined): number {
   if (!bytes) return 0;
@@ -35,6 +38,7 @@ export default function DriversPage() {
 
   return (
     <>
+
       <DriversKpis
         totalGb={bytesToGb(driversSummary?.totalGb)}
         usedGb={bytesToGb(driversSummary?.usedGb)}
