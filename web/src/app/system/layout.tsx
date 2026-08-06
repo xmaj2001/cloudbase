@@ -18,7 +18,9 @@ export default async function Layout({
           <SidebarProvider>
             <AppSidebar session={session} />
             <SidebarInset>
-              {children}
+              <div className="p-4 pt-0">
+                {children}
+              </div>
             </SidebarInset>
           </SidebarProvider>
         </TooltipProvider>

@@ -15,8 +15,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { TerminalSquareIcon, BotIcon, BookOpenIcon, Settings2Icon, LifeBuoyIcon, SendIcon, FrameIcon, PieChartIcon, MapIcon, TerminalIcon } from "lucide-react"
+import { LifeBuoyIcon, SendIcon, FrameIcon, PieChartIcon, MapIcon, Home, HistoryIcon, FolderTree, HardDrive, Users, Share2, Globe2, Trash2 } from "lucide-react"
 import { AuthSession } from "@/api/core/get-session.server"
+import Image from "next/image"
 
 const data = {
   user: {
@@ -26,101 +27,46 @@ const data = {
   },
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: (
-        <TerminalSquareIcon
-        />
-      ),
+      title: "Inicio",
+      url: "/system",
+      icon: Home,
       isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: (
-        <BotIcon
-        />
-      ),
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+      title: "Recentes",
+      url: "/system/recent",
+      icon: HistoryIcon,
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: (
-        <BookOpenIcon
-        />
-      ),
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
+      title: "Explorador",
+      url: "/system/explorer",
+      icon: FolderTree,
+
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: (
-        <Settings2Icon
-        />
-      ),
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      title: "Drivers",
+      url: "/system/drivers",
+      icon: HardDrive,
+    },
+    {
+      title: "Grupos",
+      url: "/system/groups",
+      icon: Users,
+    },
+    {
+      title: "Partilhados",
+      url: "/system/shared",
+      icon: Share2,
+    },
+    {
+      title: "Área Pública",
+      url: "/system/public",
+      icon: Globe2,
+    },
+    {
+      title: "Lixeira",
+      url: "/system/trash",
+      icon: Trash2,
     },
   ],
   navSecondary: [
@@ -180,13 +126,19 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <TerminalIcon className="size-4" />
+              <a href="/system">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
+                  <Image
+                    src="/logo.png"
+                    alt="Cloudbase"
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                  />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-medium">Cloudbase</span>
+                  <span className="truncate text-xs">v0.0.1</span>
                 </div>
               </a>
             </SidebarMenuButton>
