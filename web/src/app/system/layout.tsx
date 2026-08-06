@@ -1,6 +1,8 @@
 import { requireSession } from "@/api/core/require-session";
+import { AppSidebar } from "@/components/app-sidebar";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default async function Layout({
@@ -13,9 +15,12 @@ export default async function Layout({
     <QueryProvider>
       <SessionProvider session={session}>
         <TooltipProvider>
-          <div className="flex bg-background text-foreground min-h-screen">
-            <div className="flex-1 min-w-0">{children}</div>
-          </div>
+          <SidebarProvider>
+            <AppSidebar session={session} />
+            <SidebarInset>
+              {children}
+            </SidebarInset>
+          </SidebarProvider>
         </TooltipProvider>
       </SessionProvider>
     </QueryProvider>
