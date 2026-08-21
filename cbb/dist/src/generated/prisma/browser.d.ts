@@ -1,0 +1,14 @@
+import * as Prisma from './internal/prismaNamespaceBrowser.js';
+export { Prisma };
+export * as $Enums from './enums.js';
+export * from './enums.js';
+export type User = Prisma.UserModel;
+export type Session = Prisma.SessionModel;
+export type Account = Prisma.AccountModel;
+export type Verification = Prisma.VerificationModel;
+export type OauthApplication = Prisma.OauthApplicationModel;
+export type OauthAccessToken = Prisma.OauthAccessTokenModel;
+export type OauthConsent = Prisma.OauthConsentModel;
+export type Provider = Prisma.ProviderModel;
+export type Node = Prisma.NodeModel;
+export type FileChunk = Prisma.FileChunkModel;

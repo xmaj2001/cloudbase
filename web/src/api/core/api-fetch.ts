@@ -5,7 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_URL || "";
 
 export async function apiFetch<T>(
   url: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<T> {
   try {
     const response = await fetch(`${API_URL}/api/${url}`, {
@@ -28,6 +28,8 @@ export async function apiFetch<T>(
       throw error;
     }
     // Trata falhas físicas de rede (CORS, sem internet, DNS)
-    throw new Error(`Falha na comunicação com o BFF: ${error instanceof Error ? error.message : "Erro de rede"}`);
+    throw new Error(
+      `Falha na comunicação com o BFF: ${error instanceof Error ? error.message : "Erro de rede"}`,
+    );
   }
 }

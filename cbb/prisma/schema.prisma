@@ -1,0 +1,271 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════════════════════════════════════════
+// USER
+// ═══════════════════════════════════════════════════
+
+model User {
+  id            String  @id @default(uuid())
+  email         String  @unique
+  name          String
+  emailVerified Boolean @default(false)
+  image         String?
+  passwordHash  String?
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime?
+  sessions          Session[]
+  accounts          Account[]
+  oauthApplications OauthApplication[]
+  oauthAccessTokens OauthAccessToken[]
+  oauthConsents     OauthConsent[]
+  providers         Provider[]
+  nodes             Node[]
+
+  @@map("users")
+}
+
+// ═══════════════════════════════════════════════════
+// BETTER AUTH
+// ═══════════════════════════════════════════════════
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model OauthApplication {
+  id                String             @id
+  name              String
+  icon              String?
+  metadata          String?
+  clientId          String
+  clientSecret      String?
+  redirectUrls      String
+  type              String
+  disabled          Boolean?           @default(false)
+  userId            String?
+  user              User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime
+  updatedAt         DateTime
+  oauthaccesstokens OauthAccessToken[]
+  oauthconsents     OauthConsent[]
+
+  @@unique([clientId])
+  @@index([userId])
+  @@map("oauthApplication")
+}
+
+model OauthAccessToken {
+  id                    String           @id
+  accessToken           String
+  refreshToken          String
+  accessTokenExpiresAt  DateTime
+  refreshTokenExpiresAt DateTime
+  clientId              String
+  oauthapplication      OauthApplication @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  userId                String?
+  user                  User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scopes                String
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@unique([accessToken])
+  @@unique([refreshToken])
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauthAccessToken")
+}
+
+model OauthConsent {
+  id               String           @id
+  clientId         String
+  oauthapplication OauthApplication @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  userId           String
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scopes           String
+  createdAt        DateTime
+  updatedAt        DateTime
+  consentGiven     Boolean
+
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauthConsent")
+}
+
+// ═══════════════════════════════════════════════════
+// STORAGE Providers
+// ═══════════════════════════════════════════════════
+enum ProviderType {
+  GOOGLE_DRIVE
+  ONEDRIVE
+  TELEGRAM
+  CLOUDINARY
+  MEGA
+  DROPBOX
+  BOX
+  PCLOUD
+  YANDEX
+  VPS
+  LOCAL_MACHINE
+}
+
+model Provider {
+  id     String       @id @default(uuid())
+  userId String
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type   ProviderType
+
+  displayName String
+  isActive    Boolean @default(true)
+  priority    Int     @default(0)
+
+  credentials Json
+  folderPath  String?
+
+  lastSyncAt DateTime?
+  syncError  String?
+
+  totalSpace     BigInt?
+  usedSpace      BigInt?
+  availableSpace BigInt?
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  nodes      Node[]
+  fileChunks FileChunk[]
+
+  @@unique([userId, type, id])
+  @@map("providers")
+}
+
+// ═══════════════════════════════════════════════════
+// NODE
+// ═══════════════════════════════════════════════════
+
+enum NodeType {
+  FILE
+  FOLDER
+}
+
+model Node {
+  id     String   @id @default(uuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type   NodeType
+
+  name      String
+  mimeType  String?
+  extension String?
+  size      BigInt?
+
+  isFragmented Boolean @default(false)
+  totalChunks  Int     @default(1)
+  originalHash String?
+
+  providerId        String
+  Provider          Provider  @relation(fields: [providerId], references: [id])
+  providerFileId    String?
+  providerPath      String? @default("CloudBase/")
+  providerCreatedAt DateTime?
+  providerUpdatedAt DateTime?
+
+  parentId String?
+  parent   Node?   @relation("NodeHierarchy", fields: [parentId], references: [id])
+  children Node[]  @relation("NodeHierarchy")
+
+  trashedAt  DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  fileChunks FileChunk[]
+
+  @@map("nodes")
+}
+
+// ═══════════════════════════════════════════════════
+// FILE CHUNK
+// ═══════════════════════════════════════════════════
+model FileChunk {
+  id String @id @default(uuid())
+
+  chunkIndex Int
+  size       BigInt
+  startByte  BigInt
+  endByte    BigInt
+  chunkHash  String
+
+  nodeId String
+  node   Node   @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  providerId        String
+  Provider          Provider  @relation(fields: [providerId], references: [id])
+  providerFileId    String?
+  providerPath      String? @default("CloudBase/_fragments/")
+  providerCreatedAt DateTime?
+  providerUpdatedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([nodeId, chunkIndex])
+  @@index([nodeId])
+  @@index([providerId])
+  @@map("file_chunks")
+}

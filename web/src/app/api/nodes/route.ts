@@ -1,5 +1,5 @@
+import { backendFetch } from "@/features/core/backend-fetch";
 import { NextRequest, NextResponse } from "next/server";
-import { backendFetch } from "@/api/core/backend-fetch";
 
 // GET /api/nodes -> Lista nós da raiz ou de uma pasta específica
 export async function GET(req: NextRequest) {
@@ -11,6 +11,11 @@ export async function GET(req: NextRequest) {
     const response = await backendFetch(req, endpoint);
 
     if (!response.ok) {
+      const errorData = await response.json();
+      console.error(
+        "[BFF GET /nodes] Erro ao carregar ficheiros e pastas do servidor NestJS:",
+        errorData,
+      );
       return NextResponse.json(
         { error: "Erro ao carregar ficheiros e pastas do servidor NestJS" },
         { status: response.status },

@@ -1,0 +1,1 @@
+{"version":3,"file":"_client.js","sourceRoot":"","sources":["../../../prisma/seeds/_client.ts"],"names":[],"mappings":";;;AACA,8DAAiE;AACjE,mDAA8C;AAC9C,2CAAwC;AAO/B,sFAPA,aAAK,OAOA;AALd,MAAM,OAAO,GAAG,IAAI,qBAAQ,CAAC;IAC3B,gBAAgB,EAAE,OAAO,CAAC,GAAG,CAAC,YAAsB;CACrD,CAAC,CAAC;AAEU,QAAA,MAAM,GAAG,IAAI,qBAAY,CAAC,EAAE,OAAO,EAAE,CAAC,CAAC"}

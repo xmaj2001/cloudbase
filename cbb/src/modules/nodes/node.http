@@ -1,0 +1,113 @@
+@baseUrl = http://localhost:5000/v1
+@authToken = x5LegKWVSaILZTnBRavvoEgmoghXMi6l
+@providerId = 0ead6e86-6689-42bc-8f70-954cee175c83
+@telegramProviderId = c99477cd-e1e8-4de6-a46e-09735c57b430
+
+
+### 1. Criar uma Pasta (Folder) na Raiz
+# @name createFolder
+POST {{baseUrl}}/nodes
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Filmes e Séries",
+  "type": "FOLDER",
+  "providerId": "{{providerId}}"
+}
+
+### Guardar o ID da pasta criada
+@folderId = {{createFolder.response.body.data.id}}
+
+###
+
+### 2. Criar um Ficheiro Simples (Sem Fragmentação)
+# @name createFileSimple
+POST {{baseUrl}}/nodes
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "documento_projeto.pdf",
+  "type": "FILE",
+  "mimeType": "application/pdf",
+  "extension": "pdf",
+  "size": "52428800",
+  "isFragmented": false,
+  "totalChunks": 1,
+  "originalHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "providerId": "{{providerId}}",
+  "providerFileId": "gdrive_file_id_9988",
+  "providerPath": "CloudBase/documento_projeto.pdf",
+  "parentId": "{{folderId}}"
+}
+
+###
+
+### 3. Criar um Ficheiro Fragmentado (Com Chunks/Partes)
+# @name createFileFragmented
+POST {{baseUrl}}/nodes
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "filme_4k.zip",
+  "type": "FILE",
+  "mimeType": "application/zip",
+  "extension": "zip",
+  "size": "17000000000",
+  "isFragmented": true,
+  "totalChunks": 2,
+  "originalHash": "8f4e3c2b1a5d6e7f8a9b0c1d2e3f4a5b",
+  "providerId": "{{providerId}}",
+  "parentId": null,
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "size": "16106127360",
+      "startByte": "0",
+      "endByte": "16106127360",
+      "chunkHash": "hash_part_0_abc123",
+      "providerId": "{{providerId}}",
+      "providerFileId": "gdrive_part_001",
+      "providerPath": "CloudBase/_fragments/filme_4k.zip.part0"
+    },
+    {
+      "chunkIndex": 1,
+      "size": "893872640",
+      "startByte": "16106127360",
+      "endByte": "17000000000",
+      "chunkHash": "hash_part_1_xyz789",
+      "providerId": "{{providerId}}",
+      "providerFileId": "gdrive_part_001",
+      "providerPath": "CloudBase/_fragments/filme_4k.zip.part1"
+    }
+  ]
+}
+
+### Guardar o ID do ficheiro fragmentado
+@nodeId = {{createFileFragmented.response.body.data.id}}
+
+###
+
+### 4. Listar Conteúdo da Raiz (parentId não enviado)
+GET {{baseUrl}}/nodes
+Authorization: Bearer {{authToken}}
+
+###
+
+### 5. Listar Conteúdo Dentro de uma Pasta Específica
+GET {{baseUrl}}/nodes?parentId={{folderId}}
+Authorization: Bearer {{authToken}}
+
+###
+
+### 6. Obter Detalhes Completos de um Node (Incluindo Chunks e Providers)
+GET {{baseUrl}}/nodes/{{nodeId}}
+Authorization: Bearer {{authToken}}
+
+###
+
+### 7. Mover Ficheiro/Pasta para a Reciclagem (Trash)
+DELETE {{baseUrl}}/nodes/{{nodeId}}/trash
+Authorization: Bearer {{authToken}}
