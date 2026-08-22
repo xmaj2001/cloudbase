@@ -11,20 +11,34 @@ const plugins = [(0, plugins_1.bearer)(), (0, plugins_1.oneTap)()];
 const prisma = new client_1.PrismaClient({
     adapter: new adapter_pg_1.PrismaPg({ connectionString: process.env.DATABASE_URL }),
 });
-function createBetterAuth() {
-    const prisma = new client_1.PrismaClient({
-        adapter: new adapter_pg_1.PrismaPg({ connectionString: process.env.DATABASE_URL }),
-    });
-    return (0, better_auth_1.betterAuth)({
-        basePath: "/v1/api/auth",
+function createAuthConfig() {
+    return {
         database: (0, prisma_1.prismaAdapter)(prisma, { provider: "postgresql" }),
         plugins,
+        session: {
+            updateAge: 60 * 60 * 24,
+            absoluteLifetime: 60 * 60 * 24 * 30,
+            cookieCache: {
+                enabled: true,
+                maxAge: 5 * 60,
+            },
+        },
+        cookie: {
+            name: "better-auth.session_token",
+            path: "/",
+            domain: undefined,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 30,
+        },
         emailAndPassword: {
             enabled: true,
             revokeSessionsOnPasswordReset: true,
         },
         trustedOrigins: [
             "http://localhost:3000",
+            "http://localhost:5000",
         ],
         socialProviders: {
             google: {
@@ -32,24 +46,10 @@ function createBetterAuth() {
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             },
         },
-    });
+    };
 }
-exports.authServer = (0, better_auth_1.betterAuth)({
-    basePath: "/v1/api/auth",
-    database: (0, prisma_1.prismaAdapter)(prisma, { provider: "postgresql" }),
-    plugins,
-    emailAndPassword: {
-        enabled: true,
-        revokeSessionsOnPasswordReset: true,
-    },
-    trustedOrigins: [
-        "http://localhost:3000",
-    ],
-    socialProviders: {
-        google: {
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        },
-    },
-});
+function createBetterAuth() {
+    return (0, better_auth_1.betterAuth)(createAuthConfig());
+}
+exports.authServer = (0, better_auth_1.betterAuth)(createAuthConfig());
 //# sourceMappingURL=betterAuth.js.map

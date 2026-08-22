@@ -14,11 +14,11 @@ export declare class ProviderServices {
     private readonly prisma;
     constructor(prisma: PrismaService);
     create(userId: string, dto: CreateDriverDto): Promise<{
-        type: import("../../generated/prisma/enums").ProviderType;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: import("../../generated/prisma/enums").ProviderType;
         displayName: string;
         credentials: import("@prisma/client/runtime/client").JsonValue;
         priority: number;
@@ -31,11 +31,11 @@ export declare class ProviderServices {
         availableSpace: bigint | null;
     }>;
     list(userId: string): Promise<{
-        type: import("../../generated/prisma/enums").ProviderType;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: import("../../generated/prisma/enums").ProviderType;
         displayName: string;
         credentials: import("@prisma/client/runtime/client").JsonValue;
         priority: number;

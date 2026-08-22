@@ -26,6 +26,7 @@ export async function apiFetchServer<T>(
   try {
     const response = await fetch(`${BACKEND_URL}/${url}`, {
       ...options,
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         ...serverHeaders,

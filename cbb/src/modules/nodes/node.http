@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:5000/v1
-@authToken = x5LegKWVSaILZTnBRavvoEgmoghXMi6l
-@providerId = 0ead6e86-6689-42bc-8f70-954cee175c83
+@authToken = dUTRrRhd1OzxA1dopIXBQT5dZcOuZZJO
+@providerId = 56d4f035-fa7e-49d1-a105-1a96d462b401
 @telegramProviderId = c99477cd-e1e8-4de6-a46e-09735c57b430
 
 

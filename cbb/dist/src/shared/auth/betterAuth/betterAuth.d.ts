@@ -1,10 +1,26 @@
 export declare function createBetterAuth(): import("better-auth", { with: { "resolution-mode": "import" } }).Auth<{
-    basePath: string;
     database: (options: import("better-auth", { with: { "resolution-mode": "import" } }).BetterAuthOptions) => import("better-auth", { with: { "resolution-mode": "import" } }).DBAdapter<import("better-auth", { with: { "resolution-mode": "import" } }).BetterAuthOptions>;
     plugins: any[];
+    session: {
+        updateAge: number;
+        absoluteLifetime: number;
+        cookieCache: {
+            enabled: boolean;
+            maxAge: number;
+        };
+    };
+    cookie: {
+        name: string;
+        path: string;
+        domain: undefined;
+        sameSite: string;
+        secure: boolean;
+        httpOnly: boolean;
+        maxAge: number;
+    };
     emailAndPassword: {
-        enabled: true;
-        revokeSessionsOnPasswordReset: true;
+        enabled: boolean;
+        revokeSessionsOnPasswordReset: boolean;
     };
     trustedOrigins: string[];
     socialProviders: {
@@ -15,12 +31,28 @@ export declare function createBetterAuth(): import("better-auth", { with: { "res
     };
 }>;
 export declare const authServer: import("better-auth", { with: { "resolution-mode": "import" } }).Auth<{
-    basePath: string;
     database: (options: import("better-auth", { with: { "resolution-mode": "import" } }).BetterAuthOptions) => import("better-auth", { with: { "resolution-mode": "import" } }).DBAdapter<import("better-auth", { with: { "resolution-mode": "import" } }).BetterAuthOptions>;
     plugins: any[];
+    session: {
+        updateAge: number;
+        absoluteLifetime: number;
+        cookieCache: {
+            enabled: boolean;
+            maxAge: number;
+        };
+    };
+    cookie: {
+        name: string;
+        path: string;
+        domain: undefined;
+        sameSite: string;
+        secure: boolean;
+        httpOnly: boolean;
+        maxAge: number;
+    };
     emailAndPassword: {
-        enabled: true;
-        revokeSessionsOnPasswordReset: true;
+        enabled: boolean;
+        revokeSessionsOnPasswordReset: boolean;
     };
     trustedOrigins: string[];
     socialProviders: {

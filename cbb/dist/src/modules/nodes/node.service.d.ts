@@ -5,12 +5,12 @@ export declare class NodeService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     create(userId: string, dto: CreateNodeWithChunksDto): Promise<{
-        type: NodeType;
-        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: NodeType;
+        name: string;
         providerId: string;
         extension: string | null;
         isFragmented: boolean;
@@ -31,12 +31,12 @@ export declare class NodeService {
             children: number;
         };
     } & {
-        type: NodeType;
-        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: NodeType;
+        name: string;
         providerId: string;
         extension: string | null;
         isFragmented: boolean;
@@ -54,8 +54,8 @@ export declare class NodeService {
     findOne(userId: string, id: string): Promise<{
         fileChunks: ({
             Provider: {
-                type: import("src/generated/prisma/enums").ProviderType;
                 id: string;
+                type: import("src/generated/prisma/enums").ProviderType;
                 displayName: string;
             };
         } & {
@@ -75,17 +75,17 @@ export declare class NodeService {
             nodeId: string;
         })[];
         Provider: {
-            type: import("src/generated/prisma/enums").ProviderType;
             id: string;
+            type: import("src/generated/prisma/enums").ProviderType;
             displayName: string;
         };
     } & {
-        type: NodeType;
-        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: NodeType;
+        name: string;
         providerId: string;
         extension: string | null;
         isFragmented: boolean;
@@ -101,12 +101,12 @@ export declare class NodeService {
         trashedAt: Date | null;
     }>;
     moveToTrash(userId: string, id: string): Promise<{
-        type: NodeType;
-        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: NodeType;
+        name: string;
         providerId: string;
         extension: string | null;
         isFragmented: boolean;

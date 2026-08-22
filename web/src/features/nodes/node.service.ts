@@ -1,6 +1,7 @@
 import { apiFetch } from "@/api/core/api-fetch";
 import type { ApiEnvelope } from "@/api/core/api.types";
 import type { ApiNode, ApiNodeDetail, CreateNodeInput } from "./types";
+import { apiFetchServer } from "../core/api-fetch.server";
 
 /**
  * Serviço da feature nodes.
@@ -24,7 +25,7 @@ export const nodeService = {
    */
   listChildren: async (parentId?: string | null): Promise<ApiNode[]> => {
     const query = parentId ? `?parentId=${parentId}` : "";
-    const res = await apiFetch<ApiEnvelope<ApiNode[]>>(`nodes${query}`);
+    const res = await apiFetchServer<ApiEnvelope<ApiNode[]>>(`nodes${query}`);
     return res.data;
   },
 

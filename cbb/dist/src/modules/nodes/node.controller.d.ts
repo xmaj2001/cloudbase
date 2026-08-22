@@ -5,12 +5,12 @@ export declare class NodeController {
     private readonly nodesService;
     constructor(nodesService: NodeService);
     create(session: UserSession, dto: CreateNodeWithChunksDto): Promise<{
-        type: import("../../generated/prisma/enums").NodeType;
-        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: import("../../generated/prisma/enums").NodeType;
+        name: string;
         providerId: string;
         extension: string | null;
         isFragmented: boolean;
@@ -31,12 +31,12 @@ export declare class NodeController {
             children: number;
         };
     } & {
-        type: import("../../generated/prisma/enums").NodeType;
-        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: import("../../generated/prisma/enums").NodeType;
+        name: string;
         providerId: string;
         extension: string | null;
         isFragmented: boolean;
@@ -54,8 +54,8 @@ export declare class NodeController {
     findOne(session: UserSession, id: string): Promise<{
         fileChunks: ({
             Provider: {
-                type: import("../../generated/prisma/enums").ProviderType;
                 id: string;
+                type: import("../../generated/prisma/enums").ProviderType;
                 displayName: string;
             };
         } & {
@@ -75,17 +75,17 @@ export declare class NodeController {
             nodeId: string;
         })[];
         Provider: {
-            type: import("../../generated/prisma/enums").ProviderType;
             id: string;
+            type: import("../../generated/prisma/enums").ProviderType;
             displayName: string;
         };
     } & {
-        type: import("../../generated/prisma/enums").NodeType;
-        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: import("../../generated/prisma/enums").NodeType;
+        name: string;
         providerId: string;
         extension: string | null;
         isFragmented: boolean;
@@ -101,12 +101,12 @@ export declare class NodeController {
         trashedAt: Date | null;
     }>;
     moveToTrash(session: UserSession, id: string): Promise<{
-        type: import("../../generated/prisma/enums").NodeType;
-        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: import("../../generated/prisma/enums").NodeType;
+        name: string;
         providerId: string;
         extension: string | null;
         isFragmented: boolean;

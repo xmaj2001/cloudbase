@@ -1,17 +1,17 @@
-import { requireSession } from "@/api/core/require-session";
 import { AppSidebar } from "@/components/system/app-sidebar";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { TopbarStorage } from "./_components/Topbar";
+import { requireSession } from "@/features/core/require-session";
 
 export default async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await requireSession("/storage");
+  const session = await requireSession("/system");
   return (
     <QueryProvider>
       <SessionProvider session={session}>

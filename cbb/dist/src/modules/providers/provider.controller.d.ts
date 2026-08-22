@@ -6,11 +6,11 @@ export declare class ProviderController {
     constructor(service: ProviderServices);
     getSupportedProviders(): import("./provider.service").SupportedProviderInfo[];
     create(session: UserSession, dto: CreateDriverDto): Promise<{
-        type: import("../../generated/prisma/enums").ProviderType;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: import("../../generated/prisma/enums").ProviderType;
         displayName: string;
         credentials: import("@prisma/client/runtime/client").JsonValue;
         priority: number;
@@ -23,11 +23,11 @@ export declare class ProviderController {
         availableSpace: bigint | null;
     }>;
     findAll(session: UserSession): Promise<{
-        type: import("../../generated/prisma/enums").ProviderType;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        type: import("../../generated/prisma/enums").ProviderType;
         displayName: string;
         credentials: import("@prisma/client/runtime/client").JsonValue;
         priority: number;

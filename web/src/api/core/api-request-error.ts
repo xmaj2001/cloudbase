@@ -1,6 +1,5 @@
 import type { ApiResponseError, ErrorResponse, Fields } from "./api.types";
 
-
 export class ApiRequestError extends Error {
   private readonly _code: number;
   private readonly _message: string;
@@ -8,24 +7,14 @@ export class ApiRequestError extends Error {
   private readonly _path: string;
   private readonly _ts: string;
 
-  constructor(response: any) {
-    if (response?.data) {
-      super(response.data.message);
-      this.name = "ApiRequestError";
-      this._code = response.data.code;
-      this._message = response.data.message;
-      this._fields = response.data.fields || [];
-      this._path = response.path || "";
-      this._ts = response.ts || new Date().toISOString();
-    } else {
-      super(response?.error || response?.message || "Unknown error");
-      this.name = "ApiRequestError";
-      this._code = response?.status || 500;
-      this._message = response?.error || response?.message || "Unknown error";
-      this._fields = [];
-      this._path = "";
-      this._ts = new Date().toISOString();
-    }
+  constructor(response: ApiResponseError<ErrorResponse>) {
+    super(response.data.message);
+    this.name = "ApiRequestError";
+    this._code = response.data.code;
+    this._message = response.data.message;
+    this._fields = response.data.fields;
+    this._path = response.path;
+    this._ts = response.ts;
   }
 
   get code(): number {

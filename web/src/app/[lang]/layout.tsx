@@ -50,7 +50,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* <OneTapProvider /> */}
+          <OneTapProvider />
           {children}
         </ThemeProvider>
       </body>
