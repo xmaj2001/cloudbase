@@ -1,6 +1,6 @@
 import { FileText, Layers, Activity, Zap } from "lucide-react";
 
-export function DriverMetrics() {
+export function ProviderMetrics({ dict }: { dict?: any }) {
   const metrics = [
     { icon: FileText, k: "Ficheiros", v: "0" },
     { icon: Layers, k: "Fragmentos", v: "0" },

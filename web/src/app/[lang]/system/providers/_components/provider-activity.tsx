@@ -1,4 +1,4 @@
-export function DriverActivity() {
+export function ProviderActivity({ dict }: { dict?: any }) {
   const activities = [
     { t: "há 2 min", a: "Upload", f: "video-final.mp4", s: "128 MB" },
     { t: "há 24 min", a: "Fragmento sync", f: "backup.zip · chunk 12/40", s: "50 MB" },

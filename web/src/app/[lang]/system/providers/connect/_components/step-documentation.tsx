@@ -3,14 +3,17 @@
 import { motion } from "framer-motion";
 import { Info, Video, ExternalLink } from "lucide-react";
 import { ProviderHeader, SideNav, EmptyPanel } from "./shared-components";
-import { ProviderSpec } from "@/lib/api/drivers/driver-providor";
+import { ProviderSpec } from "@/components/providers/provider-spec";
 
 interface StepDocumentationProps {
   selected: ProviderSpec;
   setStep: (step: 1 | 2 | 3 | 4) => void;
 }
 
-export function StepDocumentation({ selected, setStep }: StepDocumentationProps) {
+export function StepDocumentation({
+  selected,
+  setStep,
+}: StepDocumentationProps) {
   return (
     <motion.section
       key="s2"
@@ -32,7 +35,9 @@ export function StepDocumentation({ selected, setStep }: StepDocumentationProps)
             <ol className="space-y-3">
               {selected.docs.excerpt.map((line, i) => (
                 <li key={i} className="flex gap-3 text-[13px]">
-                  <span className="mono text-[11px] text-muted-foreground w-5 shrink-0 pt-0.5">{i + 1}.</span>
+                  <span className="mono text-[11px] text-muted-foreground w-5 shrink-0 pt-0.5">
+                    {i + 1}.
+                  </span>
                   <span className="text-foreground/90">{line}</span>
                 </li>
               ))}
@@ -47,14 +52,20 @@ export function StepDocumentation({ selected, setStep }: StepDocumentationProps)
             </a>
           </div>
         ) : (
-          <EmptyPanel icon={Info} title="Sem documentação" text="Este provider ainda não tem guia detalhado." />
+          <EmptyPanel
+            icon={Info}
+            title="Sem documentação"
+            text="Este provider ainda não tem guia detalhado."
+          />
         )}
 
         {selected.video ? (
           <div className="bg-background border border-hairline rounded-2xl overflow-hidden">
             <div className="flex items-center gap-2 p-4 border-b border-hairline">
               <Video className="size-4" />
-              <h2 className="text-[14px] font-medium">{selected.video.title}</h2>
+              <h2 className="text-[14px] font-medium">
+                {selected.video.title}
+              </h2>
             </div>
             <div className="aspect-video bg-surface-2">
               <iframe
@@ -67,11 +78,19 @@ export function StepDocumentation({ selected, setStep }: StepDocumentationProps)
             </div>
           </div>
         ) : (
-          <EmptyPanel icon={Video} title="Sem vídeo" text="Ainda não temos tutorial em vídeo para este provider." />
+          <EmptyPanel
+            icon={Video}
+            title="Sem vídeo"
+            text="Ainda não temos tutorial em vídeo para este provider."
+          />
         )}
       </div>
 
-      <SideNav onBack={() => setStep(1)} onNext={() => setStep(3)} nextLabel="Continuar" />
+      <SideNav
+        onBack={() => setStep(1)}
+        onNext={() => setStep(3)}
+        nextLabel="Continuar"
+      />
     </motion.section>
   );
 }

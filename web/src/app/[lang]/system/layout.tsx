@@ -18,9 +18,13 @@ export default async function Layout({
         <TooltipProvider>
           <SidebarProvider>
             <AppSidebar session={session} />
-            <SidebarInset className="px-4 sm:px-8 pt-4 pb-6">
-              <TopbarStorage />
-              <div className="">{children}</div>
+            <SidebarInset className="flex flex-col h-screen overflow-hidden bg-background">
+              <div className="shrink-0 px-4 sm:px-6 lg:px-8">
+                <TopbarStorage />
+              </div>
+              <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-8 no-scrollbar">
+                {children}
+              </main>
             </SidebarInset>
           </SidebarProvider>
         </TooltipProvider>

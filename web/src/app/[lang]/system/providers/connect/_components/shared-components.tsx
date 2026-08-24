@@ -2,14 +2,14 @@
 
 import React from "react";
 import { ArrowRight, LucideIcon } from "lucide-react";
-import { ProviderSpec } from "@/components/drivers/driver-providor";
-import { DriverIcon } from "@/components/drivers/driver-icon";
+import { ProviderSpec } from "@/components/providers/provider-spec";
+import { ProviderIcon } from "@/components/providers/provider-icon";
 
 export function ProviderHeader({ p }: { p: ProviderSpec }) {
   return (
     <div className="bg-background border border-hairline rounded-2xl p-5 flex items-center gap-4">
       <div className="h-12 w-12 rounded-xl bg-surface-2 grid place-items-center">
-        <DriverIcon type={p.type} className="size-6" />
+        <ProviderIcon type={p.type} className="size-6" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-[15px] font-medium">{p.name}</div>
@@ -22,8 +22,16 @@ export function ProviderHeader({ p }: { p: ProviderSpec }) {
   );
 }
 
-export function SideNav({ onBack, onNext, nextLabel, disabled }: {
-  onBack: () => void; onNext: () => void; nextLabel: string; disabled?: boolean;
+export function SideNav({
+  onBack,
+  onNext,
+  nextLabel,
+  disabled,
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  nextLabel: string;
+  disabled?: boolean;
 }) {
   return (
     <div className="space-y-3">
@@ -44,33 +52,67 @@ export function SideNav({ onBack, onNext, nextLabel, disabled }: {
   );
 }
 
-export function TermItem({ icon: Icon, title, body, danger }: {
-  icon: LucideIcon; title: string; body: string; danger?: boolean;
+export function TermItem({
+  icon: Icon,
+  title,
+  body,
+  danger,
+}: {
+  icon: LucideIcon;
+  title: string;
+  body: string;
+  danger?: boolean;
 }) {
   return (
-    <div className={`flex gap-3 p-3 rounded-lg ${danger ? "bg-destructive/5 border border-destructive/20" : "bg-surface-2/50"}`}>
-      <Icon className={`size-4 mt-0.5 shrink-0 ${danger ? "text-destructive" : "text-muted-foreground"}`} />
+    <div
+      className={`flex gap-3 p-3 rounded-lg ${danger ? "bg-destructive/5 border border-destructive/20" : "bg-surface-2/50"}`}
+    >
+      <Icon
+        className={`size-4 mt-0.5 shrink-0 ${danger ? "text-destructive" : "text-muted-foreground"}`}
+      />
       <div className="min-w-0">
         <div className="text-[13px] font-medium">{title}</div>
-        <div className="text-[12px] text-muted-foreground mt-1 leading-relaxed">{body}</div>
+        <div className="text-[12px] text-muted-foreground mt-1 leading-relaxed">
+          {body}
+        </div>
       </div>
     </div>
   );
 }
 
-export function Field({ label, helper, children, full }: {
-  label: string; helper?: string; children: React.ReactNode; full?: boolean;
+export function Field({
+  label,
+  helper,
+  children,
+  full,
+}: {
+  label: string;
+  helper?: string;
+  children: React.ReactNode;
+  full?: boolean;
 }) {
   return (
     <div className={full ? "md:col-span-2" : ""}>
-      <label className="text-[11px] uppercase tracking-widest text-muted-foreground">{label}</label>
+      <label className="text-[11px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </label>
       <div className="mt-2">{children}</div>
-      {helper && <div className="mt-1.5 text-[11px] text-muted-foreground">{helper}</div>}
+      {helper && (
+        <div className="mt-1.5 text-[11px] text-muted-foreground">{helper}</div>
+      )}
     </div>
   );
 }
 
-export function EmptyPanel({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
+export function EmptyPanel({
+  icon: Icon,
+  title,
+  text,
+}: {
+  icon: LucideIcon;
+  title: string;
+  text: string;
+}) {
   return (
     <div className="bg-background border border-dashed border-hairline rounded-2xl p-8 text-center">
       <Icon className="size-5 mx-auto text-muted-foreground" />

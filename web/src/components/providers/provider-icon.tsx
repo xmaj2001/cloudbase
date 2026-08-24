@@ -41,7 +41,7 @@ const DRIVER_COLOR_MAP: Partial<Record<DriverType, string>> = {
   YANDEX: "#FC3F1D",
 };
 
-export function DriverIcon({
+export function ProviderIcon({
   type,
   className,
 }: {

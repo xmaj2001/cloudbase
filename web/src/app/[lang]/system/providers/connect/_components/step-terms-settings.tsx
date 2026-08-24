@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Shield, Folder, Lock, Pause, RefreshCw, Sparkles } from "lucide-react";
 import { ProviderHeader, TermItem, Field, SideNav } from "./shared-components";
-import { ProviderSpec } from "@/lib/api/drivers/driver-providor";
+import { ProviderSpec } from "@/components/providers/provider-spec";
 
 interface StepTermsSettingsProps {
   selected: ProviderSpec;
@@ -68,10 +68,15 @@ export function StepTermsSettings({
           />
 
           <div className="pt-2 border-t border-hairline space-y-4">
-            <Field label="Nome da pasta no driver" helper="Padrão: cloudbase. Podes personalizar.">
+            <Field
+              label="Nome da pasta no driver"
+              helper="Padrão: cloudbase. Podes personalizar."
+            >
               <input
                 value={folderName}
-                onChange={(e) => setFolderName(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""))}
+                onChange={(e) =>
+                  setFolderName(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ""))
+                }
                 className="w-full h-10 bg-surface-2 rounded-lg px-3 text-[13px] mono outline-none focus:ring-1 focus:ring-foreground"
               />
             </Field>
@@ -84,7 +89,9 @@ export function StepTermsSettings({
                 className="mt-0.5 size-4 accent-foreground"
               />
               <span className="text-[12px] text-foreground/90 leading-relaxed">
-                Aceito os termos e compreendo que apagar a pasta <span className="mono">{folderName}/_fragments</span> resulta em perda de dados.
+                Aceito os termos e compreendo que apagar a pasta{" "}
+                <span className="mono">{folderName}/_fragments</span> resulta em
+                perda de dados.
               </span>
             </label>
           </div>

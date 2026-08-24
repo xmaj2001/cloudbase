@@ -16,6 +16,10 @@ export interface ProviderSpec {
   authKind: "OAUTH" | "CREDENTIALS";
   freeQuotaGb: number | "unlimited" | "self-hosted";
   fields: FieldSpec[];
+  video?: {
+    url: string;
+    title: string;
+  };
   docs?: {
     excerpt: string[];
     url: string;
@@ -86,9 +90,25 @@ export const providers: ProviderSpec[] = [
     authKind: "CREDENTIALS",
     freeQuotaGb: 25,
     fields: [
-      { name: "cloudName", label: "Cloud Name", placeholder: "meu-cloud-name", required: true },
-      { name: "apiKey", label: "API Key", placeholder: "872xxxxxxxxxxx", required: true },
-      { name: "apiSecret", label: "API Secret", placeholder: "xxxx-xxxxx...", type: "password", required: true },
+      {
+        name: "cloudName",
+        label: "Cloud Name",
+        placeholder: "meu-cloud-name",
+        required: true,
+      },
+      {
+        name: "apiKey",
+        label: "API Key",
+        placeholder: "872xxxxxxxxxxx",
+        required: true,
+      },
+      {
+        name: "apiSecret",
+        label: "API Secret",
+        placeholder: "xxxx-xxxxx...",
+        type: "password",
+        required: true,
+      },
     ],
   },
   {
@@ -98,8 +118,18 @@ export const providers: ProviderSpec[] = [
     authKind: "CREDENTIALS",
     freeQuotaGb: 20,
     fields: [
-      { name: "accountEmail", label: "E-mail da Conta", placeholder: "user@example.com", required: true },
-      { name: "sessionToken", label: "Password / Session Token", type: "password", required: true },
+      {
+        name: "accountEmail",
+        label: "E-mail da Conta",
+        placeholder: "user@example.com",
+        required: true,
+      },
+      {
+        name: "sessionToken",
+        label: "Password / Session Token",
+        type: "password",
+        required: true,
+      },
     ],
   },
   {
@@ -140,8 +170,19 @@ export const providers: ProviderSpec[] = [
         required: true,
         helper: "Gerado ao rodar o script de instalação do agente na VPS.",
       },
-      { name: "host", label: "IP ou Domínio (Host)", placeholder: "185.xxx.xx.x", required: false },
-      { name: "port", label: "Porta do Agente", placeholder: "8080", type: "number", required: false },
+      {
+        name: "host",
+        label: "IP ou Domínio (Host)",
+        placeholder: "185.xxx.xx.x",
+        required: false,
+      },
+      {
+        name: "port",
+        label: "Porta do Agente",
+        placeholder: "8080",
+        type: "number",
+        required: false,
+      },
     ],
   },
   {
@@ -151,7 +192,12 @@ export const providers: ProviderSpec[] = [
     authKind: "CREDENTIALS",
     freeQuotaGb: "self-hosted",
     fields: [
-      { name: "agentToken", label: "Agent Token", type: "password", required: true },
+      {
+        name: "agentToken",
+        label: "Agent Token",
+        type: "password",
+        required: true,
+      },
     ],
   },
 ];

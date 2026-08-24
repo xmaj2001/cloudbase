@@ -1,3 +1,38 @@
 {
-  
+  "explorer": {
+    "folders": "Pastas",
+    "files": "Ficheiros",
+    "noFiles": "Nenhum ficheiro encontrado."
+  },
+  "providers": {
+    "allProviders": "Todos os providers",
+    "syncing": "A sincronizar",
+    "sync": "Sincronizar",
+    "pause": "Pausar",
+    "loadingMetadata": "A carregar metadados do provider...",
+    "notFound": "Provider não encontrado",
+    "notFoundDesc": "A infraestrutura com o ID especificado não existe ou foi removida.",
+    "backToProviders": "Voltar aos providers",
+    "connectProvider": "Conectar provider",
+    "chooseProvider": "Escolher provider",
+    "documentation": "Documentação",
+    "terms": "Termos & configuração",
+    "credentials": "Credenciais",
+    "active": "Ativo",
+    "paused": "Pausado",
+    "error": "Erro",
+    "details": "Detalhes",
+    "type": "Tipo",
+    "cluster": "Cluster",
+    "connected": "Conectado",
+    "lastSync": "Última sync",
+    "dangerZone": "Zona de perigo",
+    "disconnect": "Desconectar provider",
+    "files": "Ficheiros",
+    "chunks": "Fragmentos",
+    "uploadEst": "Upload (Est.)",
+    "downloadEst": "Download (Est.)",
+    "recentActivity": "Atividade recente",
+    "last7Days": "últimos 7 dias"
+  }
 }

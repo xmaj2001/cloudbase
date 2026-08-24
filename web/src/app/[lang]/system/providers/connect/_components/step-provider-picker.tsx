@@ -1,9 +1,9 @@
 "use client";
 
+import { ProviderIcon } from "@/components/providers/provider-icon";
+import { ProviderSpec } from "@/components/providers/provider-spec";
 import { motion } from "framer-motion";
 import { Search, ArrowRight } from "lucide-react";
-import { type ProviderSpec } from "@/components/drivers/driver-providor";
-import { DriverIcon } from "@/components/drivers/driver-icon";
 
 interface StepProviderPickerProps {
   query: string;
@@ -55,7 +55,7 @@ export function StepProviderPicker({
               <div className="flex items-start justify-between w-full">
                 {/* O teu DriverIcon dinâmico e colorido entra aqui */}
                 <div className="h-11 w-11 rounded-xl bg-surface-2 border border-hairline grid place-items-center shrink-0">
-                  <DriverIcon type={p.type} className="size-5.5" />
+                  <ProviderIcon type={p.type} className="size-5.5" />
                 </div>
 
                 <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground px-2 py-0.5 bg-surface-2 rounded border border-hairline">

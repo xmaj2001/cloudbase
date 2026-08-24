@@ -32,6 +32,9 @@ let ProviderController = class ProviderController {
     findAll(session) {
         return this.service.list(session.user.id);
     }
+    findOne(session, id) {
+        return this.service.findById(session.user.id, id);
+    }
     getCredentials(session, id) {
         return this.service.getCredentials(session.user.id, id);
     }
@@ -76,6 +79,18 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], ProviderController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(":id"),
+    (0, swagger_1.ApiOperation)({
+        summary: "Obter Provider",
+        description: "Retorna os detalhes de um Provider específico.",
+    }),
+    __param(0, (0, nestjs_better_auth_1.Session)()),
+    __param(1, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], ProviderController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Get)(":id/credentials"),
     (0, swagger_1.ApiOperation)({

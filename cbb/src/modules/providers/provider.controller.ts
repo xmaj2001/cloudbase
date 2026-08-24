@@ -53,6 +53,15 @@ export class ProviderController {
     return this.service.list(session.user.id);
   }
 
+  @Get(":id")
+  @ApiOperation({
+    summary: "Obter Provider",
+    description: "Retorna os detalhes de um Provider específico.",
+  })
+  findOne(@Session() session: UserSession, @Param("id") id: string) {
+    return this.service.findById(session.user.id, id);
+  }
+
   @Get(":id/credentials")
   @ApiOperation({
     summary: "Obter Credenciais",

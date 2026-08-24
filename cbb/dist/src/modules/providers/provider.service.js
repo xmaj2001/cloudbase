@@ -49,6 +49,15 @@ let ProviderServices = class ProviderServices {
             orderBy: { availableSpace: "desc" },
         });
     }
+    async findById(userId, providerId) {
+        const provider = await this.prisma.provider.findFirst({
+            where: { id: providerId, userId, isActive: true },
+        });
+        if (!provider) {
+            throw new common_1.NotFoundException("Provider não encontrado ou inativo");
+        }
+        return provider;
+    }
     async getCredentials(userId, providerId) {
         const provider = await this.prisma.provider.findFirst({
             where: { id: providerId, userId, isActive: true },

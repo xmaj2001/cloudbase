@@ -1,3 +1,38 @@
 {
-  
+  "explorer": {
+    "folders": "Folders",
+    "files": "Files",
+    "noFiles": "No files found."
+  },
+  "providers": {
+    "allProviders": "All providers",
+    "syncing": "Syncing",
+    "sync": "Sync",
+    "pause": "Pause",
+    "loadingMetadata": "Loading provider metadata...",
+    "notFound": "Provider not found",
+    "notFoundDesc": "The infrastructure with the specified ID does not exist or has been removed.",
+    "backToProviders": "Back to providers",
+    "connectProvider": "Connect provider",
+    "chooseProvider": "Choose provider",
+    "documentation": "Documentation",
+    "terms": "Terms & Settings",
+    "credentials": "Credentials",
+    "active": "Active",
+    "paused": "Paused",
+    "error": "Error",
+    "details": "Details",
+    "type": "Type",
+    "cluster": "Cluster",
+    "connected": "Connected",
+    "lastSync": "Last sync",
+    "dangerZone": "Danger Zone",
+    "disconnect": "Disconnect provider",
+    "files": "Files",
+    "chunks": "Chunks",
+    "uploadEst": "Upload (Est.)",
+    "downloadEst": "Download (Est.)",
+    "recentActivity": "Recent activity",
+    "last7Days": "last 7 days"
+  }
 }

@@ -1,7 +1,46 @@
 @baseUrl = http://localhost:5000/v1
-@authToken = dUTRrRhd1OzxA1dopIXBQT5dZcOuZZJO
-@providerId = 56d4f035-fa7e-49d1-a105-1a96d462b401
-@telegramProviderId = c99477cd-e1e8-4de6-a46e-09735c57b430
+@email = dev@cloudbase.com
+@password = SenhaSegura123!
+
+### 1. Criar Utilizador (Sign Up)
+# @name signUp
+POST {{baseUrl}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "name": "Developer CloudBase"
+}
+
+###
+
+### 2. Fazer Login (Sign In)
+# @name signIn
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Capturar o Token da Sessão
+@authToken = {{signIn.response.body.data.token}}
+@userId = {{signIn.response.body.data.user.id}}
+
+###
+
+### 3. Obter Sessão Atual (Me)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+
+### 6. Listar Providers
+## @name providers
+GET {{baseUrl}}/providers
+Authorization: Bearer {{authToken}}
+
+@providerId = dfadac5e-d54d-4ea1-bfc2-097238ef7c13
 
 
 ### 1. Criar uma Pasta (Folder) na Raiz
@@ -11,9 +50,11 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Filmes e Séries",
+  "name": "Max",
   "type": "FOLDER",
-  "providerId": "{{providerId}}"
+  "providerId": "{{providerId}}",
+  "parentId": "1d278140-d287-45c9-a071-9f537b0c03c7"
+  
 }
 
 ### Guardar o ID da pasta criada
@@ -38,8 +79,7 @@ Content-Type: application/json
   "originalHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "providerId": "{{providerId}}",
   "providerFileId": "gdrive_file_id_9988",
-  "providerPath": "CloudBase/documento_projeto.pdf",
-  "parentId": "{{folderId}}"
+  "providerPath": "CloudBase/documento_projeto.pdf"
 }
 
 ###
@@ -51,7 +91,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "filme_4k.zip",
+  "name": "photoshop.zip",
   "type": "FILE",
   "mimeType": "application/zip",
   "extension": "zip",
@@ -60,7 +100,7 @@ Content-Type: application/json
   "totalChunks": 2,
   "originalHash": "8f4e3c2b1a5d6e7f8a9b0c1d2e3f4a5b",
   "providerId": "{{providerId}}",
-  "parentId": null,
+  "parentId": "1d278140-d287-45c9-a071-9f537b0c03c7",
   "chunks": [
     {
       "chunkIndex": 0,
@@ -97,7 +137,7 @@ Authorization: Bearer {{authToken}}
 ###
 
 ### 5. Listar Conteúdo Dentro de uma Pasta Específica
-GET {{baseUrl}}/nodes?parentId={{folderId}}
+GET {{baseUrl}}/nodes?parentId=1d278140-d287-45c9-a071-9f537b0c03c7
 Authorization: Bearer {{authToken}}
 
 ###

@@ -1,13 +1,18 @@
 "use client";
 
-interface DriversKpisProps {
+interface ProvidersKpisProps {
   totalGb: number;
   usedGb: number;
-  driversCount: number;
+  providersCount: number;
   activeCount: number;
 }
 
-export function DriversKpis({ totalGb, usedGb, driversCount, activeCount }: DriversKpisProps) {
+export function ProvidersKpis({
+  totalGb,
+  usedGb,
+  providersCount,
+  activeCount,
+}: ProvidersKpisProps) {
   const kpis = [
     {
       k: "Espaço total",
@@ -17,12 +22,15 @@ export function DriversKpis({ totalGb, usedGb, driversCount, activeCount }: Driv
     {
       k: "Espaço em uso",
       v: `${usedGb.toFixed(2)} GB`,
-      sub: totalGb > 0 ? `${((usedGb / totalGb) * 100).toFixed(0)}% do total` : "0% em uso",
+      sub:
+        totalGb > 0
+          ? `${((usedGb / totalGb) * 100).toFixed(0)}% do total`
+          : "0% em uso",
     },
     { k: "Ficheiros virtuais", v: "0", sub: "0 fragmentos ativos" },
     {
-      k: "Drivers Conectados",
-      v: `${driversCount}`,
+      k: "Providers Conectados",
+      v: `${providersCount}`,
       sub: `${activeCount} operacionais`,
     },
   ];
@@ -37,9 +45,7 @@ export function DriversKpis({ totalGb, usedGb, driversCount, activeCount }: Driv
           <div className="mt-3 text-3xl font-medium tracking-tight tabular-nums">
             {c.v}
           </div>
-          <div className="mt-1 text-[12px] text-muted-foreground">
-            {c.sub}
-          </div>
+          <div className="mt-1 text-[12px] text-muted-foreground">{c.sub}</div>
         </div>
       ))}
     </div>

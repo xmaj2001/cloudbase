@@ -1,4 +1,3 @@
-import { apiFetch } from "@/api/core/api-fetch";
 import type { ApiEnvelope } from "@/api/core/api.types";
 import type {
   ApiProvider,
@@ -6,6 +5,7 @@ import type {
   CreateProviderInput,
   SupportedProvider,
 } from "./types";
+import { apiFetchServer } from "../core/api-fetch.server";
 
 /**
  * Serviço da feature providers.
@@ -17,7 +17,7 @@ import type {
 export const providerService = {
   // GET /api/providers/supported → Tipos de provedores suportados
   getSupportedProviders: async (): Promise<SupportedProvider[]> => {
-    const res = await apiFetch<ApiEnvelope<SupportedProvider[]>>(
+    const res = await apiFetchServer<ApiEnvelope<SupportedProvider[]>>(
       "providers/supported",
     );
     return res.data;
@@ -25,13 +25,19 @@ export const providerService = {
 
   // GET /api/providers → Lista todos os providers do utilizador (sem credentials)
   getProviders: async (): Promise<ApiProvider[]> => {
-    const res = await apiFetch<ApiEnvelope<ApiProvider[]>>("providers");
+    const res = await apiFetchServer<ApiEnvelope<ApiProvider[]>>("providers");
+    return res.data;
+  },
+
+  // GET /api/providers/:id → Detalhes de um provider específico
+  getProviderById: async (id: string): Promise<ApiProvider> => {
+    const res = await apiFetchServer<ApiEnvelope<ApiProvider>>(`providers/${id}`);
     return res.data;
   },
 
   // POST /api/providers → Cria/Conecta um novo provider
   createProvider: async (body: CreateProviderInput): Promise<ApiProvider> => {
-    const res = await apiFetch<ApiEnvelope<ApiProvider>>("providers", {
+    const res = await apiFetchServer<ApiEnvelope<ApiProvider>>("providers", {
       method: "POST",
       body: JSON.stringify(body),
     });
@@ -41,7 +47,7 @@ export const providerService = {
   // GET /api/providers/:id/credentials → Credenciais de um provider específico
   // Só deve ser chamado quando o utilizador explicitamente solicita as credenciais.
   getCredentials: async (id: string): Promise<ProviderCredentials> => {
-    const res = await apiFetch<ApiEnvelope<ProviderCredentials>>(
+    const res = await apiFetchServer<ApiEnvelope<ProviderCredentials>>(
       `providers/${id}/credentials`,
     );
     return res.data;

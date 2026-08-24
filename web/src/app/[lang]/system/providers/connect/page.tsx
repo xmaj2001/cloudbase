@@ -13,8 +13,9 @@ import { StepCredentials } from "./_components/step-credentials";
 import {
   providers,
   type ProviderSpec,
-} from "@/components/drivers/driver-providor";
-import { useDriverMutations } from "@/api/drivers";
+} from "@/components/providers/provider-spec";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { providerService } from "@/features/providers/provider.service";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -25,7 +26,7 @@ const stepLabels: Record<Step, string> = {
   4: "Credenciais",
 };
 
-export default function ConnectDriverPage() {
+export default function ConnectProviderPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [selected, setSelected] = useState<ProviderSpec | null>(null);
@@ -61,41 +62,42 @@ export default function ConnectDriverPage() {
       (f) => !f.required || (creds[f.name] ?? "").trim().length > 0,
     );
 
-  const { connect } = useDriverMutations();
+  const queryClient = useQueryClient();
+  const connect = useMutation({
+    mutationFn: (data: any) => providerService.createProvider(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["providers"] });
+      setDone(true);
+      // setTimeout(() => router.push("/system/providers"), 1000);
+    },
+    onError: (error) => {
+      console.error("Erro ao conectar:", error);
+    },
+  });
 
   const handleSubmit = async () => {
     if (!selected || !canSubmit) return;
 
-    // Monta o payload estritamente tipado como ConnectDriverRequest
     const payload = {
       type: selected.type,
       displayName: displayName,
       priority: priority,
       credentials: {
         ...creds,
-      } as any, // Cast temporário se necessário para satisfazer o union do DriverCredentials
+      } as any,
     };
 
-    // Dispara a mutation real do TanStack Query
-    connect.mutate(payload, {
-      onSuccess: () => {
-        setDone(true);
-        // setTimeout(() => router.push("/system/drivers"), 1000);
-      },
-      onError: (error) => {
-        console.error("Erro ao conectar:", error);
-      },
-    });
+    connect.mutate(payload);
   };
 
   return (
     <>
       <div className="mb-6">
         <Link
-          href="/system/drivers"
+          href="/system/providers"
           className="inline-flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition"
         >
-          <ArrowLeft className="size-3.5" /> Todos os drivers
+          <ArrowLeft className="size-3.5" /> Todos os providers
         </Link>
       </div>
 
@@ -110,12 +112,13 @@ export default function ConnectDriverPage() {
               <button
                 onClick={() => (complete || n === 1) && setStep(n)}
                 disabled={!complete && !active && n !== 1 ? true : false}
-                className={`flex items-center gap-2 h-8 px-3 rounded-full text-[11px] mono transition ${active
-                  ? "bg-foreground text-background"
-                  : complete
-                    ? "bg-surface-2 text-foreground hover:bg-surface-2/70"
-                    : "bg-transparent text-muted-foreground border border-hairline"
-                  }`}
+                className={`flex items-center gap-2 h-8 px-3 rounded-full text-[11px] mono transition ${
+                  active
+                    ? "bg-foreground text-background"
+                    : complete
+                      ? "bg-surface-2 text-foreground hover:bg-surface-2/70"
+                      : "bg-transparent text-muted-foreground border border-hairline"
+                }`}
               >
                 <span className="tabular-nums">0{n}</span>
                 <span>{stepLabels[n]}</span>

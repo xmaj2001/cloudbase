@@ -1,4 +1,3 @@
-// app/[lang]/dictionaries.ts
 import "server-only";
 
 const dictionaries = {

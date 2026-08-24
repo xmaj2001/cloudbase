@@ -1,9 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Lock, Shield, Check, RefreshCw, Play, AlertTriangle, ExternalLink } from "lucide-react";
+import {
+  Lock,
+  Shield,
+  Check,
+  RefreshCw,
+  Play,
+  AlertTriangle,
+  ExternalLink,
+} from "lucide-react";
 import { ProviderHeader, Field } from "./shared-components";
-import { ProviderSpec } from "@/lib/api/drivers/driver-providor";
+import { ProviderSpec } from "@/components/providers/provider-spec";
 
 interface StepCredentialsProps {
   selected: ProviderSpec;
@@ -49,10 +57,15 @@ export function StepCredentials({
         <div className="bg-background border border-hairline rounded-2xl p-6 space-y-5">
           <div className="flex items-center gap-2">
             <Lock className="size-4" />
-            <h2 className="text-[14px] font-medium">Credenciais · {selected.authKind.replace("_", " ")}</h2>
+            <h2 className="text-[14px] font-medium">
+              Credenciais · {selected.authKind.replace("_", " ")}
+            </h2>
           </div>
 
-          <Field label="Nome de exibição" helper="Como este driver aparecerá na lista.">
+          <Field
+            label="Nome de exibição"
+            helper="Como este driver aparecerá na lista."
+          >
             <input
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
@@ -64,10 +77,18 @@ export function StepCredentials({
             <div className="p-5 rounded-xl border border-hairline bg-surface-2/50 flex items-center justify-between">
               <div>
                 <div className="text-[13px] font-medium">Autorização OAuth</div>
-                <div className="text-[12px] text-muted-foreground mt-1">Serás redirecionado para {selected.name} para autorizar.</div>
+                <div className="text-[12px] text-muted-foreground mt-1">
+                  Serás redirecionado para {selected.name} para autorizar.
+                </div>
               </div>
               <button
-                onClick={() => setCreds({ accessToken: "mock", refreshToken: "mock", accountEmail: "user@example.com" })}
+                onClick={() =>
+                  setCreds({
+                    accessToken: "mock",
+                    refreshToken: "mock",
+                    accountEmail: "user@example.com",
+                  })
+                }
                 className="inline-flex items-center gap-2 h-9 px-4 rounded-full bg-foreground text-background text-[12px] hover:opacity-90 transition"
               >
                 <ExternalLink className="size-3.5" /> Autorizar
@@ -76,12 +97,19 @@ export function StepCredentials({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {selected.fields.map((f) => (
-                <Field key={f.name} label={f.label} helper={f.helper} full={f.type === "password"}>
+                <Field
+                  key={f.name}
+                  label={f.label}
+                  helper={f.helper}
+                  full={f.type === "password"}
+                >
                   <input
                     type={f.type ?? "text"}
                     placeholder={f.placeholder}
                     value={creds[f.name] ?? ""}
-                    onChange={(e) => setCreds((c) => ({ ...c, [f.name]: e.target.value }))}
+                    onChange={(e) =>
+                      setCreds((c) => ({ ...c, [f.name]: e.target.value }))
+                    }
                     className="w-full h-10 bg-surface-2 rounded-lg px-3 text-[13px] mono outline-none focus:ring-1 focus:ring-foreground"
                   />
                 </Field>
@@ -90,7 +118,10 @@ export function StepCredentials({
           )}
 
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-hairline">
-            <Field label="Prioridade" helper="0 = mais alta. Drivers com maior prioridade recebem escritas primeiro.">
+            <Field
+              label="Prioridade"
+              helper="0 = mais alta. Drivers com maior prioridade recebem escritas primeiro."
+            >
               <input
                 type="number"
                 min={0}
@@ -109,7 +140,8 @@ export function StepCredentials({
 
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
           <Shield className="size-3.5" />
-          Credenciais encriptadas em repouso com AES-256. Nunca são expostas no cliente.
+          Credenciais encriptadas em repouso com AES-256. Nunca são expostas no
+          cliente.
         </div>
       </div>
 
@@ -119,9 +151,19 @@ export function StepCredentials({
           onClick={onSubmit}
           className="w-full h-11 rounded-full bg-foreground text-background text-[13px] font-medium hover:opacity-90 transition disabled:opacity-40 inline-flex items-center justify-center gap-2"
         >
-          {done ? (<><Check className="size-4" /> Conectado</>)
-            : submitting ? (<><RefreshCw className="size-4 animate-spin" /> A conectar...</>)
-            : (<><Play className="size-4" /> Conectar driver</>)}
+          {done ? (
+            <>
+              <Check className="size-4" /> Conectado
+            </>
+          ) : submitting ? (
+            <>
+              <RefreshCw className="size-4 animate-spin" /> A conectar...
+            </>
+          ) : (
+            <>
+              <Play className="size-4" /> Conectar driver
+            </>
+          )}
         </button>
         <button
           onClick={() => setStep(3)}

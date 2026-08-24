@@ -21,7 +21,7 @@ import { usePathname } from "next/navigation";
 import { AuthSession } from "@/api/core/get-session.server";
 import { useSession } from "@/components/providers/session-provider";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
+import { LanguageToggle } from "@/components/language-toggle";
 import { ModeToggle } from "@/components/mode-toggle";
 
 const navItems = [
@@ -62,6 +62,7 @@ export function TopbarStorage({ variant }: TopbarStorageProps) {
             ⌘K
           </span>
         </div>
+        <LanguageToggle />
         <ModeToggle />
         <button className="h-9 w-9 grid place-items-center rounded-full border border-hairline">
           <Bell className="h-4 w-4" />

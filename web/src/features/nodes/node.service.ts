@@ -34,7 +34,7 @@ export const nodeService = {
    * Obtém detalhes completos de um node, incluindo chunks e provider.
    */
   getNode: async (id: string): Promise<ApiNodeDetail> => {
-    const res = await apiFetch<ApiEnvelope<ApiNodeDetail>>(`nodes/${id}`);
+    const res = await apiFetchServer<ApiEnvelope<ApiNodeDetail>>(`nodes/${id}`);
     return res.data;
   },
 
@@ -44,7 +44,7 @@ export const nodeService = {
    * Para ficheiros fragmentados, incluir o array `chunks` no payload.
    */
   createNode: async (body: CreateNodeInput): Promise<ApiNode> => {
-    const res = await apiFetch<ApiEnvelope<ApiNode>>("nodes", {
+    const res = await apiFetchServer<ApiEnvelope<ApiNode>>("nodes", {
       method: "POST",
       body: JSON.stringify(body),
     });
@@ -56,9 +56,12 @@ export const nodeService = {
    * Move o node para a reciclagem (soft delete — define `trashedAt`).
    */
   moveToTrash: async (id: string): Promise<ApiNode> => {
-    const res = await apiFetch<ApiEnvelope<ApiNode>>(`nodes/${id}/trash`, {
-      method: "PATCH",
-    });
+    const res = await apiFetchServer<ApiEnvelope<ApiNode>>(
+      `nodes/${id}/trash`,
+      {
+        method: "PATCH",
+      },
+    );
     return res.data;
   },
 
@@ -67,9 +70,12 @@ export const nodeService = {
    * Restaura o node da reciclagem (limpa `trashedAt`).
    */
   restore: async (id: string): Promise<ApiNode> => {
-    const res = await apiFetch<ApiEnvelope<ApiNode>>(`nodes/${id}/restore`, {
-      method: "PATCH",
-    });
+    const res = await apiFetchServer<ApiEnvelope<ApiNode>>(
+      `nodes/${id}/restore`,
+      {
+        method: "PATCH",
+      },
+    );
     return res.data;
   },
 
@@ -78,10 +84,13 @@ export const nodeService = {
    * Renomeia um ficheiro ou pasta.
    */
   rename: async (id: string, name: string): Promise<ApiNode> => {
-    const res = await apiFetch<ApiEnvelope<ApiNode>>(`nodes/${id}/rename`, {
-      method: "PATCH",
-      body: JSON.stringify({ name }),
-    });
+    const res = await apiFetchServer<ApiEnvelope<ApiNode>>(
+      `nodes/${id}/rename`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ name }),
+      },
+    );
     return res.data;
   },
 
@@ -91,7 +100,7 @@ export const nodeService = {
    * `parentId = null` → move para a raiz.
    */
   move: async (id: string, parentId: string | null): Promise<ApiNode> => {
-    const res = await apiFetch<ApiEnvelope<ApiNode>>(`nodes/${id}/move`, {
+    const res = await apiFetchServer<ApiEnvelope<ApiNode>>(`nodes/${id}/move`, {
       method: "PATCH",
       body: JSON.stringify({ parentId }),
     });
@@ -103,7 +112,7 @@ export const nodeService = {
    * Elimina o node permanentemente (sem possibilidade de recuperação).
    */
   deleteForever: async (id: string): Promise<ApiNode> => {
-    const res = await apiFetch<ApiEnvelope<ApiNode>>(`nodes/${id}`, {
+    const res = await apiFetchServer<ApiEnvelope<ApiNode>>(`nodes/${id}`, {
       method: "DELETE",
     });
     return res.data;

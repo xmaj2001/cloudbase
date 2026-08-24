@@ -1,65 +1,43 @@
-"use client";
-
+import { getDictionary, Locale } from "../../../dictionaries";
+import { providerService } from "@/features/providers/provider.service";
+import { ProviderHeroCard } from "../_components/provider-hero-card";
+import { ProviderMetrics } from "../_components/provider-metrics";
+import { ProviderActivity } from "../_components/provider-activity";
+import { ProviderSidebarDetails } from "../_components/provider-sidebar-details";
+import { ProviderActions } from "../_components/provider-actions";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { ArrowLeft, RefreshCw, Pause, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
-import { DriverHeroCard } from "../_components/driver-hero-card";
-import { DriverMetrics } from "../_components/driver-metrics";
-import { DriverActivity } from "../_components/driver-activity";
-import { DriverSidebarDetails } from "../_components/driver-sidebar-details";
-import { useState } from "react";
-import { useDriverMutations, useDrivers } from "@/api/drivers";
+interface ProviderDetailPageProps {
+  params: Promise<{ lang: Locale; id: string }>;
+}
 
-export default function DriverDetailPage() {
-  const params = useParams();
-  const driverId = params.id as string;
+export default async function ProviderDetailPage({ params }: ProviderDetailPageProps) {
+  const { lang, id } = await params;
+  const dict = await getDictionary(lang);
+  const pDict = dict.providers;
 
-  const { sync } = useDriverMutations();
-  const [isLoadingSync, setIsLoadingSync] = useState(false);
-  const { data: drivers = [], isLoading: isDriversLoading } = useDrivers();
-
-  const handleSyncDriver = async () => {
-    if (!driverId) return;
-    setIsLoadingSync(true);
-    await sync.mutateAsync(driverId, {
-      onSuccess: (updatedDriver) => {
-        setIsLoadingSync(false);
-        console.log("Driver sincronizado com sucesso:", updatedDriver);
-      },
-      onError: (error) => {
-        setIsLoadingSync(false);
-        console.error("Erro ao sincronizar o driver:", error);
-      },
-    });
-    setIsLoadingSync(false);
-  };
-  const driver = drivers.find((d) => d.id === driverId);
-
-  if (isDriversLoading) {
-    return (
-      <div className="h-[60vh] w-full flex flex-col items-center justify-center gap-2">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
-        <span className="text-xs text-muted-foreground font-mono">
-          A carregar metadados do driver...
-        </span>
-      </div>
-    );
+  let provider = null;
+  try {
+    provider = await providerService.getProviderById(id);
+  } catch (error) {
+    // Se o provider não for encontrado (404), provider continuará null
+    console.error("ProviderDetail: Erro ao buscar provider", error);
   }
 
-  if (!driver) {
+  if (!provider) {
     return (
       <main className="flex-1 px-8 py-8">
         <div className="border border-dashed border-hairline rounded-2xl p-12 text-center">
-          <div className="text-sm font-medium">Driver não encontrado</div>
+          <div className="text-sm font-medium">{pDict?.notFound || "Provider não encontrado"}</div>
           <div className="text-xs text-muted-foreground mt-1 mb-4">
-            A infraestrutura com o ID especificado não existe ou foi removida.
+            {pDict?.notFoundDesc || "A infraestrutura com o ID especificado não existe ou foi removida."}
           </div>
           <Link
-            href="/storage/drivers"
+            href="/system/providers"
             className="inline-flex h-9 px-4 items-center rounded-full bg-foreground text-background text-[12px] font-medium"
           >
-            Voltar aos drivers
+            {pDict?.backToProviders || "Voltar aos providers"}
           </Link>
         </div>
       </main>
@@ -67,48 +45,34 @@ export default function DriverDetailPage() {
   }
 
   return (
-    <main className="p-8 space-y-8 max-w-350 m-auto">
+    <div className="w-full relative">
       {/* Header com os botões de controle direto */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 mt-4">
         <div>
           <Link
-            href="/storage/drivers"
+            href="/system/providers"
             className="inline-flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition"
           >
-            <ArrowLeft className="size-3.5" /> Todos os drivers
+            <ArrowLeft className="size-3.5" /> {pDict?.allProviders || "Todos os providers"}
           </Link>
         </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleSyncDriver}
-            disabled={isLoadingSync}
-            className={`inline-flex items-center gap-2 h-9 px-3 rounded-full border border-hairline text-[12px] hover:border-foreground transition font-medium bg-background ${isLoadingSync ? "invert" : ""}`}
-          >
-            <RefreshCw
-              className={`size-3.5 ${isLoadingSync ? "animate-spin" : ""}`}
-            />{" "}
-            Sincronizar
-          </button>
-          <button className="inline-flex items-center gap-2 h-9 px-3 rounded-full border border-hairline text-[12px] hover:border-foreground transition font-medium bg-background">
-            <Pause className="size-3.5" /> Pausar
-          </button>
-        </div>
+        <ProviderActions providerId={provider.id} dict={pDict} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
         <div className="space-y-6">
-          <DriverHeroCard
-            driver={driver}
-            driverUsed={driver.space?.usedSpace ?? 0}
-            driverTotal={driver.space?.totalSpace ?? 0}
+          <ProviderHeroCard
+            provider={provider}
+            providerUsed={Number(provider.usedSpace ?? 0)}
+            providerTotal={Number(provider.totalSpace ?? 0)}
+            dict={pDict}
           />
-          <DriverMetrics />
-          <DriverActivity />
+          <ProviderMetrics dict={pDict} />
+          <ProviderActivity dict={pDict} />
         </div>
 
-        <DriverSidebarDetails driver={driver} />
+        <ProviderSidebarDetails provider={provider} dict={pDict} />
       </div>
-    </main>
+    </div>
   );
 }

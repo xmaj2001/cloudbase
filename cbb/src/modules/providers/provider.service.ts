@@ -64,6 +64,19 @@ export class ProviderServices {
     });
   }
 
+  // Busca um provider específico
+  async findById(userId: string, providerId: string) {
+    const provider = await this.prisma.provider.findFirst({
+      where: { id: providerId, userId, isActive: true },
+    });
+
+    if (!provider) {
+      throw new NotFoundException("Provider não encontrado ou inativo");
+    }
+
+    return provider;
+  }
+
   // Busca as credenciais de um provider específico pertencente ao utilizador
   async getCredentials(
     userId: string,
