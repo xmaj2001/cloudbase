@@ -4,7 +4,7 @@ import { SessionProvider } from "@/components/providers/session-provider";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { TopbarStorage } from "./_components/Topbar";
-import { requireSession } from "@/features/core/require-session";
+import { requireSession } from "@/lib/features/core/require-session";
 
 export default async function Layout({
   children,

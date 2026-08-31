@@ -1,7 +1,7 @@
 import { ProvidersKpis } from "./_components/providers-kpis";
 import { ProviderCard } from "./_components/provider-card";
 import { ConnectProviderFab } from "./_components/connect-provider-fab";
-import { providerService } from "@/features/providers/provider.service";
+import { providerService } from "@/lib/features/providers/provider.service";
 import { getDictionary } from "../../dictionaries";
 
 export default async function ProvidersPage({

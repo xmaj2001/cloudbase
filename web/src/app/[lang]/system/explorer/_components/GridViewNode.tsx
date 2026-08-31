@@ -1,6 +1,6 @@
 "use client";
 
-import { ApiNode } from "@/features/nodes";
+import { ApiNode } from "@/lib/features/nodes";
 import GridItemNode from "./GridItemNode";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 

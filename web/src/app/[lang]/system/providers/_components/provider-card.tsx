@@ -6,7 +6,7 @@ import { ArrowUpRight, Activity } from "lucide-react";
 import { ProviderIcon } from "@/components/providers/provider-icon";
 import { fmtBytes } from "@/lib/utils";
 
-import { ApiProvider } from "@/features/providers/types";
+import { ApiProvider } from "@/lib/features/providers/types";
 
 interface ProviderCardProps {
   provider: ApiProvider;

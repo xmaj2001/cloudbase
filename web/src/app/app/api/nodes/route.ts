@@ -1,4 +1,4 @@
-import { backendFetch } from "@/features/core/backend-fetch";
+import { backendFetch } from "@/lib/features/core/backend-fetch";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/nodes -> Lista nós da raiz ou de uma pasta específica

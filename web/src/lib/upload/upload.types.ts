@@ -11,7 +11,7 @@
 
 export type ProgressState = "WAITING" | "UPLOADING" | "DONE" | "ERROR";
 
-export type UploadStep = "file" | "driver" | "plan" | "progress";
+export type UploadStep = "file" | "provider" | "plan" | "progress";
 
 /**
  * Dados de um ficheiro que o frontend envia ao backend para calcular o plano.
@@ -26,11 +26,11 @@ export interface UploadFileInput {
 }
 
 // -----------------------------------------------------------------------------
-// DRIVER — representação de um driver seleccionado
+// PROVIDER — representação de um provider seleccionado
 // -----------------------------------------------------------------------------
 
 /**
- * Dados de espaço de um driver.
+ * Dados de espaço de um provider.
  * Vêm como string da API porque são BigInt na base de dados.
  */
 export interface DriverSpaceDto {
@@ -55,9 +55,9 @@ export interface DriverSpaceDto {
  */
 export interface UploadPlanChunk {
   chunkIndex:    number   // índice do chunk (0, 1, 2...)
-  driverId:      string   // ID do driver de destino
-  driverName:    string   // nome do driver (para mostrar no UI)
-  driverType:    string   // tipo do provider (GOOGLE_DRIVE, TELEGRAM, etc.)
+  providerId:    string   // ID do provider de destino
+  providerName:  string   // nome do provider (para mostrar no UI)
+  providerType:  string   // tipo do provider (GOOGLE_DRIVE, TELEGRAM, etc.)
   startByte:     number   // byte de início no ficheiro original (para file.slice)
   endByte:       number   // byte de fim no ficheiro original   (para file.slice)
   chunkSizeBytes: number  // tamanho deste chunk em bytes
@@ -123,10 +123,10 @@ export interface UploadPlanResponse {
 // -----------------------------------------------------------------------------
 
 export interface UploadPlanRequest {
-  userId:            string           // ID do utilizador autenticado
-  files:             UploadFileInput[] // ficheiros a enviar
-  selectedDriverIds: string[]         // drivers seleccionados (pode ser vazio)
-                                      // se vazio → backend escolhe automaticamente
+  userId:              string           // ID do utilizador autenticado
+  files:               UploadFileInput[] // ficheiros a enviar
+  selectedProviderIds: string[]         // providers seleccionados (pode ser vazio)
+                                        // se vazio → backend escolhe automaticamente
 }
 
 // -----------------------------------------------------------------------------

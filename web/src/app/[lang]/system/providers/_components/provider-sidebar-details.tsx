@@ -3,7 +3,7 @@
 import { HardDrive, MapPin, Calendar, RefreshCw, Shield, Trash2 } from "lucide-react";
 import React from "react";
 
-import { ApiProvider } from "@/features/providers/types";
+import { ApiProvider } from "@/lib/features/providers/types";
 
 interface ProviderSidebarDetailsProps {
   provider: ApiProvider;

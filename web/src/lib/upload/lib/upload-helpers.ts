@@ -54,7 +54,6 @@ export async function verifyPlan(
 //
 // =============================================================================
 
-import { FilePlanSuccess } from '../upload.types'
 
 interface ExecuteUploadInput {
   file:      File             // ficheiro real do browser (File API)

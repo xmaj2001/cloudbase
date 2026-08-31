@@ -21,8 +21,8 @@ import { motion } from "framer-motion";
 
 interface StepProgressProps {
   fileProgress: UploadFileProgress[]; // progresso real de cada ficheiro vindo do hook
-  isDone: boolean;                    // true quando todos os ficheiros terminaram (sucesso ou erro)
-  onStart: () => void;                // dispara o upload — chamado no mount
+  isDone: boolean; // true quando todos os ficheiros terminaram (sucesso ou erro)
+  onStart: () => void; // dispara o upload — chamado no mount
 }
 
 // -----------------------------------------------------------------------------
@@ -30,7 +30,10 @@ interface StepProgressProps {
 // -----------------------------------------------------------------------------
 
 function StatusBadge({ status }: { status: UploadFileStatus }) {
-  const config: Record<UploadFileStatus, { label: string; className: string; icon: any }> = {
+  const config: Record<
+    UploadFileStatus,
+    { label: string; className: string; icon: any }
+  > = {
     WAITING: {
       label: "Em espera",
       className: "bg-surface-2 text-muted-foreground border-hairline",
@@ -70,7 +73,7 @@ function StatusBadge({ status }: { status: UploadFileStatus }) {
     <span
       className={cn(
         "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium border tabular-nums",
-        current.className
+        current.className,
       )}
     >
       {current.icon === Loader2 && <Icon className="size-3 animate-spin" />}
@@ -103,26 +106,31 @@ export function StepProgress({
   const totalFiles = fileProgress.length;
 
   // ── Média aritmética real do progresso global de todos os ficheiros ────────
-  const overallProgress = totalFiles === 0
-    ? 0
-    : Math.round(
-        fileProgress.reduce((sum, f) => sum + f.progress, 0) / totalFiles
-      );
+  const overallProgress =
+    totalFiles === 0
+      ? 0
+      : Math.round(
+          fileProgress.reduce((sum, f) => sum + f.progress, 0) / totalFiles,
+        );
 
   // ── Contagem de estados para o sumário ─────────────────────────────────────
   const doneCount = fileProgress.filter((f) => f.status === "DONE").length;
   const errorCount = fileProgress.filter((f) => f.status === "ERROR").length;
   const activeCount = fileProgress.filter(
-    (f) => f.status === "UPLOADING" || f.status === "HASHING" || f.status === "REGISTERING"
+    (f) =>
+      f.status === "UPLOADING" ||
+      f.status === "HASHING" ||
+      f.status === "REGISTERING",
   ).length;
 
   // Texto dinâmico do cabeçalho de progresso
   let helperText = "A preparar o upload...";
   if (activeCount > 0) helperText = `A processar ${activeCount} ficheiro(s)...`;
   if (isDone) {
-    helperText = errorCount > 0 
-      ? `Concluído com avisos. ${doneCount} enviados, ${errorCount} falharam.`
-      : "Todos os ficheiros enviados com sucesso!";
+    helperText =
+      errorCount > 0
+        ? `Concluído com avisos. ${doneCount} enviados, ${errorCount} falharam.`
+        : "Todos os ficheiros enviados com sucesso!";
   }
 
   return (
@@ -133,7 +141,10 @@ export function StepProgress({
           <div className="flex items-center gap-2.5">
             {isDone ? (
               <CheckCircle2
-                className={cn("size-5", errorCount > 0 ? "text-amber-500" : "text-emerald-500")}
+                className={cn(
+                  "size-5",
+                  errorCount > 0 ? "text-amber-500" : "text-emerald-500",
+                )}
               />
             ) : (
               <Loader2 className="size-5 animate-spin text-primary" />
@@ -157,10 +168,10 @@ export function StepProgress({
       {/* Lista Individual de Ficheiros */}
       <ScrollArea className="max-h-65">
         <ul className="space-y-2 pr-2">
-          {fileProgress.map((f) => {
+          {fileProgress.map((f, i) => {
             return (
               <motion.li
-                key={f.fileName}
+                key={`file-${i}`}
                 layout
                 className="rounded-lg border border-hairline px-4 py-3 bg-background"
               >
@@ -169,7 +180,10 @@ export function StepProgress({
                     <FileText className="size-4 stroke-[1.5]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate" title={f.fileName}>
+                    <div
+                      className="text-sm font-medium truncate"
+                      title={f.fileName}
+                    >
                       {f.fileName}
                     </div>
                     <div className="text-[11px] text-muted-foreground mono flex items-center gap-1.5">
@@ -180,7 +194,10 @@ export function StepProgress({
                       )}
                       <span>{Math.round(f.progress)}%</span>
                       {f.error && (
-                        <span className="text-destructive truncate max-w-[180px]" title={f.error}>
+                        <span
+                          className="text-destructive truncate max-w-[180px]"
+                          title={f.error}
+                        >
                           · {f.error}
                         </span>
                       )}
@@ -200,10 +217,10 @@ export function StepProgress({
                       f.status === "DONE"
                         ? "bg-emerald-500"
                         : f.status === "ERROR"
-                        ? "bg-destructive"
-                        : f.status === "HASHING" || f.status === "REGISTERING"
-                        ? "bg-amber-500"
-                        : "bg-primary"
+                          ? "bg-destructive"
+                          : f.status === "HASHING" || f.status === "REGISTERING"
+                            ? "bg-amber-500"
+                            : "bg-primary",
                     )}
                   />
                 </div>

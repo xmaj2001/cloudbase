@@ -1,10 +1,17 @@
-'use client'
+"use client";
 import { useState, useMemo } from "react";
-import { CheckCircle2, Scissors, HardDrive, ChevronsUpDown, Check, AlertTriangle } from "lucide-react";
-import { FilePlan, UploadPlanChunk } from "@/lib/api/upload/types";
-import { ApiDriver } from "@/lib/api/drivers/types";
+import {
+  CheckCircle2,
+  Scissors,
+  HardDrive,
+  ChevronsUpDown,
+  Check,
+  AlertTriangle,
+} from "lucide-react";
+import { FilePlan, FilePlanSuccess, UploadPlanChunk } from "../upload.types";
+import { ApiProvider } from "@/lib/features/providers";
 import { PROVIDER_ICONS } from "@/types/drivers";
-import { formatBytes } from "@/lib/api/drivers/features/upload-analysis";
+import { fmtBytes as formatBytes } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,25 +24,25 @@ import { cn } from "@/lib/utils";
 // ─── Props ───────────────────────────────────────────────────────────────────
 
 interface StepPlanProps {
-  plan: FilePlan[];
-  drivers: ApiDriver[];
-  onPlanChange: (plan: FilePlan[]) => void;
+  plan: FilePlanSuccess[];
+  providers: ApiProvider[];
+  onPlanChange: (plan: FilePlanSuccess[]) => void;
 }
 
-// ─── Utilitário: calcula o espaço restante por driver dado o plano actual ─────
+// ─── Utilitário: calcula o espaço restante por provider dado o plano actual ─────
 //
-// Para cada driver, começa com o espaço disponível real e subtrai todos os
-// chunks actualmente atribuídos a esse driver no plano.
+// Para cada provider, começa com o espaço disponível real e subtrai todos os
+// chunks actualmente atribuídos a esse provider no plano.
 //
 function computeRemainingSpace(
-  drivers: ApiDriver[],
-  plan: FilePlan[],
-  excludeChunk?: { fileName: string; chunkIndex: number }
+  providers: ApiProvider[],
+  plan: FilePlanSuccess[],
+  excludeChunk?: { fileName: string; chunkIndex: number },
 ): Map<string, number> {
   const map = new Map<string, number>();
 
-  for (const d of drivers) {
-    map.set(d.id, Number(d.space?.availableSpace ?? 0));
+  for (const d of providers) {
+    map.set(d.id, Number(d.availableSpace ?? 0));
   }
 
   for (const filePlan of plan) {
@@ -48,8 +55,8 @@ function computeRemainingSpace(
       ) {
         continue;
       }
-      const current = map.get(chunk.driverId) ?? 0;
-      map.set(chunk.driverId, current - chunk.chunkSizeBytes);
+      const current = map.get(chunk.providerId) ?? 0;
+      map.set(chunk.providerId, current - chunk.chunkSizeBytes);
     }
   }
 
@@ -58,14 +65,14 @@ function computeRemainingSpace(
 
 // ─── Component principal ─────────────────────────────────────────────────────
 
-export function StepPlan({ plan, drivers, onPlanChange }: StepPlanProps) {
+export function StepPlan({ plan, providers, onPlanChange }: StepPlanProps) {
   const hasFragmented = plan.some((f) => f.isFragmented);
 
-  // Reassignar um chunk a um novo driver
+  // Reassignar um chunk a um novo provider
   const handleReassign = (
     fileName: string,
     chunkIndex: number,
-    newDriver: ApiDriver
+    newProvider: ApiProvider,
   ) => {
     const newPlan = plan.map((filePlan) => {
       if (filePlan.fileName !== fileName) return filePlan;
@@ -74,9 +81,9 @@ export function StepPlan({ plan, drivers, onPlanChange }: StepPlanProps) {
         if (chunk.chunkIndex !== chunkIndex) return chunk;
         return {
           ...chunk,
-          driverId: newDriver.id,
-          driverName: newDriver.displayName,
-          driverType: newDriver.type,
+          providerId: newProvider.id,
+          providerName: newProvider.displayName,
+          providerType: newProvider.type,
         } satisfies UploadPlanChunk;
       });
 
@@ -94,7 +101,7 @@ export function StepPlan({ plan, drivers, onPlanChange }: StepPlanProps) {
           "flex items-start gap-3 rounded-lg border p-3 text-sm",
           hasFragmented
             ? "border-amber-500/20 bg-amber-500/5"
-            : "border-green-500/20 bg-green-500/5"
+            : "border-green-500/20 bg-green-500/5",
         )}
       >
         {hasFragmented ? (
@@ -108,25 +115,26 @@ export function StepPlan({ plan, drivers, onPlanChange }: StepPlanProps) {
               "font-medium",
               hasFragmented
                 ? "text-amber-700 dark:text-amber-400"
-                : "text-green-700 dark:text-green-400"
+                : "text-green-700 dark:text-green-400",
             )}
           >
             {hasFragmented ? "Plano com fragmentação" : "Plano de distribuição"}
           </p>
           <p className="text-muted-foreground text-xs mt-0.5">
-            Podes alterar o driver de destino de cada ficheiro ou parte clicando
-            no driver. Só são apresentados drivers com espaço suficiente.
+            Podes alterar o provider de destino de cada ficheiro ou parte
+            clicando no provider. Só são apresentados providers com espaço
+            suficiente.
           </p>
         </div>
       </div>
 
       {/* Lista de ficheiros */}
-      <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1">
-        {plan.map((filePlan) => (
+      <div className="flex flex-col gap-3 pr-1 h-full">
+        {plan.map((filePlan, i) => (
           <FilePlanCard
-            key={filePlan.fileName}
+            key={`plan-card-${i}`}
             filePlan={filePlan}
-            drivers={drivers}
+            providers={providers}
             plan={plan}
             onReassign={handleReassign}
           />
@@ -140,14 +148,18 @@ export function StepPlan({ plan, drivers, onPlanChange }: StepPlanProps) {
 
 function FilePlanCard({
   filePlan,
-  drivers,
+  providers,
   plan,
   onReassign,
 }: {
-  filePlan: FilePlan;
-  drivers: ApiDriver[];
-  plan: FilePlan[];
-  onReassign: (fileName: string, chunkIndex: number, driver: ApiDriver) => void;
+  filePlan: FilePlanSuccess;
+  providers: ApiProvider[];
+  plan: FilePlanSuccess[];
+  onReassign: (
+    fileName: string,
+    chunkIndex: number,
+    provider: ApiProvider,
+  ) => void;
 }) {
   return (
     <div className="rounded-xl border bg-card overflow-hidden">
@@ -155,7 +167,9 @@ function FilePlanCard({
       <div className="flex items-center justify-between px-3 py-2 border-b bg-muted/30">
         <div className="flex items-center gap-2 min-w-0">
           <HardDrive className="size-3.5 shrink-0 text-muted-foreground" />
-          <span className="text-sm font-medium truncate">{filePlan.fileName}</span>
+          <span className="text-sm font-medium truncate">
+            {filePlan.fileName}
+          </span>
         </div>
         <div className="flex items-center gap-1.5 shrink-0 ml-2">
           {filePlan.isFragmented && (
@@ -179,7 +193,7 @@ function FilePlanCard({
             key={chunk.chunkIndex}
             fileName={filePlan.fileName}
             chunk={chunk}
-            drivers={drivers}
+            providers={providers}
             plan={plan}
             onReassign={onReassign}
           />
@@ -189,51 +203,57 @@ function FilePlanCard({
   );
 }
 
-// ─── Linha de um chunk com selector de driver ─────────────────────────────────
+// ─── Linha de um chunk com selector de provider ─────────────────────────────────
 
 function ChunkRow({
   fileName,
   chunk,
-  drivers,
+  providers,
   plan,
   onReassign,
 }: {
   fileName: string;
   chunk: UploadPlanChunk;
-  drivers: ApiDriver[];
-  plan: FilePlan[];
-  onReassign: (fileName: string, chunkIndex: number, driver: ApiDriver) => void;
+  providers: ApiProvider[];
+  plan: FilePlanSuccess[];
+  onReassign: (
+    fileName: string,
+    chunkIndex: number,
+    provider: ApiProvider,
+  ) => void;
 }) {
   const [open, setOpen] = useState(false);
 
-  // Calcula o espaço livre por driver excluindo a alocação actual deste chunk
+  // Calcula o espaço livre por provider excluindo a alocação actual deste chunk
   const remaining = useMemo(
     () =>
-      computeRemainingSpace(drivers, plan, {
+      computeRemainingSpace(providers, plan, {
         fileName,
         chunkIndex: chunk.chunkIndex,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [drivers, plan, fileName, chunk.chunkIndex]
+    [providers, plan, fileName, chunk.chunkIndex],
   );
 
-  // Drivers que têm espaço suficiente para este chunk
-  const eligibleDrivers = useMemo(
+  // Providers que têm espaço suficiente para este chunk
+  const eligibleProviders = useMemo(
     () =>
-      drivers.filter((d) => (remaining.get(d.id) ?? 0) >= chunk.chunkSizeBytes),
-    [drivers, remaining, chunk.chunkSizeBytes]
+      providers.filter(
+        (d) => (remaining.get(d.id) ?? 0) >= chunk.chunkSizeBytes,
+      ),
+    [providers, remaining, chunk.chunkSizeBytes],
   );
 
-  const currentDriver = drivers.find((d) => d.id === chunk.driverId);
-  const remainingForCurrent = remaining.get(chunk.driverId) ?? 0;
-  // Se o driver actual já não tem espaço suficiente (pode acontecer após outra reatribuição)
+  const currentProvider = providers.find((d) => d.id === chunk.providerId);
+  const remainingForCurrent = remaining.get(chunk.providerId) ?? 0;
+  // Se o provider actual já não tem espaço suficiente (pode acontecer após outra reatribuição)
   const isOverCapacity = remainingForCurrent < 0;
 
   return (
     <div
       className={cn(
         "flex items-center justify-between px-3 py-2 text-sm transition-colors",
-        isOverCapacity && "bg-destructive/5"
+        isOverCapacity && "bg-destructive/5",
       )}
     >
       {/* Info do chunk */}
@@ -244,7 +264,8 @@ function ChunkRow({
               Parte {chunk.chunkIndex + 1}
             </Badge>
             <span className="text-[10px] text-muted-foreground tabular-nums">
-              {chunk.startByte.toLocaleString()} → {chunk.endByte.toLocaleString()} bytes
+              {chunk.startByte.toLocaleString()} →{" "}
+              {chunk.endByte.toLocaleString()} bytes
             </span>
           </div>
         )}
@@ -253,7 +274,7 @@ function ChunkRow({
         </span>
       </div>
 
-      {/* Selector de driver */}
+      {/* Selector de provider */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -261,7 +282,7 @@ function ChunkRow({
             size="sm"
             className={cn(
               "h-8 max-w-[180px] px-2 text-xs gap-1.5 justify-between shrink-0",
-              isOverCapacity && "border-destructive/50 text-destructive"
+              isOverCapacity && "border-destructive/50 text-destructive",
             )}
           >
             <span className="flex items-center gap-1.5 min-w-0">
@@ -269,10 +290,10 @@ function ChunkRow({
                 <AlertTriangle className="size-3.5 shrink-0 text-destructive" />
               ) : (
                 <span className="leading-none shrink-0">
-                  {PROVIDER_ICONS[chunk.driverType] ?? "💾"}
+                  {PROVIDER_ICONS[chunk.providerType] ?? "💾"}
                 </span>
               )}
-              <span className="truncate">{chunk.driverName}</span>
+              <span className="truncate">{chunk.providerName}</span>
             </span>
             <ChevronsUpDown className="size-3 shrink-0 text-muted-foreground" />
           </Button>
@@ -280,20 +301,21 @@ function ChunkRow({
 
         <PopoverContent className="w-64 p-1" align="end">
           <p className="text-[10px] font-medium text-muted-foreground px-2 py-1.5 uppercase tracking-wide">
-            Drivers disponíveis — {formatBytes(chunk.chunkSizeBytes)} necessários
+            Providers disponíveis — {formatBytes(chunk.chunkSizeBytes)}{" "}
+            necessários
           </p>
-          {drivers.map((driver) => {
-            const free = remaining.get(driver.id) ?? 0;
+          {providers.map((provider) => {
+            const free = remaining.get(provider.id) ?? 0;
             const canFit = free >= chunk.chunkSizeBytes;
-            const isCurrent = driver.id === chunk.driverId;
+            const isCurrent = provider.id === chunk.providerId;
 
             return (
               <button
-                key={driver.id}
+                key={provider.id}
                 disabled={!canFit && !isCurrent}
                 onClick={() => {
                   if (canFit || isCurrent) {
-                    onReassign(fileName, chunk.chunkIndex, driver);
+                    onReassign(fileName, chunk.chunkIndex, provider);
                     setOpen(false);
                   }
                 }}
@@ -302,21 +324,21 @@ function ChunkRow({
                   canFit
                     ? "hover:bg-muted cursor-pointer"
                     : "opacity-40 cursor-not-allowed",
-                  isCurrent && "bg-primary/10 font-medium"
+                  isCurrent && "bg-primary/10 font-medium",
                 )}
               >
                 {/* Ícone do provider */}
                 <span className="text-base leading-none shrink-0">
-                  {PROVIDER_ICONS[driver.type] ?? "💾"}
+                  {PROVIDER_ICONS[provider.type] ?? "💾"}
                 </span>
 
                 {/* Nome + espaço livre */}
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="truncate">{driver.displayName}</span>
+                  <span className="truncate">{provider.displayName}</span>
                   <span
                     className={cn(
                       "text-[10px] tabular-nums",
-                      canFit ? "text-muted-foreground" : "text-destructive/70"
+                      canFit ? "text-muted-foreground" : "text-destructive/70",
                     )}
                   >
                     {formatBytes(Math.max(0, free))} livres

@@ -12,18 +12,22 @@ import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { useUpload } from "./hooks/use-upload";
+import type { FilePlanSuccess } from "./upload.types";
 import { UploadStep } from "./upload.types";
 import { StepFileSelect } from "./steps/StepFileSelect";
-import { StepDriverSelect } from "./steps/StepDriverSelect";
+import { StepProviderSelect } from "./steps/StepProviderSelect";
+import { StepPlan } from "./steps/StepPlan";
 import { StepProgress } from "./steps/StepProgress";
-import { ApiDriver } from "@/lib/api/drivers/types";
+import type { ApiProvider } from "@/lib/features/providers";
 import { Stepper } from "./Stepper";
 
 const subtitle: Record<UploadStep, string> = {
   file: "Escolhe os ficheiros que queres adicionar ao teu armazenamento unificado.",
-  driver: "Escolha o driver de destino para onde os ficheiros vão ser transferidos.",
-  plan: "",
-  progress: "Os teus ficheiros estão a ser transferidos e registados no sistema.",
+  provider:
+    "Escolha o provider de destino para onde os ficheiros vão ser transferidos.",
+  plan: "Revê o plano de distribuição e ajusta os providers de destino de cada ficheiro ou parte.",
+  progress:
+    "Os teus ficheiros estão a ser transferidos e registados no sistema.",
 };
 
 interface UploadModalProps {
@@ -43,50 +47,69 @@ export function UploadModal({
 }: UploadModalProps) {
   const [files, setFiles] = useState<File[]>(initialFiles);
   const [step, setStep] = useState<UploadStep>("file");
-  const [selectedDrivers, setSelectedDrivers] = useState<ApiDriver[]>([]);
+  const [selectedProviders, setSelectedProviders] = useState<ApiProvider[]>([]);
+  const [editedPlan, setEditedPlan] = useState<FilePlanSuccess[]>([]);
 
-  // ── Instanciação do nosso Hook Simples ─────────────────────────────────────
-  const { startUpload, fileProgress, isUploadingDone } = useUpload({
+  const {
+    fetchPlan,
+    startUpload,
+    planResult,
+    isPlanLoading,
+    fileProgress,
+    isUploadingDone,
+  } = useUpload({
     userId,
     parentId,
     files,
-    selectedDrivers,
-    onComplete: () => {
-      // Opcional: O que fazer quando tudo acabar
-    },
+    selectedProviders,
   });
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
       setFiles([]);
-      setSelectedDrivers([]);
+      setSelectedProviders([]);
+      setEditedPlan([]);
       setStep("file");
     }
     onOpenChange(isOpen);
   };
 
-  const goNext = () => {
+  const goNext = async () => {
     if (step === "file") {
-      setStep("driver");
-    } else if (step === "driver") {
-      setStep("progress"); // Vai direto do driver para a barra de progresso ativa
+      setStep("provider");
+    } else if (step === "provider") {
+      // Chamar o backend para calcular o plano
+      const result = await fetchPlan();
+      if (result) {
+        setEditedPlan(result.placed);
+        setStep("plan");
+      }
+    } else if (step === "plan") {
+      // Executar o upload com o plano (possivelmente editado pelo utilizador)
+      void startUpload(editedPlan);
+      setStep("progress");
     } else if (step === "progress" && isUploadingDone) {
-      handleOpenChange(false); // Concluído -> Fecha o modal e limpa
+      handleOpenChange(false);
     }
   };
 
   const goBack = () => {
-    if (step === "driver") setStep("file");
+    if (step === "provider") setStep("file");
+    if (step === "plan") setStep("provider");
   };
 
-  const canContinue =
-    (step === "file" && files.length > 0) ||
-    (step === "driver") ||
-    (step === "progress" && isUploadingDone);
+  const canContinue = (() => {
+    if (step === "file") return files.length > 0;
+    if (step === "provider") return !isPlanLoading;
+    if (step === "plan") return editedPlan.length > 0;
+    if (step === "progress") return isUploadingDone;
+    return false;
+  })();
 
   const getNextLabel = () => {
     if (step === "file") return "Continuar";
-    if (step === "driver") return "Iniciar Envio";
+    if (step === "provider") return isPlanLoading ? "A calcular..." : "Ver Plano";
+    if (step === "plan") return "Iniciar Envio";
     if (step === "progress") return isUploadingDone ? "Fechar" : "A enviar...";
     return "Continuar";
   };
@@ -95,12 +118,14 @@ export function UploadModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-3xl p-0 gap-0 overflow-hidden border border-hairline bg-background">
         <DialogHeader className="px-7 pt-6 pb-5 border-b border-hairline space-y-1.5">
-          <div className="text-xl font-medium tracking-tight">Adicionar ficheiros</div>
+          <div className="text-xl font-medium tracking-tight">
+            Adicionar ficheiros
+          </div>
           <DialogDescription className="text-sm text-muted-foreground">
             {subtitle[step]}
           </DialogDescription>
           <div className="pt-5">
-            <Stepper current={step} />
+            <Stepper current={step} isUploading={step === "progress" && !isUploadingDone} />
           </div>
         </DialogHeader>
 
@@ -117,18 +142,25 @@ export function UploadModal({
               {step === "file" && (
                 <StepFileSelect files={files} setFiles={setFiles} />
               )}
-              {step === "driver" && (
-                <StepDriverSelect
+              {step === "provider" && (
+                <StepProviderSelect
                   userId={userId}
-                  selectedDrivers={selectedDrivers}
-                  onSelectionChange={setSelectedDrivers}
+                  selectedProviders={selectedProviders}
+                  onSelectionChange={setSelectedProviders}
+                />
+              )}
+              {step === "plan" && (
+                <StepPlan
+                  plan={editedPlan}
+                  providers={selectedProviders}
+                  onPlanChange={setEditedPlan}
                 />
               )}
               {step === "progress" && (
                 <StepProgress
                   fileProgress={fileProgress}
                   isDone={isUploadingDone}
-                  onStart={startUpload}
+                  onStart={() => {}}
                 />
               )}
             </motion.div>
@@ -138,15 +170,24 @@ export function UploadModal({
         {/* Footer */}
         <div className="px-7 py-4 border-t border-hairline flex items-center justify-between bg-surface-1/30">
           <div>
-            {step === "driver" && (
-              <Button variant="ghost" onClick={goBack} className="gap-1.5 text-xs">
+            {(step === "provider" || step === "plan") && (
+              <Button
+                variant="ghost"
+                onClick={goBack}
+                disabled={isPlanLoading}
+                className="gap-1.5 text-xs"
+              >
                 <ArrowLeft className="size-4" /> Voltar
               </Button>
             )}
           </div>
           <div className="flex items-center gap-2">
             {step !== "progress" && (
-              <Button variant="outline" onClick={() => handleOpenChange(false)} className="text-xs">
+              <Button
+                variant="outline"
+                onClick={() => handleOpenChange(false)}
+                className="text-xs"
+              >
                 Cancelar
               </Button>
             )}
@@ -155,14 +196,14 @@ export function UploadModal({
               disabled={!canContinue}
               className="gap-1.5 min-w-35 text-xs font-medium"
             >
-              {step === "progress" && !isUploadingDone && (
+              {(step === "progress" && !isUploadingDone) || (step === "provider" && isPlanLoading) ? (
                 <Loader2 className="size-3.5 animate-spin" />
-              )}
+              ) : null}
               {step === "progress" && isUploadingDone && (
                 <Check className="size-3.5 text-emerald-400" />
               )}
               {getNextLabel()}
-              {step !== "progress" && <ArrowRight className="size-4" />}
+              {step !== "progress" && !isPlanLoading && <ArrowRight className="size-4" />}
             </Button>
           </div>
         </div>
@@ -170,3 +211,4 @@ export function UploadModal({
     </Dialog>
   );
 }
+

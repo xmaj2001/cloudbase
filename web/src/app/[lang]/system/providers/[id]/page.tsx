@@ -1,5 +1,5 @@
 import { getDictionary, Locale } from "../../../dictionaries";
-import { providerService } from "@/features/providers/provider.service";
+import { providerService } from "@/lib/features/providers/provider.service";
 import { ProviderHeroCard } from "../_components/provider-hero-card";
 import { ProviderMetrics } from "../_components/provider-metrics";
 import { ProviderActivity } from "../_components/provider-activity";

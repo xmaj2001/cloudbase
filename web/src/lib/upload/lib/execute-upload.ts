@@ -1,4 +1,10 @@
-import { DriverUploadSignature } from "@/lib/api/upload/types";
+// Assinatura de upload devolvida pelo BFF /api/upload/sign
+interface DriverUploadSignature {
+  method: string;
+  uploadUrl: string;
+  headers?: Record<string, string>;
+  formDataFields?: Record<string, string>;
+}
 import { FilePlanSuccess } from "../upload.types";
 
 
@@ -37,7 +43,7 @@ export async function executeUploadPlan({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 userId,
-                driverId: chunk.driverId,
+                providerId: chunk.providerId,
                 fileName: filePlan.fileName,
                 chunkIndex: chunk.chunkIndex,
                 isFragment: filePlan.isFragmented
@@ -119,7 +125,7 @@ export async function executeUploadPlan({
             isFragmented: filePlan.isFragmented,
             chunks: filePlan.chunks.map(c => ({
                 chunkIndex: c.chunkIndex,
-                driverId: c.driverId,
+                providerId: c.providerId,
                 sizeBytes: String(c.chunkSizeBytes)
             }))
         })

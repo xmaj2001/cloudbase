@@ -178,7 +178,7 @@ model Provider {
   priority    Int     @default(0)
 
   credentials Json
-  folderPath  String?
+  folderPath  String? @default("CloudBase/")
 
   lastSyncAt DateTime?
   syncError  String?
@@ -223,7 +223,7 @@ model Node {
   providerId        String
   Provider          Provider  @relation(fields: [providerId], references: [id])
   providerFileId    String?
-  providerPath      String? @default("CloudBase/")
+  providerPath      String?   @default("CloudBase/")
   providerCreatedAt DateTime?
   providerUpdatedAt DateTime?
 
@@ -257,7 +257,7 @@ model FileChunk {
   providerId        String
   Provider          Provider  @relation(fields: [providerId], references: [id])
   providerFileId    String?
-  providerPath      String? @default("CloudBase/_fragments/")
+  providerPath      String?   @default("CloudBase/_fragments/")
   providerCreatedAt DateTime?
   providerUpdatedAt DateTime?
 

@@ -40,7 +40,7 @@ Authorization: Bearer {{authToken}}
 GET {{baseUrl}}/providers
 Authorization: Bearer {{authToken}}
 
-@providerId = dfadac5e-d54d-4ea1-bfc2-097238ef7c13
+@providerId = dc6321a4-1533-42aa-8a22-fd5ae55e8066
 
 
 ### 1. Criar uma Pasta (Folder) na Raiz
@@ -52,8 +52,8 @@ Content-Type: application/json
 {
   "name": "Max",
   "type": "FOLDER",
-  "providerId": "{{providerId}}",
-  "parentId": "1d278140-d287-45c9-a071-9f537b0c03c7"
+  "providerId": "{{providerId}}"
+  
   
 }
 

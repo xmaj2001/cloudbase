@@ -4,7 +4,7 @@ import { DriverIcon } from "@/components/drivers/driver-icon";
 import { fmtBytes } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-import { ApiProvider } from "@/features/providers/types";
+import { ApiProvider } from "@/lib/features/providers/types";
 import { ProviderIcon } from "@/components/providers/provider-icon";
 
 interface ProviderHeroCardProps {

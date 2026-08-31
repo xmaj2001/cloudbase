@@ -1,4 +1,4 @@
-import { NodeType } from "@/features/nodes";
+import { NodeType } from "@/lib/features/nodes";
 import {
   Archive,
   FileText,

@@ -15,7 +15,7 @@ import {
   type ProviderSpec,
 } from "@/components/providers/provider-spec";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { providerService } from "@/features/providers/provider.service";
+import { providerService } from "@/lib/features/providers/provider.service";
 
 type Step = 1 | 2 | 3 | 4;
 

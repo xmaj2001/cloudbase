@@ -1,6 +1,6 @@
 "use client";
 
-import { ApiNode } from "@/features/nodes";
+import { ApiNode } from "@/lib/features/nodes";
 import { getNodeIcon } from "@/lib/utils-components";
 import { fmtSize } from "@/lib/utils/node";
 import { motion } from "framer-motion";

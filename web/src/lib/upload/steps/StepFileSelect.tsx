@@ -14,8 +14,30 @@ export function StepFileSelect({ files, setFiles }: StepFileSelectProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
+  const [rejectedNames, setRejectedNames] = useState<string[]>([]);
+
   const add = (list: FileList | File[]) => {
-    setFiles([...files, ...list]);
+    const incoming = Array.from(list);
+    const existing = new Set(files.map((f) => `${f.name}__${f.size}__${f.lastModified}`));
+
+    const accepted: File[] = [];
+    const rejected: string[] = [];
+
+    for (const f of incoming) {
+      const key = `${f.name}__${f.size}__${f.lastModified}`;
+      if (existing.has(key)) {
+        rejected.push(f.name);
+      } else {
+        accepted.push(f);
+        existing.add(key); // evita duplicados dentro do mesmo drop
+      }
+    }
+
+    if (accepted.length > 0) setFiles([...files, ...accepted]);
+    if (rejected.length > 0) {
+      setRejectedNames(rejected);
+      setTimeout(() => setRejectedNames([]), 3000);
+    }
   };
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -24,8 +46,7 @@ export function StepFileSelect({ files, setFiles }: StepFileSelectProps) {
   }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    if (!e.currentTarget.contains(e.relatedTarget as Node))
-      setDragOver(false);
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOver(false);
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -92,7 +113,7 @@ export function StepFileSelect({ files, setFiles }: StepFileSelectProps) {
               <ul className="divide-y divide-hairline">
                 {files.map((f, index) => (
                   <motion.li
-                    key={index}
+                    key={`${f.name}__${f.lastModified}__${index}`}
                     layout
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -124,6 +145,18 @@ export function StepFileSelect({ files, setFiles }: StepFileSelectProps) {
                 ))}
               </ul>
             </ScrollArea>
+            {rejectedNames.length > 0 && (
+              <motion.p
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                className="mt-2 px-1 text-[11px] text-amber-500"
+              >
+                {rejectedNames.length === 1
+                  ? `"${rejectedNames[0]}" já foi adicionado e foi ignorado.`
+                  : `${rejectedNames.length} ficheiros duplicados foram ignorados.`}
+              </motion.p>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
